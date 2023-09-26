@@ -1,0 +1,21 @@
+<root>
+    <Cliente>
+        <User>Yeiki</User>
+        <Password>Mamahuevo#1</Password>
+        <Nombre>Yerik Chaves Serrano</Nombre>
+        <Correo>yerikchaves818@gmail.com</Correo>
+        <Edad>20</Edad>
+        <Musica>
+            <CancionA>abcd</CancionA>
+            <CancionB>efg</CancionB>
+            <CancionC>hij</CancionC>
+        </Musica>
+        <Foto>imagenes/FotosPerfil/Yeiki.jpg</Foto>
+        <Colores>
+            <ColorA>#</ColorA>
+            <ColorB>#</ColorB>
+            <ColorC>#</ColorC>
+            <ColorD>#</ColorD>
+        </Colores>
+    </Cliente>
+<Cliente><User>Gabopango</User><Password>jjgDfg#1</Password><Name>Gabriel</Name><Email>gabo@gmail.com</Email><Age>19</Age><Music><SongA>A</SongA><SongB>B</SongB><SongC>C</SongC></Music><ProfilePic>imagenes/FotosPerfil/Gabopango.jpg</ProfilePic><Colors><ColorA>#A</ColorA><ColorB>#B</ColorB><ColorC>#C</ColorC><ColorD>#D</ColorD></Colors></Cliente></root>
