@@ -1,7 +1,6 @@
 import tkinter as tk
 import xml.etree.ElementTree as ET
 from tkinter import messagebox
-import cv2
 
 class Autenticacion:
     def __init__(self, window):
@@ -17,7 +16,7 @@ class Autenticacion:
         self.entry_password = tk.Entry(window, show="*")  # Para ocultar la contraseña
 
         # Botones
-        self.button_iniciar_sesion = tk.Button(window, text="Iniciar Sesión", command=self.verificar_inicio_sesion)
+        self.button_iniciar_sesion = tk.Button(window, text="Iniciar Sesión", command=self.verificarUsuario())
         #self.button_salir = tk.Button(ventana, text="Salir", command=ventana.quit)
 
         # Diseño de la interfaz
@@ -66,14 +65,14 @@ class Autenticacion:
         cv2.destroyAllWindows()
         return False  # Autenticación biométrica fallida'''
 
-    def Verificarusuario(self):
+    def verificarUsuario(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
 
         # Cargar la clave utilizada para la encriptación (reemplaza con tu clave real)
 
         # Cargar el archivo encriptado
-        with open("archivo_encriptado.xml", "rb") as archivo:
+        with open("DataBase.xml", "rb") as archivo:
             contentEncript = archivo.read()
 
         # Desencriptar el contenido del archivo
@@ -82,11 +81,11 @@ class Autenticacion:
         root = ET.fromstring(contentEncript.decode('utf-8'))
 
         for username2 in root.findall('username'):
-            Usermanesave = username2.find('username').text
+            Usernamesave = username2.find('username').text
             Contrasave = username2.find('password').text
 
             # Comparar el nombre de usuario y la contraseña ingresados con los datos del XML desencriptado
-            if Usermanesave == username and Contrasave == password:
+            if Usernamesave == username and Contrasave == password:
                 return True
         return False
 
