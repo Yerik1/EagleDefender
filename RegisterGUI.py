@@ -68,6 +68,22 @@ buttons(" - ", minimize, "Red", "Blue", width - 45, -0.5)
 # Agraga el label del titulo
 addLabel("Register", width/2-60, 0.1*(height/30), "flat",25)
 
+# Agrega los labels de la ventana de Registro
+
+addLabel("Name",width/2-110,48,"flat",12)
+
+addLabel("User",width/2-103,74,"flat",12)
+
+addLabel("Password",width/2-140,98,"flat",12)
+
+addLabel("Confirm Password",width/2-198,123,"flat",12)
+
+addLabel("Email",width/2-110,148,"flat",12)
+
+addLabel("Age",width/2-99,173,"flat",12)
+
+addLabel("Music",width/2-111,199,"flat",12)
+
 
 profilePicPath = ""
 extention = ""
@@ -152,7 +168,7 @@ def colorpic(e):
     dispE.config(bg=hex[4], fg=hex[4])
 
 """
-funcion que recopila la informacion de las entries
+funcion que recopila la informacion de los entries
 """
 def save():
     global colorA,colorB,colorC,colorD,colorE
@@ -342,16 +358,16 @@ def toggle_checkbox():
 
 #Se crean las entries del registro
 entryUser= Entry(root,width=20)
-entryUser.place(x=width/2,y=60,anchor=CENTER)
+entryUser.place(x=width/2,y=85,anchor=CENTER)
 
 entryPassword= Entry(root,width=20,show="⧫")
-entryPassword.place(x=width/2,y=85,anchor=CENTER)
+entryPassword.place(x=width/2,y=110,anchor=CENTER)
 
 entryConfPassword= Entry(root,width=20,show="⧫")
-entryConfPassword.place(x=width/2,y=110,anchor=CENTER)
+entryConfPassword.place(x=width/2,y=135,anchor=CENTER)
 
 entryName= Entry(root,width=20)
-entryName.place(x=width/2,y=135,anchor=CENTER)
+entryName.place(x=width/2,y=60,anchor=CENTER)
 
 entryEmail= Entry(root,width=20)
 entryEmail.place(x=width/2,y=160,anchor=CENTER)
@@ -365,7 +381,7 @@ entryMusic.place(x=width/2,y=210,anchor=CENTER)
 
 #Boton mostrar contraseña
 showPassword= Button(root, text="Show Password", command=showHidePassword)
-showPassword.place(x=width/2+130,y=110,anchor=CENTER)
+showPassword.place(x=width/2+130,y=120,anchor=CENTER)
 
 #Boton agregar cancion
 addSong= Button(root, text="Add", command=addSong)
@@ -399,39 +415,40 @@ copy = Image.open(imageName)
 myImg = ImageTk.PhotoImage(Image.open(imageName).resize((100, 100)))
 
 #se crea el canvas de la rueda de color
-c = Canvas(root,width=210, height=100)
+c = Canvas(root,width=97, height=95, bg = "black", highlightbackground= BG)
 c.place(x=(width/2),y=300, anchor=CENTER)
 c.create_image(50, 50, image=myImg,anchor=CENTER)
 c.bind("<Button-1>", colorpic)
 
 #Se crean los lugares donde aparece el codigo de color y se muestra el color
-entryA = Entry(c, width=10)
-entryA.place(x=120,y=0)
-entryB = Entry(c, width=10)
-entryB.place(x=120,y=20)
-entryC = Entry(c, width=10)
-entryC.place(x=120,y=40)
-entryD = Entry(c, width=10)
-entryD.place(x=120,y=60)
-entryE = Entry(c, width=10)
-entryE.place(x=120,y=80)
-dispA = Button(c, text="  ")
-dispA.place(x=200,y=0)
-dispB = Button(c, text="  ")
-dispB.place(x=200,y=20)
-dispC = Button(c, text="  ")
-dispC.place(x=200,y=40)
-dispD = Button(c, text="  ")
-dispD.place(x=200,y=60)
-dispE = Button(c, text="  ")
-dispE.place(x=200,y=80)
+entryA = Entry(root, width=10, state="disable")
+entryA.place(x=width/2+50,y=250)
+entryB = Entry(root, width=10, state="disable")
+entryB.place(x=width/2+50,y=270)
+entryC = Entry(root, width=10, state="disable")
+entryC.place(x=width/2+50,y=290)
+entryD = Entry(root, width=10, state="disable")
+entryD.place(x=width/2+50,y=310)
+entryE = Entry(root, width=10, state="disable")
+entryE.place(x=width/2+50,y=330)
+
+dispA = Button(root, text="  ", state="disable")
+dispA.place(x=width/2+100,y=250)
+dispB = Button(root, text="  ", state="disable")
+dispB.place(x=width/2+100,y=270)
+dispC = Button(root, text="  ", state="disable")
+dispC.place(x=width/2+100,y=290)
+dispD = Button(root, text="  ", state="disable")
+dispD.place(x=width/2+100,y=310)
+dispE = Button(root, text="  ", state="disable")
+dispE.place(x=width/2+100,y=330)
 
 #Seleccion de imagenes
 bg1="./Backgrounds/Background1.PNG"
 copyBg1 = Image.open(bg1)
 myBg1 = ImageTk.PhotoImage(Image.open(bg1).resize((100, 100)))
 
-cbg1= Canvas(root,width=100,height=100)
+cbg1= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbg1.place(x=(width/3-100),y=410, anchor=CENTER)
 cbg1.create_image(50, 50, image=myBg1,anchor=CENTER)
 cbg1.bind("<Button-1>", lambda event, p=1:selectBackground(event,p))
@@ -440,7 +457,7 @@ bg2="./Backgrounds/Background2.PNG"
 copyBg2 = Image.open(bg2)
 myBg2 = ImageTk.PhotoImage(Image.open(bg2).resize((100, 100)))
 
-cbg2= Canvas(root,width=100,height=100)
+cbg2= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbg2.place(x=(width/3),y=410, anchor=CENTER)
 cbg2.create_image(50, 50, image=myBg2,anchor=CENTER)
 cbg2.bind("<Button-1>", lambda event, p=2:selectBackground(event,p))
@@ -449,7 +466,7 @@ bg3="./Backgrounds/Background3.PNG"
 copyBg3 = Image.open(bg3)
 myBg3 = ImageTk.PhotoImage(Image.open(bg3).resize((100, 100)))
 
-cbg3= Canvas(root,width=100,height=100)
+cbg3= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbg3.place(x=(width/3+100),y=410, anchor=CENTER)
 cbg3.create_image(50, 50, image=myBg3,anchor=CENTER)
 cbg3.bind("<Button-1>", lambda event, p=3:selectBackground(event,p))
@@ -463,7 +480,7 @@ br1="./Barriers/Barrier1.PNG"
 copyBr1 = Image.open(br1)
 myBr1 = ImageTk.PhotoImage(Image.open(br1).resize((100, 100)))
 
-cbr1= Canvas(root,width=100,height=100)
+cbr1= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbr1.place(x=(2*width/3-100),y=410, anchor=CENTER)
 cbr1.create_image(50, 50, image=myBr1,anchor=CENTER)
 cbr1.bind("<Button-1>", lambda event, p=1:selectBarrier(event,p))
@@ -472,7 +489,7 @@ br2="./Barriers/Barrier2.PNG"
 copyBr2 = Image.open(bg2)
 myBr2 = ImageTk.PhotoImage(Image.open(br2).resize((100, 100)))
 
-cbr2= Canvas(root,width=100,height=100)
+cbr2= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbr2.place(x=(2*width/3),y=410, anchor=CENTER)
 cbr2.create_image(50, 50, image=myBr2,anchor=CENTER)
 cbr2.bind("<Button-1>", lambda event, p=2:selectBarrier(event,p))
@@ -481,7 +498,7 @@ br3="./Barriers/Barrier3.PNG"
 copyBr3 = Image.open(bg3)
 myBr3 = ImageTk.PhotoImage(Image.open(br3).resize((100, 100)))
 
-cbr3= Canvas(root,width=100,height=100)
+cbr3= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbr3.place(x=(2*width/3+100),y=410, anchor=CENTER)
 cbr3.create_image(50, 50, image=myBr3,anchor=CENTER)
 cbr3.bind("<Button-1>", lambda event, p=3:selectBarrier(event,p))
@@ -495,7 +512,7 @@ wb1="./Powers/WaterBalls/WB1.PNG"
 copyWb1 = Image.open(wb1)
 myWb1 = ImageTk.PhotoImage(Image.open(wb1).resize((100, 100)))
 
-cwb1= Canvas(root,width=100,height=100)
+cwb1= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cwb1.place(x=(width/4-100),y=550, anchor=CENTER)
 cwb1.create_image(50, 50, image=myWb1,anchor=CENTER)
 cwb1.bind("<Button-1>", lambda event, p=1:selectWB(event,p))
@@ -504,7 +521,7 @@ wb2="./Powers/WaterBalls/WB2.PNG"
 copyWb2 = Image.open(wb1)
 myWb2 = ImageTk.PhotoImage(Image.open(wb2).resize((100, 100)))
 
-cwb2= Canvas(root,width=100,height=100)
+cwb2= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cwb2.place(x=(width/4),y=550, anchor=CENTER)
 cwb2.create_image(50, 50, image=myWb2,anchor=CENTER)
 cwb2.bind("<Button-1>", lambda event, p=2:selectWB(event,p))
@@ -513,7 +530,7 @@ wb3="./Powers/WaterBalls/WB3.PNG"
 copyWb3 = Image.open(wb3)
 myWb3 = ImageTk.PhotoImage(Image.open(wb3).resize((100, 100)))
 
-cwb3= Canvas(root,width=100,height=100)
+cwb3= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cwb3.place(x=(width/4)+100,y=550, anchor=CENTER)
 cwb3.create_image(50, 50, image=myWb3,anchor=CENTER)
 cwb3.bind("<Button-1>", lambda event, p=3:selectWB(event,p))
@@ -527,7 +544,7 @@ fb1="./Powers/FireBalls/FB1.PNG"
 copyFb1 = Image.open(fb1)
 myFb1 = ImageTk.PhotoImage(Image.open(fb1).resize((100, 100)))
 
-cfb1= Canvas(root,width=100,height=100)
+cfb1= Canvas(root,width=100,height=100,bg="white",highlightbackground=BG)
 cfb1.place(x=(width/2-100),y=550, anchor=CENTER)
 cfb1.create_image(50, 50, image=myFb1,anchor=CENTER)
 cfb1.bind("<Button-1>", lambda event, p=1:selectFB(event,p))
@@ -536,7 +553,7 @@ fb2="./Powers/FireBalls/FB2.PNG"
 copyFb2 = Image.open(fb2)
 myFb2 = ImageTk.PhotoImage(Image.open(fb2).resize((100, 100)))
 
-cfb2= Canvas(root,width=100,height=100)
+cfb2= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cfb2.place(x=(width/2),y=550, anchor=CENTER)
 cfb2.create_image(50, 50, image=myFb2,anchor=CENTER)
 cfb2.bind("<Button-1>", lambda event, p=2:selectFB(event,p))
@@ -545,7 +562,7 @@ fb3="./Powers/FireBalls/FB3.PNG"
 copyFb3 = Image.open(fb3)
 myFb3 = ImageTk.PhotoImage(Image.open(fb3).resize((100, 100)))
 
-cfb3= Canvas(root,width=100,height=100)
+cfb3= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cfb3.place(x=(width/2)+100,y=550, anchor=CENTER)
 cfb3.create_image(50, 50, image=myFb3,anchor=CENTER)
 cfb3.bind("<Button-1>", lambda event, p=3:selectFB(event,p))
@@ -559,7 +576,7 @@ bmb1="./Powers/Bombs/Bomb1.PNG"
 copyBmb1 = Image.open(bmb1)
 myBmb1 = ImageTk.PhotoImage(Image.open(bmb1).resize((100, 100)))
 
-cbmb1= Canvas(root,width=100,height=100)
+cbmb1= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbmb1.place(x=(3*width/4-100),y=550, anchor=CENTER)
 cbmb1.create_image(50, 50, image=myBmb1,anchor=CENTER)
 cbmb1.bind("<Button-1>", lambda event, p=1:selectBmb(event,p))
@@ -568,7 +585,7 @@ bmb2="./Powers/Bombs/Bomb2.PNG"
 copyBmb2 = Image.open(bmb2)
 myBmb2 = ImageTk.PhotoImage(Image.open(bmb2).resize((100, 100)))
 
-cbmb2= Canvas(root,width=100,height=100)
+cbmb2= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbmb2.place(x=(3*width/4),y=550, anchor=CENTER)
 cbmb2.create_image(50, 50, image=myBmb2,anchor=CENTER)
 cbmb2.bind("<Button-1>", lambda event, p=2:selectBmb(event,p))
@@ -577,7 +594,7 @@ bmb3="./Powers/Bombs/Bomb3.PNG"
 copyBmb3 = Image.open(bmb3)
 myBmb3 = ImageTk.PhotoImage(Image.open(bmb3).resize((100, 100)))
 
-cbmb3= Canvas(root,width=100,height=100)
+cbmb3= Canvas(root,width=100,height=100,bg=BG,highlightbackground=BG)
 cbmb3.place(x=(3*width/4+100),y=550, anchor=CENTER)
 cbmb3.create_image(50, 50, image=myBmb3,anchor=CENTER)
 cbmb3.bind("<Button-1>", lambda event, p=3:selectBmb(event,p))
