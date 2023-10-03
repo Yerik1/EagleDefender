@@ -4,6 +4,7 @@ from tkinter import messagebox
 import Register as register
 from initialEnvironment import begin
 import RegisterGUI
+import reconocimientoFacial
 
 class Autentication:
     def __init__(self, window):
@@ -22,6 +23,7 @@ class Autentication:
         # Botones
         self.buttonIniciarSesion = tk.Button(window, text="Log In", command=self.verificarUsuario)
         self.buttonRegister = tk.Button(window, text="Register", command=self.register)
+        self.buttonBiometric = tk.Button(window,text="Biometric", command=self.biometric())
         #self.button_salir = tk.Button(ventana, text="Salir", command=ventana.quit)
 
         # Diseño de la interfaz
@@ -74,6 +76,9 @@ class Autentication:
     def register(self):
         self.registerWindow=RegisterGUI
         self.registerWindow.begin()
+
+    def biometric(self):
+        reconocimientoFacial.facialRecognition()
 
 
 Autentication(window=tk.Tk())
