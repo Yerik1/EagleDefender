@@ -4,13 +4,15 @@ from tkinter import messagebox
 import Register as register
 from initialEnvironment import begin
 import RegisterGUI
-import reconocimientoFacial
+import FacialRecognition
 
 class Autentication:
     def __init__(self, window):
         self.window = window
         self.window.title("Log In")
         self.registerWindow=""
+        self.faceRecogn=""
+        self.faceRecognClass=""
 
         # Etiquetas
         self.labelUsername = tk.Label(window, text="User Name:")
@@ -23,7 +25,7 @@ class Autentication:
         # Botones
         self.buttonIniciarSesion = tk.Button(window, text="Log In", command=self.verificarUsuario)
         self.buttonRegister = tk.Button(window, text="Register", command=self.register)
-        self.buttonBiometric = tk.Button(window,text="Biometric", command=self.biometric())
+        self.buttonBiometric = tk.Button(window,text="Biometric", command=self.biometric)
         #self.button_salir = tk.Button(ventana, text="Salir", command=ventana.quit)
 
         # Diseño de la interfaz
@@ -33,6 +35,7 @@ class Autentication:
         self.entryPassword.pack()
         self.buttonIniciarSesion.pack()
         self.buttonRegister.pack()
+        self.buttonBiometric.pack()
         #self.button_salir.pack()
         self.window.mainloop()
 
@@ -78,7 +81,15 @@ class Autentication:
         self.registerWindow.begin()
 
     def biometric(self):
-        reconocimientoFacial.facialRecognition()
+        print("entro")
+        self.faceRecogn=FacialRecognition
+        self.faceRecognClass=self.faceRecogn.Recogn
+        self.faceRecogn=self.faceRecogn.Recogn
+        print(self.faceRecogn.recognition1(self.faceRecognClass))
+        self.window.destroy()
+        self.window.quit()
+        begin()
+
 
 
 Autentication(window=tk.Tk())
