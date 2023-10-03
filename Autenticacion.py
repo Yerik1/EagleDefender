@@ -1,8 +1,7 @@
 import tkinter as tk
 import xml.etree.ElementTree as ET
 from tkinter import messagebox
-#from Register import encrypt Descomentar al unir con las demás clases de devRegistro
-#from Register import decrypt Descomentar al unir con las demás clases de devRegistro
+import Register as register
 
 class Autenticacion:
     def __init__(self, window):
@@ -34,8 +33,8 @@ class Autenticacion:
     def verificarUsuario(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
-        #decrypt = decrypt() Descomentar al unir con las demás clases de devRegistro
-        #encrypt = encrypt() Descomentar al unir con las demás clases de devRegistro
+        decrypt = register.decrypt() #Descomentar al unir con las demás clases de devRegistro
+        encrypt = register.encrypt() #Descomentar al unir con las demás clases de devRegistro
 
 
         # Cargar la clave utilizada para la encriptación (reemplaza con tu clave real)
@@ -45,7 +44,7 @@ class Autenticacion:
             contentEncript = archivo.read()
 
         # Desencriptar el contenido del archivo
-        #dencryptedXml = decrypt(contentEncript) Descomentar al unir con las demás clases de devRegistro
+        dencryptedXml = decrypt(contentEncript) #Descomentar al unir con las demás clases de devRegistro
 
         # Analizar el XML desencriptado
         root = ET.fromstring(contentEncript.decode('utf-8'))
@@ -56,9 +55,9 @@ class Autenticacion:
 
             # Comparar el nombre de usuario y la contraseña ingresados con los datos del XML desencriptado
             if Usernamesave == username and Contrasave == password:
-                #encrypted_xml = encrypt(contentEncript) Descomentar al unir con las demás clases de devRegistro
+                encrypted_xml = encrypt(contentEncript) #Descomentar al unir con las demás clases de devRegistro
                 return True
-        #encrypted_xml = encrypt(contentEncript) Descomentar al unir con las demás clases de devRegistro
+        encrypted_xml = encrypt(contentEncript) #Descomentar al unir con las demás clases de devRegistro
         return False
 
 
