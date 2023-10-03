@@ -82,7 +82,7 @@ def decrypt():
 """
 funcion que permite agregar un usuario con su informacion a la base de datos
 """
-def register():
+def register(list,profPicRoute):
     decrypt()
     #arbol con la informacion del archivo xml
     tree= eT.parse('DataBase')
@@ -94,62 +94,62 @@ def register():
 
     # agrega atributos al nuevo elemento
     newUser = eT.SubElement(newClient, 'User')  # nombre de usuario
-    newUser.text = 'Gabopango'
+    newUser.text = list[0]
     newPassword = eT.SubElement(newClient, 'Password')  # contraseña
-    newPassword.text = 'jjgDfg#1'
+    newPassword.text = list[1]
     newName = eT.SubElement(newClient, 'Name')  # nombre del cliente
-    newName.text = 'Gabriel'
+    newName.text = list[3]
     newEmail = eT.SubElement(newClient, 'Email')  # correo electronico
-    newEmail.text = 'gabo@gmail.com'
+    newEmail.text = list[4]
     newAge = eT.SubElement(newClient, 'Age')  # edad del cliente
-    newAge.text = '19'
+    newAge.text = list[5]
     #Se crea el elemento de la lista de canciones
     newSongList = eT.Element('Music')
 
     newSongA =eT.SubElement(newSongList, 'SongA') #cancion A
-    newSongA.text="A"
+    newSongA.text=list[6]
     newSongB = eT.SubElement(newSongList, 'SongB') #cancion B
-    newSongB.text = "B"
+    newSongB.text = list[7]
     newSongC = eT.SubElement(newSongList, 'SongC') #cancion C
-    newSongC.text = "C"
+    newSongC.text = list[8]
 
     #se agrega la lista de canciones al cliente
     newClient.append(newSongList)
 
     newProfPic = eT.SubElement(newClient, 'ProfilePic') #ruta de la foto de perfil
-    newProfPic.text = 'imagenes/FotosPerfil/'+'Gabopango'+'.jpg'
+    newProfPic.text = profPicRoute
 
     #Paleta de colores del usuario
     newColorPalette = eT.Element('Colors')
 
     newColorA = eT.SubElement(newColorPalette, 'ColorA')#color A
-    newColorA.text = "#A"
+    newColorA.text = list[9]
     newColorB = eT.SubElement(newColorPalette, 'ColorB')#color B
-    newColorB.text = "#B"
+    newColorB.text = list[10]
     newColorC = eT.SubElement(newColorPalette, 'ColorC')#color C
-    newColorC.text = "#C"
+    newColorC.text = list[11]
     newColorD = eT.SubElement(newColorPalette, 'ColorD')#color D
-    newColorD.text = "#D"
+    newColorD.text = list[12]
     newColorD = eT.SubElement(newColorPalette, 'ColorE')  # color D
-    newColorD.text = "#E"
+    newColorD.text = list[13]
     # Se agrega la paleta de colores al cliente
     newClient.append(newColorPalette)
 
     #se agrega las texturas escogidas
     newWalls = eT.SubElement(newClient, 'Wall')  # numero del sprite de barerra
-    newWalls.text = '1'
+    newWalls.text = list[14]
 
     newBackGround = eT.SubElement(newClient, 'BackGround')  # numero del sprite de fondo
-    newBackGround.text = '1'
+    newBackGround.text = list[15]
 
     newWaterBall = eT.SubElement(newClient, 'WaterBall')  # numero del sprite de bola de agua
-    newWaterBall.text = '1'
+    newWaterBall.text = list[16]
 
     newFireBall = eT.SubElement(newClient, 'FireBall')  # numero del sprite de bola de fuego
-    newFireBall.text = '1'
+    newFireBall.text = list[17]
 
     newBomb = eT.SubElement(newClient, 'Bomb')  # numero del sprite de bomba
-    newBomb.text = '1'
+    newBomb.text = list[18]
 
 
     #se agrega el cliente a la raiz
@@ -157,22 +157,21 @@ def register():
     #se escribe la informacion en la base de datos
     tree.write('DataBase')
     encrypt()
+    print("piola")
 
 """
 funcion que valida el usuario, contraseña y edad
 """
-def validate(user,password,age):
-    if(isinstance(age,int)):
-        if not(safeUser(user)):
-            if(safePassword(password)):
-                print("safe")
-                return True
-            else:
-                print("Contraseña invalida")
+def validate(user,password):
+    if not(safeUser(user)):
+        if(safePassword(password)):
+            print("safe")
+            return True
         else:
-            print("Usuario invalido")
+            print("Contraseña invalida")
     else:
-        print("Edad invalida")
+        print("Usuario invalido")
+    return False
 
 """
 funcion que verifica si se puede usar el usuario
@@ -210,4 +209,3 @@ def safePassword(password):
 
     # Si la contraseña cumple con todos los requisitos
     return True
-
