@@ -556,6 +556,6 @@ varCheckbox = BooleanVar()
 checkbox = Checkbutton(root, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
 checkbox.place(x=width/4,y=300)
 
-#Abre la ventana
-root.mainloop()
-
+def begin():
+    #Abre la ventana
+    root.mainloop()
