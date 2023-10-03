@@ -209,4 +209,3 @@ def safePassword(password):
 
     # Si la contraseña cumple con todos los requisitos
     return True
-encrypt()
