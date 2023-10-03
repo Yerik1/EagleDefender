@@ -60,10 +60,10 @@ musicAttacker = initialEnvironmentScreen.addLabel("Music: ", 9*(width/15), 2*(he
 
 # Labels del rol que desarolla cada jugador
 rolDefender = initialEnvironmentScreen.addLabel("Defender", 6.5*(width/15), height/37, "flat")
-rolAttacker = initialEnvironmentScreen.addLabel("Attacker", 14.5*(width/15), height/37, "flat")
+rolAttacker = initialEnvironmentScreen.addLabel("Attacker", 14*(width/15), height/37, "flat")
 
 # Labels de de los datos curiosos de las cansiones
-funFactDefender = initialEnvironmentScreen.addLabel("Fun Facts: ...", width/8, height/11, "flat")
+funFactDefender = initialEnvironmentScreen.addLabel("", width/8, height/11, "flat")
 funFactAttacker = initialEnvironmentScreen.addLabel("Fun Facts: ...", 5.25*(width/8), height/11, "flat")
 
 # Imagenes de perfil
@@ -71,6 +71,12 @@ profilePicDefender = initialEnvironmentScreen.addLabel("Profile Pic", width/43, 
 profilePicAttacker = initialEnvironmentScreen.addLabel("Profile Pic", 8*(width/15), height/25, "flat")
 
 # Label del tiempo
+GUIBuilder.widgetDict = {
+            'funFactDefender': initialEnvironmentScreen.editLabel("", funFactDefender),
+        }
+
+comboxChooseLanguage = initialEnvironmentScreen.addCombox()
+comboxChooseLanguage.bind("<<ComboboxSelected>>",lambda event,self=initialEnvironmentScreen: GUIBuilder.updateLanguage(self,event))
 
 
 

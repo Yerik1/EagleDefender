@@ -2,11 +2,12 @@
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
+from translationManager import TranslationManager
+from tkinter import ttk
 
 class GUIBuilder:
     # Metodo constructor de la clase
     def __init__(self,BG):
-
         # Crea una nueva ventana de Tkinter
         self.root = Tk()
 
@@ -23,9 +24,28 @@ class GUIBuilder:
         # Configurar la ventana en pantalla completa
         self.root.attributes("-fullscreen", True)
 
+        self.translationManager = TranslationManager()
+
+        #self.languageCombobox.bind("<<ComboboxSelected>>", self.updateLanguage)
+
         # Crea botones para cerrar o minimizar la ventana
         self.buttons(" x ", self.closeEnvironment, "Red","Blue", width-23, -0.5)
         self.buttons(" - ", self.minimize, "Red", "Blue", width-45, -0.5)
+
+
+
+        self.translationManager.loadTranslations()
+
+        self.widgetDict = {
+            'funFactDefender': self.addLabel("Fun Facts: ...", width / 8, height / 11, "flat"),
+        }
+
+
+
+
+    def updateLanguage(self,event):
+        self.translationManager.setLanguage(self.currentLanguage.get())
+        self.translationManager.updateWidgets(self.widgetDict)
 
 
 
@@ -48,8 +68,12 @@ class GUIBuilder:
 
 
     def addLabel(self, txt, a, b, r):
-        label = Label(self.root, text=txt, bg=self.BG, relief=r)
+        label = Label(self.root, text=" "+txt, bg=self.BG, relief=r)
         label.place(x=a, y=b)
+        return label
+
+    def editLabel(self,txt,label):
+        label.config(text=txt)
 
 
     # Metodo constructor de botones
@@ -79,5 +103,15 @@ class GUIBuilder:
     # Metodo que minimiza la ventana
     def minimize(self):
         self.root.iconify()
+
+    def addCombox (self):
+        self.languages = ["English", "Español"]
+        self.currentLanguage = tk.StringVar()
+        self.languageCombobox = ttk.Combobox(self.root, textvariable=self.currentLanguage, values=self.languages)
+        self.languageCombobox.pack()
+        return self.languageCombobox
+
+    def deleteLbl(self):
+        print("")
 
 
