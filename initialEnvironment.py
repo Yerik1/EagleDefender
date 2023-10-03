@@ -55,15 +55,15 @@ userDefender = initialEnvironmentScreen.addLabel("User: ", width/15, height/37, 
 userAttacker = initialEnvironmentScreen.addLabel("User: ", 9*(width/15), height/37, "flat")
 
 # Labels de la cancion que esta sonando
-musicDefender = initialEnvironmentScreen.addLabel("Music: ", width/15, 2*(height/37), "flat")
+musicDefender = initialEnvironmentScreen.addLabel(" Music: ", width/15, 2*(height/37), "flat")
 musicAttacker = initialEnvironmentScreen.addLabel("Music: ", 9*(width/15), 2*(height/37), "flat")
 
 # Labels del rol que desarolla cada jugador
 rolDefender = initialEnvironmentScreen.addLabel("Defender", 6.5*(width/15), height/37, "flat")
-rolAttacker = initialEnvironmentScreen.addLabel("Attacker", 14.5*(width/15), height/37, "flat")
+rolAttacker = initialEnvironmentScreen.addLabel("Attacker", 14*(width/15), height/37, "flat")
 
-# Labels de de los datos curiosos de las cansiones
-funFactDefender = initialEnvironmentScreen.addLabel("Fun Facts: ...", width/8, height/11, "flat")
+# Labels de de los datos curiosos de las canciones
+funFactDefender = initialEnvironmentScreen.addLabel("", width/8, height/11, "flat")
 funFactAttacker = initialEnvironmentScreen.addLabel("Fun Facts: ...", 5.25*(width/8), height/11, "flat")
 
 # Imagenes de perfil
@@ -71,6 +71,25 @@ profilePicDefender = initialEnvironmentScreen.addLabel("Profile Pic", width/43, 
 profilePicAttacker = initialEnvironmentScreen.addLabel("Profile Pic", 8*(width/15), height/25, "flat")
 
 # Label del tiempo
+GUIBuilder.widgetDict = {
+                'funFactDefender': initialEnvironmentScreen.addLabel("Fun Facts: ...", width / 8, height / 11, "flat"),
+                'wallsLb': initialEnvironmentScreen.addLabel("Walls: ", 0.4*(width/30), height/6.7, "flat"),
+                'powersLb': initialEnvironmentScreen.addLabel("Powers: ", 15.4*(width/30), height/6.7, "flat"),
+                'pointsDefender': initialEnvironmentScreen.addLabel("Points: ", 0.4*(width/30),height/11,"flat"),
+                'pointsAttacker': initialEnvironmentScreen.addLabel("Points: ", 15.4*(width/30),height/11,"flat"),
+                'userDefender': initialEnvironmentScreen.addLabel("User: ", width/15, height/37, "flat"),
+                'userAttacker': initialEnvironmentScreen.addLabel("User: ", 9*(width/15), height/37, "flat"),
+                'musicDefender': initialEnvironmentScreen.addLabel("", width/15, 2*(height/37), "flat"),
+                'musicAttacker': initialEnvironmentScreen.addLabel("Music: ", 9*(width/15), 2*(height/37), "flat"),
+                'rolDefender': initialEnvironmentScreen.addLabel("Defender", 6.5*(width/15), height/37, "flat"),
+                'rolAttacker': initialEnvironmentScreen.addLabel("Attacker", 14*(width/15), height/37, "flat"),
+                'funFactAttacker': initialEnvironmentScreen.addLabel("Fun Facts: ...", 5.25*(width/8), height/11, "flat"),
+                'profilePicDefender': initialEnvironmentScreen.addLabel("Profile Pic", width/43, height/25,"flat"),
+                'profilePicAttacker': initialEnvironmentScreen.addLabel("Profile Pic", 8*(width/15), height/25, "flat"),
+        }
+
+comboxChooseLanguage = initialEnvironmentScreen.addCombox()
+comboxChooseLanguage.bind("<<ComboboxSelected>>",lambda event,self=initialEnvironmentScreen: GUIBuilder.updateLanguage(self,event))
 
 
 
