@@ -9,24 +9,69 @@ from GUIBuilder import GUIBuilder
 from Register import register, validate
 from capturingFaces import Biometric
 
-
+# Creacion de la ventana
 root = TkinterDnD.Tk()
-root.title("Register")
+root.config(background="#86895d")
 root.drop_target_register(DND_FILES)
+root.attributes("-fullscreen", True)
 
+BG = "#86895d"
 
+# Obtener las dimensiones de la pantalla
 width = root.winfo_screenwidth()  # Ancho de la pantalla
-height = root.winfo_screenheight() - 50  # Alto de la pantalla menos 50 píxeles para la barra de tareas
+height = root.winfo_screenheight()  # Alto de la pantalla menos 50 píxeles para la barra de tareas
 
-#Label titulo
-titleFont= font.Font(family="Times New Romans", size=20)
-title= Label(root, text="Register",font=titleFont)
-title.pack()
-#title.place(x=width/2,y=50,anchor=CENTER)
 
-profilePicPath=""
-extention=""
-biometric=False
+# Funcion para crear botones
+def buttons(title, action, color1, color2, a, b):
+    btn = Button(root, text=title, command=action, bd=0, relief="sunken", activebackground="#86895d")
+    btn.config(bg=color1)
+    btn.place(x=a, y=b)
+
+    # Define el fondo del boton cuando el puntero sale
+    def change1(event):
+        btn.config(bg=color1)
+
+    # Define el fondo del boton cuando el puntero entra
+    def change2(event):
+        btn.config(bg=color2)
+
+    # Metodo que cierra la ventana
+
+
+    # Cambia el color del boton cuando el puntero pasa por este
+    btn.bind("<Leave>", change1)  # Sale
+    btn.bind("<Enter>", change2)  # Entra
+
+
+# Funcion que Agrega labels
+def addLabel( txt, a, b, r,s):
+    titleFont = font.Font(family="Times New Romans", size=s)
+    label = Label(root, text=txt, bg=BG, relief=r,font=titleFont)
+    label.place(x=a, y=b)
+
+# Funcion que cierra la ventana
+def closeEnvironment():
+    root.destroy()
+
+
+# Funcion que minimiza la ventana
+def minimize():
+    root.iconify()
+
+# Pone los botones para cerrar y minimizar la ventana
+buttons(" x ", closeEnvironment, "Red", "Blue", width - 23, -0.5)
+buttons(" - ", minimize, "Red", "Blue", width - 45, -0.5)
+
+
+
+# Agraga el label del titulo
+addLabel("Register", width/2-60, 0.1*(height/30), "flat",25)
+
+
+profilePicPath = ""
+extention = ""
+biometric = False
 # Establecer las dimensiones de la ventana
 root.geometry(f"{width}x{height}+-7+0")
 
@@ -235,7 +280,7 @@ def profilePicPlacer(pictureRoute):
 
 
 
-    profilePic = Canvas(root, width=200, height=200)
+    profilePic = Canvas(root, width=200, height=200, bg="#86895d",highlightbackground="#86895d")
     profilePic.place(x=width / 4 - 100, y=50)
     # Mostrar la imagen en el Canvas
     profilePic.create_image(100, 100, image=imagen_tk)
@@ -297,55 +342,55 @@ def toggle_checkbox():
 
 #Se crean las entries del registro
 entryUser= Entry(root,width=20)
-entryUser.place(x=width/2,y=50,anchor=W)
+entryUser.place(x=width/2,y=60,anchor=CENTER)
 
 entryPassword= Entry(root,width=20,show="⧫")
-entryPassword.place(x=width/2,y=75,anchor=W)
+entryPassword.place(x=width/2,y=85,anchor=CENTER)
 
 entryConfPassword= Entry(root,width=20,show="⧫")
-entryConfPassword.place(x=width/2,y=100,anchor=W)
+entryConfPassword.place(x=width/2,y=110,anchor=CENTER)
 
 entryName= Entry(root,width=20)
-entryName.place(x=width/2,y=125,anchor=W)
+entryName.place(x=width/2,y=135,anchor=CENTER)
 
 entryEmail= Entry(root,width=20)
-entryEmail.place(x=width/2,y=150,anchor=W)
+entryEmail.place(x=width/2,y=160,anchor=CENTER)
 
 entryAge= Entry(root,width=20)
-entryAge.place(x=width/2,y=175,anchor=W)
+entryAge.place(x=width/2,y=185,anchor=CENTER)
 
 entryMusic= Entry(root,width=20)
-entryMusic.place(x=width/2,y=200,anchor=W)
+entryMusic.place(x=width/2,y=210,anchor=CENTER)
 
 
 #Boton mostrar contraseña
 showPassword= Button(root, text="Show Password", command=showHidePassword)
-showPassword.place(x=width/2+130,y=100,anchor=W)
+showPassword.place(x=width/2+130,y=110,anchor=CENTER)
 
 #Boton agregar cancion
 addSong= Button(root, text="Add", command=addSong)
-addSong.place(x=width/2+130,y=200,anchor=W)
+addSong.place(x=width/2+90,y=210,anchor=CENTER)
 
 #Entries con canciones agregadas
 entrySA=Entry(root,width=20)
-entrySA.place(x=width/2+180,y=175,anchor=W)
+entrySA.place(x=width/2+180,y=185,anchor=CENTER)
 entrySA.config(state="disabled")
 entrySB=Entry(root,width=20)
-entrySB.place(x=width/2+180,y=200,anchor=W)
+entrySB.place(x=width/2+180,y=210,anchor=CENTER)
 entrySB.config(state="disabled")
 entrySC=Entry(root,width=20)
-entrySC.place(x=width/2+180,y=225,anchor=W)
+entrySC.place(x=width/2+180,y=235,anchor=CENTER)
 entrySC.config(state="disabled")
 
 #Botones para eliminar las canciones
 buttonSA=Button(root, text="X",command=deleteSong1)
-buttonSA.place(x=width/2+310,y=175,anchor=W)
+buttonSA.place(x=width/2+270,y=185,anchor=CENTER)
 buttonSA.config(state="disabled")
 buttonSB=Button(root, text="X",command=deleteSong2)
-buttonSB.place(x=width/2+310,y=200,anchor=W)
+buttonSB.place(x=width/2+270,y=210,anchor=CENTER)
 buttonSB.config(state="disabled")
 buttonSC=Button(root, text="X",command=deleteSong3)
-buttonSC.place(x=width/2+310,y=225,anchor=W)
+buttonSC.place(x=width/2+270,y=235,anchor=CENTER)
 buttonSC.config(state="disabled")
 
 #se agrega la rueda de color como imagen
@@ -544,8 +589,9 @@ entryBmb.config(state="disabled")
 buttonProfPic=Button(root, text="Add Profile Picture",command=profilePicMaker)
 buttonProfPic.place(x=width / 4,y=25 , anchor=CENTER)
 
+# Boton para registrarse
 buttonRegister=Button(root,text="Register",command=registerGUI,bd=0,relief="sunken",activebackground="SystemButtonFace")
-buttonRegister.place(x=width/2, y=700)
+buttonRegister.place(x=width/2-30, y=700)
 
 root.dnd_bind('<<Drop>>',dragPic)
 
