@@ -36,7 +36,7 @@ class Recogn:
                 cv2.putText(frame, '{}'.format(result), (x, y - 5), 1, 1.3, (255, 255, 0), 1, cv2.LINE_AA)
 
                 # EigenFaces
-                if result[1] < 5700:
+                if result[1] < 3100:
                     folder_name = imagePath[result[0]]  # Obtenemos el nombre de la carpeta
                     cv2.putText(frame, '{}'.format(folder_name), (x, y - 25), 2, 1.1, (0, 255, 0), 1, cv2.LINE_AA)
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
