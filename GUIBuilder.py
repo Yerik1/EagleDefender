@@ -35,11 +35,12 @@ class GUIBuilder:
 
 
         self.translationManager.loadTranslations()
-
+        '''
         self.widgetDict = {
             'funFactDefender': self.addLabel("Fun Facts: ...", width / 8, height / 11, "flat"),
+            'musicDefender': self.addLabel("Music", width/15, 2*(height/37), "flat"),
         }
-
+        '''
 
 
 
@@ -74,6 +75,7 @@ class GUIBuilder:
 
     def editLabel(self,txt,label):
         label.config(text=txt)
+
 
 
     # Metodo constructor de botones

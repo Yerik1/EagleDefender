@@ -3,9 +3,7 @@ class TranslationManager:
     def __init__(self):
         self.translations = {
             'English': {
-                'testLbl': ' Hello',
-                'testBtn': ' Goodbye',
-                'wallsLb': ' Walls',
+                'wallsLb': ' Walls:',
                 'powersLb': ' Powers',
                 'pointsDefender': ' Points',
                 'pointsAttacker': ' Points',
@@ -14,19 +12,27 @@ class TranslationManager:
                 'musicDefender': ' Music',
                 'musicAttacker': ' Music',
                 'funFactDefender': ' Fun Facts: ...',
+                'funFactAttacker': ' Fun Facts: ...',
+                'rolDefender': ' Defender',
+                'rolAttacker': ' Attacker',
+                'profilePicDefender': ' Profile Pic',
+                'profilePicAttacker': ' Profile Pic',
             },
             'Español': {
-                'testLbl': ' Hola',
-                'testBtn': ' Adiós',
                 'wallsLb': ' Paredes',
                 'powersLb': ' Poderes',
                 'pointsDefender': ' Puntos',
                 'pointsAttacker': ' Puntos',
-                'userDefender': ' Usuario',
+                'userDefender': '      Usuario',
                 'userAttacker': ' Usuario',
-                'musicDefender': ' Música',
+                'musicDefender': '      Música',
                 'musicAttacker': ' Música',
                 'funFactDefender': ' Datos Curiosos: ...',
+                'funFactAttacker': ' Datos Curiosos: ...',
+                'rolDefender': ' Defensor',
+                'rolAttacker': ' Atacante',
+                'profilePicDefender': ' Foto de Perfil',
+                'profilePicAttacker': ' Foto de Perfil',
             },
         }
         self.currentLanguage = 'English'
