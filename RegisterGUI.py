@@ -1,12 +1,20 @@
 from tkinter import *
 from tkinter import colorchooser, filedialog, font
+from tkinterdnd2 import DND_FILES, TkinterDnD
+import os
 from PIL import Image, ImageTk
 import PIL
 from PIL import ImageDraw
+from GUIBuilder import GUIBuilder
+from Register import register, validate
+from capturingFaces import Biometric
 
 
-root = Tk()
+root = TkinterDnD.Tk()
 root.title("Register")
+root.drop_target_register(DND_FILES)
+
+
 width = root.winfo_screenwidth()  # Ancho de la pantalla
 height = root.winfo_screenheight() - 50  # Alto de la pantalla menos 50 píxeles para la barra de tareas
 
@@ -15,14 +23,13 @@ titleFont= font.Font(family="Times New Romans", size=20)
 title= Label(root, text="Register",font=titleFont)
 title.pack()
 #title.place(x=width/2,y=50,anchor=CENTER)
+
+profilePicPath=""
+extention=""
+biometric=False
 # Establecer las dimensiones de la ventana
 root.geometry(f"{width}x{height}+-7+0")
 
-colorA=""
-colorB=""
-colorC=""
-colorD=""
-colorE=""
 
 """
 funcion que convierte de rgb a hexadecimal
@@ -197,25 +204,34 @@ def selectBmb(event,number):
 
 
 def profilePicMaker():
+    global extention
     # Cargar la imagen
-    pictureRoute = filedialog.askopenfilename(initialdir="/Desktop/python codes",title="open images",filetypes=(("png files","*.png"),("jpg files","*.jpg"),("jpeg files","*.jpeg")))
-    imagen_original = Image.open(pictureRoute)
+    pictureRoute = filedialog.askopenfilename(initialdir="/Desktop/python codes",title="open images",filetypes=(("png files","*.png"),("jpg files","*.jpg"),("jpeg files","*.jpeg"),("svh files","*.svh"),("pdf files","*.pdf")))
 
+    # Obtener la extensión del archivo
+    _, format = os.path.splitext(pictureRoute)
+    extention = format[1:].lower()  # Elimina el punto y convierte a minúsculas
+    profilePicPlacer(pictureRoute)
+
+def profilePicPlacer(pictureRoute):
+    global profilePicPath
+    originalPic = Image.open(pictureRoute)
+    profilePicPath=originalPic
     # Cambiar el tamaño de la imagen original a 200x200 píxeles
-    imagen_original = imagen_original.resize((200, 200))
+    originalPic = originalPic.resize((200, 200))
 
     # Crear una máscara en forma de óvalo
-    ancho, alto = imagen_original.size
+    ancho, alto = originalPic.size
     mascara = Image.new("L", (ancho, alto), 0)
     draw = ImageDraw.Draw(mascara)
     draw.ellipse((0, 0, ancho, alto), fill=255)
 
     # Aplicar la máscara a la imagen original
-    imagen_recortada = Image.new("RGBA", (ancho, alto))
-    imagen_recortada.paste(imagen_original, mask=mascara)
+    reSizePic = Image.new("RGBA", (ancho, alto))
+    reSizePic.paste(originalPic, mask=mascara)
 
     # Convertir la imagen recortada en PhotoImage para mostrarla en el Canvas
-    imagen_tk = ImageTk.PhotoImage(imagen_recortada)
+    imagen_tk = ImageTk.PhotoImage(reSizePic)
 
 
 
@@ -226,8 +242,57 @@ def profilePicMaker():
     profilePic.image = imagen_tk  # Evita que la imagen sea eliminada por el recolector de basura
     buttonProfPic.place(x=width / 4,y=25 , anchor=CENTER)
 
-#Puede servir para el importar imagenes
-#
+    #guarda la foto de perfil y la ruta
+
+def dragPic(event):
+    global profilePicPath, extention
+    picture = event.data
+    # Obtener la extensión del archivo
+    _, format = os.path.splitext(picture)
+    extention = format[1:].lower()  # Elimina el punto y convierte a minúsculas
+    profilePicPlacer(picture)
+
+def registerGUI():
+    global profilePicPath, extention, biometric
+    list=[entryUser,entryPassword,entryConfPassword,entryName,entryEmail,entryAge,entrySA,entrySB,entrySC,entryA,entryB
+        ,entryC,entryD,entryE,entryBr,entryBg,entryWb,entryFb,entryBmb]
+    list2=[]
+    fileRoute=""
+    flag=True
+    if(list[2].get()==list[1].get()):
+
+        for item in list:
+            list2.append(item.get())
+            #info opcional
+            if item!=list[6]and item!=list[7]and item!=list[8]and item!=list[9]and  item!=list[10]and  item!=list[10]and  item!=list[11]and item!=list[12]and  item!=list[13]:
+                if(item.get()==""):
+                    flag=False
+                    break
+
+        if flag:
+            if validate(list2[0],list2[1]):
+                if(profilePicPath!=""):
+                    fileRoute="./ProfilePics/"+list2[0]
+                    os.makedirs(fileRoute)
+                    profilePicPath.save(fileRoute+"/PROFILEPIC."+extention)
+                if(biometric):
+                    bmt=Biometric()
+                    bmt.initialice(list2[0],root)
+                    print("finish")
+                register(list2, fileRoute)
+
+
+        else:
+            print("Porfavor llenar todos los espacios")
+    else:
+        print("No coinciden las contraseñas")
+
+def toggle_checkbox():
+    global biometric
+    if varCheckbox.get():
+        biometric=True
+    else:
+        biometric=False
 
 
 #Se crean las entries del registro
@@ -478,6 +543,19 @@ entryBmb.config(state="disabled")
 
 buttonProfPic=Button(root, text="Add Profile Picture",command=profilePicMaker)
 buttonProfPic.place(x=width / 4,y=25 , anchor=CENTER)
+
+buttonRegister=Button(root,text="Register",command=registerGUI,bd=0,relief="sunken",activebackground="SystemButtonFace")
+buttonRegister.place(x=width/2, y=700)
+
+root.dnd_bind('<<Drop>>',dragPic)
+
+# Variable para rastrear el estado de la casilla de verificación
+varCheckbox = BooleanVar()
+
+# Crear la casilla de verificación
+checkbox = Checkbutton(root, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
+checkbox.place(x=width/4,y=300)
+
 #Abre la ventana
 root.mainloop()
 
