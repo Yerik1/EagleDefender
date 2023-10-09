@@ -40,7 +40,8 @@ class Recogn:
                     folder_name = imagePath[result[0]]  # Obtenemos el nombre de la carpeta
                     cv2.putText(frame, '{}'.format(folder_name), (x, y - 25), 2, 1.1, (0, 255, 0), 1, cv2.LINE_AA)
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
+                    cap.release()
+                    cv2.destroyAllWindows()
                     return folder_name  # Retornar el nombre de la carpeta
                 else:
                     cv2.putText(frame, 'Desconocido', (x, y - 20), 2, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
@@ -51,5 +52,6 @@ class Recogn:
                 break
         cap.release()
         cv2.destroyAllWindows()
+        return "#NO#"
 
 

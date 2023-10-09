@@ -102,6 +102,7 @@ def begin():
 
 
     # Inizia el bucle de la ventana del ambiente inicial
-    initialEnvironmentScreen.initialize()
+    if not(initialEnvironmentScreen.initialize()):
+        return False
 
 

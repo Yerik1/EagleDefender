@@ -11,6 +11,9 @@ class GUIBuilder:
         # Crea una nueva ventana de Tkinter
         self.root = Tk()
 
+        # Estado de la ventana
+        self.status=True
+
         # Color de fondo de la ventana
         self.BG = BG
 
@@ -29,8 +32,8 @@ class GUIBuilder:
         #self.languageCombobox.bind("<<ComboboxSelected>>", self.updateLanguage)
 
         # Crea botones para cerrar o minimizar la ventana
-        self.buttons(" x ", self.closeEnvironment, "Red","Blue", width-23, -0.5)
-        self.buttons(" - ", self.minimize, "Red", "Blue", width-45, -0.5)
+        self.closeButton=self.buttons(" x ", self.closeEnvironment, "Red","Blue", width-23, -0.5)
+        self.minimizeButton=self.buttons(" - ", self.minimize, "Red", "Blue", width-45, -0.5)
 
 
 
@@ -53,6 +56,9 @@ class GUIBuilder:
     # Metodo encargado de iniciar el bucle de la ventana
     def initialize(self):
         self.root.mainloop()
+        while(True):
+            if not self.status:
+                return False
 
 
     # Metodo que retorna el color de fondo de la ventana
@@ -100,6 +106,7 @@ class GUIBuilder:
 
     # Metodo que cierra la ventana
     def closeEnvironment(self):
+        self.root.protocol("WM_DELETE_WINDOW", self.changeStatus(False))
         self.root.destroy()
 
     # Metodo que minimiza la ventana
@@ -115,5 +122,8 @@ class GUIBuilder:
 
     def deleteLbl(self):
         print("")
+
+    def changeStatus(self,state):
+        self.status=state
 
 

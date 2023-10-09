@@ -77,22 +77,31 @@ class Autentication:
         return False
 
     def register(self):
-        self.registerWindow=RegisterGUI
+        self.window.destroy()
+        self.window.quit()
+        self.registerWindow = RegisterGUI
         self.registerWindow.begin()
+        #root = tk.Tk()
+        #app = RegisterApp(root, "ColorWheel.png")
+        #root.mainloop()
 
     def biometric(self):
         print("entro")
         self.faceRecogn=FacialRecognition
         self.faceRecognClass=self.faceRecogn.Recogn
         self.faceRecogn=self.faceRecogn.Recogn
-        print(self.faceRecogn.recognition1(self.faceRecognClass))
-        self.window.destroy()
-        self.window.quit()
-        begin()
+        user=self.faceRecogn.recognition1(self.faceRecognClass)
+        print(user)
+        if(user!="#NO#"):
+            self.window.destroy()
+            self.window.quit()
+            if not(begin()):
+                Autentication(tk.Tk())
 
 
 
-Autentication(window=tk.Tk())
+
+Autentication(tk.Tk())
 
 
 
