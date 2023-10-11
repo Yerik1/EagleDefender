@@ -34,7 +34,8 @@ class Biometric:
         count = 0
         while True:
             ret, frame = cap.read()
-            if not ret: break
+            if not ret:
+                return "No Camera"
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             auxFrame = gray.copy()
 
@@ -49,7 +50,10 @@ class Biometric:
             cv2.imshow('frame', frame)
 
             k = cv2.waitKey(1)
-            if k == 27 or count >= 100:
+            if k == 27:
+                os.removedirs(personPath)
+                return("#NO#")
+            elif(count >= 100):
                 break
 
         cap.release()

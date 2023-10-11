@@ -72,7 +72,8 @@ class Autentication:
                 print("exito")
                 self.window.destroy()
                 self.window.quit()
-                begin()
+                if not(begin()):
+                    Autentication(tk.Tk())
                 return True
         return False
 
@@ -80,7 +81,8 @@ class Autentication:
         self.window.destroy()
         self.window.quit()
         self.registerWindow = RegisterGUI
-        self.registerWindow.begin()
+        if not(self.registerWindow.begin()):
+            Autentication(tk.Tk())
         #root = tk.Tk()
         #app = RegisterApp(root, "ColorWheel.png")
         #root.mainloop()
@@ -93,10 +95,14 @@ class Autentication:
         user=self.faceRecogn.recognition1(self.faceRecognClass)
         print(user)
         if(user!="#NO#"):
-            self.window.destroy()
-            self.window.quit()
-            if not(begin()):
-                Autentication(tk.Tk())
+            if(user!="No Camera"):
+                self.window.destroy()
+                self.window.quit()
+                if not(begin()):
+                    Autentication(tk.Tk())
+            else:
+                #Label con exepcion de que no hay camara
+                print("")
 
 
 

@@ -9,6 +9,9 @@ from GUIBuilder import GUIBuilder
 from Register import register, validate
 from capturingFaces import Biometric
 
+
+width=""
+height=""
 root=""
 BG=""
 entryA=""
@@ -42,6 +45,7 @@ entryName=""
 entryEmail=""
 entryAge=""
 varCheckbox=""
+status=True
 
 #myImg = ImageTk.PhotoImage(Image.open(imageName).resize((100, 100)))
 
@@ -77,6 +81,7 @@ def addLabel(txt, a, b, r, s):
 
 # Funcion que cierra la ventana
 def closeEnvironment():
+    root.protocol("WM_DELETE_WINDOW",changeStatus(False))
     root.destroy()
 
 # Funcion que minimiza la ventana
@@ -334,7 +339,8 @@ def registerGUI():
                     bmt = Biometric()
                     bmt.initialice(list2[0], root)
                     print("finish")
-                register(list2, fileRoute)
+                else:
+                    register(list2, fileRoute)
 
 
         else:
@@ -349,8 +355,12 @@ def toggle_checkbox():
     else:
         biometric = False
 
+def changeStatus(state):
+    global status
+    status=state
+
 def begin():
-    global root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox
+    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -662,3 +672,7 @@ def begin():
     checkbox.place(x=width / 4, y=300)
     #Abre la ventana
     root.mainloop()
+    while(True):
+        if not status:
+            return False
+    
