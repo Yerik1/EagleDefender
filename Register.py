@@ -1,6 +1,6 @@
 #Biblioteca para la edicion de archivos xml
 import xml.etree.ElementTree as eT
-
+import os
 #Biblioteca para la encriptacion rsa
 import rsa
 import re
@@ -157,6 +157,10 @@ def register(list,profPicRoute):
     #se escribe la informacion en la base de datos
     tree.write('DataBase')
     encrypt()
+    try:
+        os.remove("Temp/foto_capturada.png")
+    except Exception as e:
+        print(e)
     print("piola")
 
 """

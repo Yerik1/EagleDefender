@@ -2,6 +2,7 @@ import cv2
 import os
 import numpy as np
 from tkinter import *
+import shutil
 # pip install opencv-contrib-python
 
 # Configuración de la ventana de instrucciones
@@ -16,7 +17,7 @@ class Biometric:
 
         self.showInstructions(instructions)
 
-        button = Button(self.root, text="Iniciar Reconocimiento", command=lambda user=user,window=self.root: self.recognition(user,window))
+        button = Button(self.root, text="Iniciar Reconocimiento", command=lambda usr=user,window=self.root: self.recognition(usr,window))
         button.pack()
         # Iniciar el ciclo principal de Tkinter
         self.root.mainloop()
@@ -51,7 +52,9 @@ class Biometric:
 
             k = cv2.waitKey(1)
             if k == 27:
-                os.removedirs(personPath)
+                cap.release()
+                cv2.destroyAllWindows()
+                shutil.rmtree(personPath)
                 return("#NO#")
             elif(count >= 100):
                 break

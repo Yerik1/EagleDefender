@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="301fdc4a-011e-46f3-b446-c8ee7e8be454" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/EagleDefender.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/EagleDefender.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Autentication.py" beforeDir="false" afterPath="$PROJECT_DIR$/Autentication.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataBase" beforeDir="false" afterPath="$PROJECT_DIR$/DataBase" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FacialRecognition.py" beforeDir="false" afterPath="$PROJECT_DIR$/FacialRecognition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProfilePics/JPepe/PROFILEPIC.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Register.py" beforeDir="false" afterPath="$PROJECT_DIR$/Register.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RegisterGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/RegisterGUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capturingFaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/CapturingFaces.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,13 +46,22 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "devFuncionalidadesSp1",
-    "last_opened_file_path": "C:/Users/User/Desktop/YERIK/EagleDefender",
+    "last_opened_file_path": "C:/Users/kondy/OneDrive/Escritorio/Lambergamber/EagleDefender",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "configurable.group.project",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="EagleDefender" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="EagleDefender" />
+      </console-settings>
+    </option>
+  </component>
   <component name="RunManager" selected="Python.Autentication">
     <configuration default="true" type="DjangoTestsConfigurationType">
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -163,7 +175,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="FacialRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="PictureTaker" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="EagleDefender" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -176,7 +188,29 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\gabon\OneDrive\Documentos\Principios\Proyecto\EagleDefender\FacialRecognition.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\kondy\OneDrive\Escritorio\Lambergamber\EagleDefender\PictureTaker.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Register" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="EagleDefender" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Register.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -221,28 +255,6 @@
       <module name="" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="initialEnvironment" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="EagleDefender" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/initialEnvironment.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -318,10 +330,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.Autentication" />
+        <item itemvalue="Python.Register" />
+        <item itemvalue="Python.RegisterGUI" />
+        <item itemvalue="Python.PictureTaker" />
         <item itemvalue="Python.FacialRecognition (1)" />
-        <item itemvalue="Python.FacialRecognition" />
-        <item itemvalue="Python.FacialRecognition" />
-        <item itemvalue="Python.initialEnvironment" />
       </list>
     </recent_temporary>
   </component>

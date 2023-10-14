@@ -7,8 +7,9 @@ import PIL
 from PIL import ImageDraw
 from GUIBuilder import GUIBuilder
 from Register import register, validate
-from capturingFaces import Biometric
-
+from CapturingFaces import Biometric
+from PictureTaker import CamApp
+import cv2
 
 width=""
 height=""
@@ -45,6 +46,8 @@ entryName=""
 entryEmail=""
 entryAge=""
 varCheckbox=""
+profilePic=""
+picLabel=""
 status=True
 
 #myImg = ImageTk.PhotoImage(Image.open(imageName).resize((100, 100)))
@@ -82,6 +85,10 @@ def addLabel(txt, a, b, r, s):
 # Funcion que cierra la ventana
 def closeEnvironment():
     root.protocol("WM_DELETE_WINDOW",changeStatus(False))
+    try:
+        os.remove("Temp/foto_capturada.png")
+    except Exception as e:
+        print(e)
     root.destroy()
 
 # Funcion que minimiza la ventana
@@ -186,7 +193,7 @@ def showHidePassword():
         entryConfPassword.configure(show="⧫")
         showPassword.config(text="Show Password")
 
-def addSong():
+def addSong(event):
     if (entrySA.get() == ""):
         entrySA.config(state="normal")
         entrySA.insert(0, entryMusic.get())
@@ -202,7 +209,6 @@ def addSong():
         entrySC.insert(0, entryMusic.get())
         entrySC.config(state="disabled")
         buttonSC.config(state="normal", bg="red")
-        addSong.config(state="disabled")
 
 def deleteSong1():
     entrySA.config(state="normal")
@@ -211,6 +217,8 @@ def deleteSong1():
     entrySA.config(state="disabled")
     if (entrySA.get() == ""):
         buttonSA.config(state="disabled", bg="SystemButtonFace")
+        buttonSB.config(state="disabled", bg="SystemButtonFace")
+        buttonSC.config(state="disabled", bg="SystemButtonFace")
     deleteSong2()
 
 def deleteSong2():
@@ -220,6 +228,7 @@ def deleteSong2():
     entrySB.config(state="disabled")
     if (entrySB.get() == ""):
         buttonSB.config(state="disabled", bg="SystemButtonFace")
+        buttonSC.config(state="disabled", bg="SystemButtonFace")
     deleteSong3()
 
 def deleteSong3():
@@ -227,7 +236,6 @@ def deleteSong3():
     entrySC.delete(0, END)
     entrySC.insert(0, "")
     entrySC.config(state="disabled")
-    addSong.config(state="normal")
     if (entrySC.get() == ""):
         buttonSC.config(state="disabled", bg="SystemButtonFace")
 
@@ -274,7 +282,7 @@ def profilePicMaker():
     profilePicPlacer(pictureRoute)
 
 def profilePicPlacer(pictureRoute):
-    global profilePicPath
+    global profilePicPath, profilePic
     originalPic = Image.open(pictureRoute)
     profilePicPath = originalPic
     # Cambiar el tamaño de la imagen original a 200x200 píxeles
@@ -293,8 +301,6 @@ def profilePicPlacer(pictureRoute):
     # Convertir la imagen recortada en PhotoImage para mostrarla en el Canvas
     imagen_tk = ImageTk.PhotoImage(reSizePic)
 
-    profilePic = Canvas(root, width=200, height=200, bg="#86895d", highlightbackground="#86895d")
-    profilePic.place(x=width / 4 - 100, y=50)
     # Mostrar la imagen en el Canvas
     profilePic.create_image(100, 100, image=imagen_tk)
     profilePic.image = imagen_tk  # Evita que la imagen sea eliminada por el recolector de basura
@@ -331,15 +337,17 @@ def registerGUI():
 
         if flag:
             if validate(list2[0], list2[1]):
+                bmt=""
                 if (profilePicPath != ""):
                     fileRoute = "./ProfilePics/" + list2[0]
-                    os.makedirs(fileRoute)
-                    profilePicPath.save(fileRoute + "/PROFILEPIC." + extention)
+
                 if (biometric):
                     bmt = Biometric()
                     bmt.initialice(list2[0], root)
                     print("finish")
-                else:
+                if(bmt!="#NO#"and bmt!="No Camera"):
+                    os.makedirs(fileRoute)
+                    profilePicPath.save(fileRoute + "/PROFILEPIC." + extention)
                     register(list2, fileRoute)
 
 
@@ -359,8 +367,25 @@ def changeStatus(state):
     global status
     status=state
 
+def takepicture(event):
+    global picLabel, profilePic
+    try:
+        picLabel.destroy()
+    except Exception as e:
+        print(e)
+    picLabel = Label(profilePic)
+    picLabel.place(x=100, y=100, anchor=CENTER)
+    picLabel.bind("<Button-1>", takepicture)
+    camera=CamApp(picLabel)
+    route=camera.begin()
+    #bg=("#%02x%02x%02x" % (root.winfo_rgb(profilePic.cget("image"))))
+    profilePicPlacer(route)
+    picLabel.configure(image="",text="")
+    picLabel.destroy()
+
+
 def begin():
-    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status
+    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -423,35 +448,33 @@ def begin():
 
     entryMusic = Entry(root, width=20)
     entryMusic.place(x=width / 2, y=210, anchor=CENTER)
+    entryMusic.bind("<Return>",addSong)
 
     # Boton mostrar contraseña
     showPassword = Button(root, text="Show Password", command=showHidePassword)
     showPassword.place(x=width / 2 + 130, y=120, anchor=CENTER)
 
-    # Boton agregar cancion
-    addSongButton = Button(root, text="Add", command=addSong)
-    addSongButton.place(x=width / 2 + 90, y=210, anchor=CENTER)
 
     # Entries con canciones agregadas
     entrySA = Entry(root, width=20)
-    entrySA.place(x=width / 2 + 180, y=185, anchor=CENTER)
+    entrySA.place(x=width / 2 + 140, y=185, anchor=CENTER)
     entrySA.config(state="disabled")
     entrySB = Entry(root, width=20)
-    entrySB.place(x=width / 2 + 180, y=210, anchor=CENTER)
+    entrySB.place(x=width / 2 + 140, y=210, anchor=CENTER)
     entrySB.config(state="disabled")
     entrySC = Entry(root, width=20)
-    entrySC.place(x=width / 2 + 180, y=235, anchor=CENTER)
+    entrySC.place(x=width / 2 + 140, y=235, anchor=CENTER)
     entrySC.config(state="disabled")
 
     # Botones para eliminar las canciones
     buttonSA = Button(root, text="X", command=deleteSong1)
-    buttonSA.place(x=width / 2 + 270, y=185, anchor=CENTER)
+    buttonSA.place(x=width / 2 + 230, y=185, anchor=CENTER)
     buttonSA.config(state="disabled")
     buttonSB = Button(root, text="X", command=deleteSong2)
-    buttonSB.place(x=width / 2 + 270, y=210, anchor=CENTER)
+    buttonSB.place(x=width / 2 + 230, y=210, anchor=CENTER)
     buttonSB.config(state="disabled")
     buttonSC = Button(root, text="X", command=deleteSong3)
-    buttonSC.place(x=width / 2 + 270, y=235, anchor=CENTER)
+    buttonSC.place(x=width / 2 + 230, y=235, anchor=CENTER)
     buttonSC.config(state="disabled")
 
     # se crea el canvas de la rueda de color
@@ -468,6 +491,14 @@ def begin():
     except Exception as e:
         print("Error al cargar o procesar la imagen:", e)
 
+    profilePic = Canvas(root, width=200, height=200, bg="#86895d", highlightbackground="#86895d")
+    profilePic.place(x=width / 4 - 100, y=50)
+    profilePic.create_oval(1,1,200,200, fill= "#ffffff")
+    font1 = font.Font(family="Times New Romans", size=25)
+    picLabel=Label(profilePic, text="+",bg="#ffffff",font=font1)
+    picLabel.place(x=100,y=100,anchor=CENTER)
+    profilePic.bind("<Button-1>",takepicture)
+    picLabel.bind("<Button-1>",takepicture)
 
 
 
