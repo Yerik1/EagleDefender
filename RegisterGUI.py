@@ -6,11 +6,12 @@ from PIL import Image, ImageTk
 import PIL
 from PIL import ImageDraw
 from GUIBuilder import GUIBuilder
-from Register import register, validate
+from Register import register, validate, decrypt,encrypt
 from CapturingFaces import Biometric
 from PictureTaker import CamApp
+import xml.etree.ElementTree as ET
 import cv2
-
+import shutil
 width=""
 height=""
 root=""
@@ -84,12 +85,14 @@ def addLabel(txt, a, b, r, s):
 
 # Funcion que cierra la ventana
 def closeEnvironment():
+    global status
     root.protocol("WM_DELETE_WINDOW",changeStatus(False))
     try:
         os.remove("Temp/foto_capturada.png")
     except Exception as e:
         print(e)
     root.destroy()
+    status=False
 
 # Funcion que minimiza la ventana
 def minimize():
@@ -316,8 +319,42 @@ def dragPic(event):
     extention = format[1:].lower()  # Elimina el punto y convierte a minúsculas
     profilePicPlacer(picture)
 
-def registerGUI():
-    global profilePicPath, extention, biometric
+def deleteProfile(user):
+    decrypt()
+    tree = ET.parse("DataBase.xml")
+    root = tree.getroot()
+    encrypt()
+    for username2 in root.findall('Cliente'):
+        usernameSave = username2.find('User').text
+        if usernameSave == user:
+            root.remove(username2)
+            shutil.rmtree("./FacialRecognition/"+user)
+            shutil.rmtree("./ProfilePics/"+user)
+            break
+def editProfile(user):
+    flag=True
+    newUser=entryUser.get()
+    if(newUser!=user):
+        decrypt()
+        tree = ET.parse("DataBase.xml")
+        root = tree.getroot()
+        encrypt()
+
+        # Analizar el XML desencriptado
+
+        for username2 in root.findall('Cliente'):
+            usernameSave = username2.find('User').text
+            if usernameSave==newUser:
+                print("Usuario ya existe")
+                flag=False
+                break
+
+    if flag:
+        registerGUI(1)
+
+
+def registerGUI(case):
+    global profilePicPath, extention, biometric, status
     list = [entryUser, entryPassword, entryConfPassword, entryName, entryEmail, entryAge, entrySA, entrySB, entrySC,
             entryA, entryB
         , entryC, entryD, entryE, entryBr, entryBg, entryWb, entryFb, entryBmb]
@@ -330,7 +367,7 @@ def registerGUI():
             list2.append(item.get())
             # info opcional
             if item != list[6] and item != list[7] and item != list[8] and item != list[9] and item != list[
-                10] and item != list[10] and item != list[11] and item != list[12] and item != list[13]:
+                10] and item != list[11] and item != list[12] and item != list[13] and item != list[14] and item != list[15] and item != list[16] and item != list[17] and item != list[18]:
                 if (item.get() == ""):
                     flag = False
                     break
@@ -338,6 +375,8 @@ def registerGUI():
         if flag:
             if validate(list2[0], list2[1]):
                 bmt=""
+                if (case == 1):
+                    deleteProfile(entryUser.get())
                 if (profilePicPath != ""):
                     fileRoute = "./ProfilePics/" + list2[0]
 
@@ -349,6 +388,7 @@ def registerGUI():
                     os.makedirs(fileRoute)
                     profilePicPath.save(fileRoute + "/PROFILEPIC." + extention)
                     register(list2, fileRoute)
+                    status=False
 
 
         else:
@@ -368,7 +408,7 @@ def changeStatus(state):
     status=state
 
 def takepicture(event):
-    global picLabel, profilePic
+    global picLabel, profilePic, extention
     try:
         picLabel.destroy()
     except Exception as e:
@@ -379,12 +419,14 @@ def takepicture(event):
     camera=CamApp(picLabel)
     route=camera.begin()
     #bg=("#%02x%02x%02x" % (root.winfo_rgb(profilePic.cget("image"))))
+    _, format = os.path.splitext(route)
+    extention = format[1:].lower()
     profilePicPlacer(route)
     picLabel.configure(image="",text="")
     picLabel.destroy()
 
 
-def begin():
+def begin(case,user):
     global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel
     # Creacion de la ventana
     root=TkinterDnD.Tk()
@@ -688,10 +730,16 @@ def begin():
     buttonProfPic = Button(root, text="Add Profile Picture", command=profilePicMaker)
     buttonProfPic.place(x=width / 4, y=25, anchor=CENTER)
 
-    # Boton para registrarse
-    buttonRegister = Button(root, text="Register", command=registerGUI, bd=0, relief="sunken",
-                            activebackground="SystemButtonFace")
-    buttonRegister.place(x=width / 2 - 30, y=700)
+    if case==0:
+        # Boton para registrarse
+        buttonRegister = Button(root, text="Register", command=lambda:registerGUI(case), bd=0, relief="sunken",
+                                activebackground="SystemButtonFace")
+        buttonRegister.place(x=width / 2 - 30, y=700)
+    else:
+        # Boton para registrarse
+        buttonRegister = Button(root, text="Edit", command=lambda:editProfile(user), bd=0, relief="sunken",
+                                activebackground="SystemButtonFace")
+        buttonRegister.place(x=width / 2 - 30, y=700)
 
     root.dnd_bind('<<Drop>>', dragPic)
 

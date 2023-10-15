@@ -19,7 +19,7 @@ Funcion que permite encriptar la base de datos utilizando rsa
 """
 def encrypt():
     # Se abre el archivo de la base de datos y se guarda la informacion en una variable
-    with open("DataBase", "rb") as f:
+    with open("DataBase.xml", "rb") as f:
         data = f.read()
 
     # tamaño de los bloques en los que se va a dividir la informacion
@@ -42,7 +42,7 @@ def encrypt():
         start = end
 
     # se reescribe el documento con los bloques encriptados
-    with open("DataBase", "wb") as f:
+    with open("DataBase.xml", "wb") as f:
         for block in encryptedBlocks:
             f.write(block)
 
@@ -54,7 +54,7 @@ def decrypt():
 #se genera una lista para almacenar bloques encriptados
     encryptedBlocks = []
     #se abre el documento de la base de datos
-    with open("DataBase", "rb") as f:
+    with open("DataBase.xml", "rb") as f:
         state=True
         while state:
             #se generan bloque del tamaño de la llave privada con informacion de la base de datos
@@ -74,7 +74,7 @@ def decrypt():
         decryptedData += decryptedBlock
 
     #se sobreescribe la base de datos con la informacion desencriptada
-    with open("DataBase", "wb") as f:
+    with open("DataBase.xml", "wb") as f:
         f.write(decryptedData)
 
 
@@ -85,7 +85,7 @@ funcion que permite agregar un usuario con su informacion a la base de datos
 def register(list,profPicRoute):
     decrypt()
     #arbol con la informacion del archivo xml
-    tree= eT.parse('DataBase')
+    tree= eT.parse('DataBase.xml')
     #raiz del arbol
     root= tree.getroot()
 
@@ -155,7 +155,7 @@ def register(list,profPicRoute):
     #se agrega el cliente a la raiz
     root.append(newClient)
     #se escribe la informacion en la base de datos
-    tree.write('DataBase')
+    tree.write('DataBase.xml')
     encrypt()
     try:
         os.remove("Temp/foto_capturada.png")

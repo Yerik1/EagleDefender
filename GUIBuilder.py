@@ -2,7 +2,7 @@
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
-from translationManager import TranslationManager
+from TranslationManager import TranslationManager
 from tkinter import ttk
 
 class GUIBuilder:

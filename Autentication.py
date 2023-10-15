@@ -2,10 +2,13 @@ import tkinter as tk
 import xml.etree.ElementTree as ET
 from tkinter import messagebox
 import Register as register
-from initialEnvironment import begin
+from InitialEnvironment import begin
 import RegisterGUI
 import FacialRecognition
 
+"""
+Clase donde se realiza la autenticacion
+"""
 class Autentication:
     def __init__(self, window):
         self.window = window
@@ -50,7 +53,7 @@ class Autentication:
          # Descomentar al unir con las demás clases de devRegistro
         register.decrypt()
         # Cargar el archivo encriptado
-        tree = ET.parse("DataBase")
+        tree = ET.parse("DataBase.xml")
         root = tree.getroot()
         register.encrypt()
 
@@ -72,7 +75,7 @@ class Autentication:
                 print("exito")
                 self.window.destroy()
                 self.window.quit()
-                if not(begin()):
+                if not(begin(username)):
                     Autentication(tk.Tk())
                 return True
         return False
@@ -81,7 +84,7 @@ class Autentication:
         self.window.destroy()
         self.window.quit()
         self.registerWindow = RegisterGUI
-        if not(self.registerWindow.begin()):
+        if not(self.registerWindow.begin(0,"")):
             Autentication(tk.Tk())
         #root = tk.Tk()
         #app = RegisterApp(root, "ColorWheel.png")
@@ -98,7 +101,7 @@ class Autentication:
             if(user!="No Camera"):
                 self.window.destroy()
                 self.window.quit()
-                if not(begin()):
+                if not(begin(user)):
                     Autentication(tk.Tk())
             else:
                 #Label con exepcion de que no hay camara

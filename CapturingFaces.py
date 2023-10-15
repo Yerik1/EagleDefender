@@ -11,6 +11,11 @@ class Biometric:
     def __init__(self):
         self.root= Tk()
         self.root.title("Instrucciones")
+        self.root.protocol("WM_DELETE_WINDOW", self.training(self.root))
+
+    """
+    funcion que inicializa la ventana
+    """
     def initialice(self,user,mainWindow):
         instructions = Label(self.root, text="", justify="center")
         instructions.pack()
@@ -22,6 +27,10 @@ class Biometric:
         # Iniciar el ciclo principal de Tkinter
         self.root.mainloop()
         mainWindow.destroy()
+
+    """
+    funcion para el reconocimiento facial
+    """
     def recognition(self,user,window1):
         window1.destroy()
         dataPath = './FacialRecognition/'+user
@@ -74,7 +83,9 @@ class Biometric:
         button2.pack()
 
 
-
+    """
+    funcion para entrenar el reconocimiento facial
+    """
     def training(self,window):
         window.destroy()
         dataPath = "./FacialRecognition"
@@ -99,12 +110,15 @@ class Biometric:
         print("Entrenando...")
         faceRecognizer.train(facesData, np.array(labels))
 
-
+        os.removedirs('modeloEigenFace.xml')
         #Almacenar el modelo obtenido
         faceRecognizer.write('modeloEigenFace.xml')
         print("Almacenando el modelo")
         self.root.quit()
 
+    """
+    funcion que muestra las instrucciones de la biometrica
+    """
     def showInstructions(self,instructions):
         instructions.config(text="Instrucciones:\n\n"
                                      "1. Colocate en un lugar con buena iluminacion.\n"
@@ -113,11 +127,12 @@ class Biometric:
                                      "4. Cuando se muestre el cuadro prueba mover tu rostro en diferentes posiciones para un mejor registro.\n"
                                      "5. Si no quieres usar biometrica presiona la ´X´ para volver al registro y desactiva la opcion"
                         )
+    """
+    funcion que muestra una captura exitosa
+    """
     def showSuccess(self,success):
         success.config(text="Registro Exitoso")
 
-    def destroy(self,window):
-        window.destroy()
 
 
 
