@@ -2,10 +2,16 @@ import cv2
 import os
 # pip install opencv-python-headless
 
+"""
+Clase para realizar reconocimiento facial
+"""
 class Recogn:
     def __init__(self):
         self.root=""
 
+    """
+    funcoin donde se realiza el proceso de reconocimiento
+    """
     def recognition1(self):
         dataPath = "./FacialRecognition/"
         imagePath = os.listdir(dataPath)
@@ -22,7 +28,7 @@ class Recogn:
         while True:
             ret, frame = cap.read()
             if not ret:
-                break
+                return "No Camera"
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             auxFrame = gray.copy()
 
