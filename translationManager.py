@@ -1,4 +1,4 @@
-# translationManager.py
+# TranslationManager.py
 class TranslationManager:
     def __init__(self):
         self.translations = {
@@ -15,7 +15,7 @@ class TranslationManager:
                 'funFactAttacker': ' Fun Facts: ...',
                 'rolDefender': ' Defender',
                 'rolAttacker': ' Attacker',
-                'profilePicDefender': ' Profile Pic',
+                #'profilePicDefender': ' Profile Pic',
                 'profilePicAttacker': ' Profile Pic',
             },
             'Español': {
@@ -31,7 +31,7 @@ class TranslationManager:
                 'funFactAttacker': ' Datos Curiosos: ...',
                 'rolDefender': ' Defensor',
                 'rolAttacker': ' Atacante',
-                'profilePicDefender': ' Foto de Perfil',
+                #'profilePicDefender': ' Foto de Perfil',
                 'profilePicAttacker': ' Foto de Perfil',
             },
         }

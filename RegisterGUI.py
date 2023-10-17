@@ -6,9 +6,14 @@ from PIL import Image, ImageTk
 import PIL
 from PIL import ImageDraw
 from GUIBuilder import GUIBuilder
-from Register import register, validate
-from capturingFaces import Biometric
-
+from Register import register, validate, decrypt,encrypt
+from CapturingFaces import Biometric
+from PictureTaker import CamApp
+import xml.etree.ElementTree as ET
+import cv2
+import shutil
+width=""
+height=""
 root=""
 BG=""
 entryA=""
@@ -42,6 +47,9 @@ entryName=""
 entryEmail=""
 entryAge=""
 varCheckbox=""
+profilePic=""
+picLabel=""
+status=True
 
 #myImg = ImageTk.PhotoImage(Image.open(imageName).resize((100, 100)))
 
@@ -77,7 +85,14 @@ def addLabel(txt, a, b, r, s):
 
 # Funcion que cierra la ventana
 def closeEnvironment():
+    global status
+    root.protocol("WM_DELETE_WINDOW",changeStatus(False))
+    try:
+        os.remove("Temp/foto_capturada.png")
+    except Exception as e:
+        print(e)
     root.destroy()
+    status=False
 
 # Funcion que minimiza la ventana
 def minimize():
@@ -181,7 +196,7 @@ def showHidePassword():
         entryConfPassword.configure(show="⧫")
         showPassword.config(text="Show Password")
 
-def addSong():
+def addSong(event):
     if (entrySA.get() == ""):
         entrySA.config(state="normal")
         entrySA.insert(0, entryMusic.get())
@@ -197,7 +212,6 @@ def addSong():
         entrySC.insert(0, entryMusic.get())
         entrySC.config(state="disabled")
         buttonSC.config(state="normal", bg="red")
-        addSong.config(state="disabled")
 
 def deleteSong1():
     entrySA.config(state="normal")
@@ -206,6 +220,8 @@ def deleteSong1():
     entrySA.config(state="disabled")
     if (entrySA.get() == ""):
         buttonSA.config(state="disabled", bg="SystemButtonFace")
+        buttonSB.config(state="disabled", bg="SystemButtonFace")
+        buttonSC.config(state="disabled", bg="SystemButtonFace")
     deleteSong2()
 
 def deleteSong2():
@@ -215,6 +231,7 @@ def deleteSong2():
     entrySB.config(state="disabled")
     if (entrySB.get() == ""):
         buttonSB.config(state="disabled", bg="SystemButtonFace")
+        buttonSC.config(state="disabled", bg="SystemButtonFace")
     deleteSong3()
 
 def deleteSong3():
@@ -222,7 +239,6 @@ def deleteSong3():
     entrySC.delete(0, END)
     entrySC.insert(0, "")
     entrySC.config(state="disabled")
-    addSong.config(state="normal")
     if (entrySC.get() == ""):
         buttonSC.config(state="disabled", bg="SystemButtonFace")
 
@@ -269,7 +285,7 @@ def profilePicMaker():
     profilePicPlacer(pictureRoute)
 
 def profilePicPlacer(pictureRoute):
-    global profilePicPath
+    global profilePicPath, profilePic
     originalPic = Image.open(pictureRoute)
     profilePicPath = originalPic
     # Cambiar el tamaño de la imagen original a 200x200 píxeles
@@ -288,8 +304,6 @@ def profilePicPlacer(pictureRoute):
     # Convertir la imagen recortada en PhotoImage para mostrarla en el Canvas
     imagen_tk = ImageTk.PhotoImage(reSizePic)
 
-    profilePic = Canvas(root, width=200, height=200, bg="#86895d", highlightbackground="#86895d")
-    profilePic.place(x=width / 4 - 100, y=50)
     # Mostrar la imagen en el Canvas
     profilePic.create_image(100, 100, image=imagen_tk)
     profilePic.image = imagen_tk  # Evita que la imagen sea eliminada por el recolector de basura
@@ -305,8 +319,42 @@ def dragPic(event):
     extention = format[1:].lower()  # Elimina el punto y convierte a minúsculas
     profilePicPlacer(picture)
 
-def registerGUI():
-    global profilePicPath, extention, biometric
+def deleteProfile(user):
+    decrypt()
+    tree = ET.parse("DataBase.xml")
+    root = tree.getroot()
+    encrypt()
+    for username2 in root.findall('Cliente'):
+        usernameSave = username2.find('User').text
+        if usernameSave == user:
+            root.remove(username2)
+            shutil.rmtree("./FacialRecognition/"+user)
+            shutil.rmtree("./ProfilePics/"+user)
+            break
+def editProfile(user):
+    flag=True
+    newUser=entryUser.get()
+    if(newUser!=user):
+        decrypt()
+        tree = ET.parse("DataBase.xml")
+        root = tree.getroot()
+        encrypt()
+
+        # Analizar el XML desencriptado
+
+        for username2 in root.findall('Cliente'):
+            usernameSave = username2.find('User').text
+            if usernameSave==newUser:
+                print("Usuario ya existe")
+                flag=False
+                break
+
+    if flag:
+        registerGUI(1)
+
+
+def registerGUI(case):
+    global profilePicPath, extention, biometric, status
     list = [entryUser, entryPassword, entryConfPassword, entryName, entryEmail, entryAge, entrySA, entrySB, entrySC,
             entryA, entryB
         , entryC, entryD, entryE, entryBr, entryBg, entryWb, entryFb, entryBmb]
@@ -319,22 +367,28 @@ def registerGUI():
             list2.append(item.get())
             # info opcional
             if item != list[6] and item != list[7] and item != list[8] and item != list[9] and item != list[
-                10] and item != list[10] and item != list[11] and item != list[12] and item != list[13]:
+                10] and item != list[11] and item != list[12] and item != list[13] and item != list[14] and item != list[15] and item != list[16] and item != list[17] and item != list[18]:
                 if (item.get() == ""):
                     flag = False
                     break
 
         if flag:
             if validate(list2[0], list2[1]):
+                bmt=""
+                if (case == 1):
+                    deleteProfile(entryUser.get())
                 if (profilePicPath != ""):
                     fileRoute = "./ProfilePics/" + list2[0]
-                    os.makedirs(fileRoute)
-                    profilePicPath.save(fileRoute + "/PROFILEPIC." + extention)
+
                 if (biometric):
                     bmt = Biometric()
                     bmt.initialice(list2[0], root)
                     print("finish")
-                register(list2, fileRoute)
+                if(bmt!="#NO#"and bmt!="No Camera"):
+                    os.makedirs(fileRoute)
+                    profilePicPath.save(fileRoute + "/PROFILEPIC." + extention)
+                    register(list2, fileRoute)
+                    status=False
 
 
         else:
@@ -349,8 +403,31 @@ def toggle_checkbox():
     else:
         biometric = False
 
-def begin():
-    global root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox
+def changeStatus(state):
+    global status
+    status=state
+
+def takepicture(event):
+    global picLabel, profilePic, extention
+    try:
+        picLabel.destroy()
+    except Exception as e:
+        print(e)
+    picLabel = Label(profilePic)
+    picLabel.place(x=100, y=100, anchor=CENTER)
+    picLabel.bind("<Button-1>", takepicture)
+    camera=CamApp(picLabel)
+    route=camera.begin()
+    #bg=("#%02x%02x%02x" % (root.winfo_rgb(profilePic.cget("image"))))
+    _, format = os.path.splitext(route)
+    extention = format[1:].lower()
+    profilePicPlacer(route)
+    picLabel.configure(image="",text="")
+    picLabel.destroy()
+
+
+def begin(case,user):
+    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -413,35 +490,33 @@ def begin():
 
     entryMusic = Entry(root, width=20)
     entryMusic.place(x=width / 2, y=210, anchor=CENTER)
+    entryMusic.bind("<Return>",addSong)
 
     # Boton mostrar contraseña
     showPassword = Button(root, text="Show Password", command=showHidePassword)
     showPassword.place(x=width / 2 + 130, y=120, anchor=CENTER)
 
-    # Boton agregar cancion
-    addSongButton = Button(root, text="Add", command=addSong)
-    addSongButton.place(x=width / 2 + 90, y=210, anchor=CENTER)
 
     # Entries con canciones agregadas
     entrySA = Entry(root, width=20)
-    entrySA.place(x=width / 2 + 180, y=185, anchor=CENTER)
+    entrySA.place(x=width / 2 + 140, y=185, anchor=CENTER)
     entrySA.config(state="disabled")
     entrySB = Entry(root, width=20)
-    entrySB.place(x=width / 2 + 180, y=210, anchor=CENTER)
+    entrySB.place(x=width / 2 + 140, y=210, anchor=CENTER)
     entrySB.config(state="disabled")
     entrySC = Entry(root, width=20)
-    entrySC.place(x=width / 2 + 180, y=235, anchor=CENTER)
+    entrySC.place(x=width / 2 + 140, y=235, anchor=CENTER)
     entrySC.config(state="disabled")
 
     # Botones para eliminar las canciones
     buttonSA = Button(root, text="X", command=deleteSong1)
-    buttonSA.place(x=width / 2 + 270, y=185, anchor=CENTER)
+    buttonSA.place(x=width / 2 + 230, y=185, anchor=CENTER)
     buttonSA.config(state="disabled")
     buttonSB = Button(root, text="X", command=deleteSong2)
-    buttonSB.place(x=width / 2 + 270, y=210, anchor=CENTER)
+    buttonSB.place(x=width / 2 + 230, y=210, anchor=CENTER)
     buttonSB.config(state="disabled")
     buttonSC = Button(root, text="X", command=deleteSong3)
-    buttonSC.place(x=width / 2 + 270, y=235, anchor=CENTER)
+    buttonSC.place(x=width / 2 + 230, y=235, anchor=CENTER)
     buttonSC.config(state="disabled")
 
     # se crea el canvas de la rueda de color
@@ -458,6 +533,14 @@ def begin():
     except Exception as e:
         print("Error al cargar o procesar la imagen:", e)
 
+    profilePic = Canvas(root, width=200, height=200, bg="#86895d", highlightbackground="#86895d")
+    profilePic.place(x=width / 4 - 100, y=50)
+    profilePic.create_oval(1,1,200,200, fill= "#ffffff")
+    font1 = font.Font(family="Times New Romans", size=25)
+    picLabel=Label(profilePic, text="+",bg="#ffffff",font=font1)
+    picLabel.place(x=100,y=100,anchor=CENTER)
+    profilePic.bind("<Button-1>",takepicture)
+    picLabel.bind("<Button-1>",takepicture)
 
 
 
@@ -647,10 +730,16 @@ def begin():
     buttonProfPic = Button(root, text="Add Profile Picture", command=profilePicMaker)
     buttonProfPic.place(x=width / 4, y=25, anchor=CENTER)
 
-    # Boton para registrarse
-    buttonRegister = Button(root, text="Register", command=registerGUI, bd=0, relief="sunken",
-                            activebackground="SystemButtonFace")
-    buttonRegister.place(x=width / 2 - 30, y=700)
+    if case==0:
+        # Boton para registrarse
+        buttonRegister = Button(root, text="Register", command=lambda:registerGUI(case), bd=0, relief="sunken",
+                                activebackground="SystemButtonFace")
+        buttonRegister.place(x=width / 2 - 30, y=700)
+    else:
+        # Boton para registrarse
+        buttonRegister = Button(root, text="Edit", command=lambda:editProfile(user), bd=0, relief="sunken",
+                                activebackground="SystemButtonFace")
+        buttonRegister.place(x=width / 2 - 30, y=700)
 
     root.dnd_bind('<<Drop>>', dragPic)
 
@@ -662,3 +751,7 @@ def begin():
     checkbox.place(x=width / 4, y=300)
     #Abre la ventana
     root.mainloop()
+    while(True):
+        if not status:
+            return False
+    
