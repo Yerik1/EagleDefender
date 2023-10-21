@@ -7,6 +7,7 @@
     <list default="true" id="301fdc4a-011e-46f3-b446-c8ee7e8be454" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataBase.xml" beforeDir="false" afterPath="$PROJECT_DIR$/DataBase.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prueba.py" beforeDir="false" afterPath="$PROJECT_DIR$/prueba.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,20 +35,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;devFuncionalidadesSp1&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/kondy/OneDrive/Escritorio/Lambergamber/EagleDefender&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.project&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "devFuncionalidadesSp1",
+    "last_opened_file_path": "C:/Users/kondy/OneDrive/Escritorio/Prueba",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "configurable.group.project",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="EagleDefender" is-module-sdk="true">
@@ -56,7 +57,7 @@
       </console-settings>
     </option>
   </component>
-  <component name="RunManager" selected="Python.prueba">
+  <component name="RunManager" selected="Python.Autentication">
     <configuration default="true" type="DjangoTestsConfigurationType">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -301,8 +302,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.prueba" />
         <item itemvalue="Python.Autentication" />
+        <item itemvalue="Python.prueba" />
         <item itemvalue="Python.InitialEnvironment" />
         <item itemvalue="Python.ColorFilter" />
         <item itemvalue="Python.Register" />
