@@ -16,6 +16,7 @@ class Autentication:
         self.registerWindow=""
         self.faceRecogn=""
         self.faceRecognClass=""
+        self.window.geometry("800x800")
 
         # Etiquetas
         self.labelUsername = tk.Label(window, text="User Name:")

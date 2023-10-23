@@ -84,6 +84,7 @@ class GUIBuilder:
 
 
 
+
     # Metodo constructor de botones
     def buttons(self, title, action, color1,color2, a, b):
 

@@ -13,6 +13,7 @@ class Biometric:
         self.root.title("Instrucciones")
         self.root.protocol("WM_DELETE_WINDOW", self.training(self.root))
 
+
     """
     funcion que inicializa la ventana
     """
