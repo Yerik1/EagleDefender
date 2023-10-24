@@ -79,7 +79,9 @@ def verificarUsuario():
 
             print("exito")
             logInScreen.closeEnvironment()
-            if not (Game("Yerik1","Luis")):
+
+            if not (Game("Yerik1","Luis").initialize("Yerik1","Luis")):
+
 
                 logInScreen.initialize()
 
