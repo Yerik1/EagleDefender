@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter as tk
 from tkinter import colorchooser, filedialog, font
 from tkinterdnd2 import DND_FILES, TkinterDnD
 import os
@@ -427,7 +428,7 @@ def takepicture(event):
 
 
 def begin(case,user):
-    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel
+    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -496,6 +497,37 @@ def begin(case,user):
     showPassword = Button(root, text="Show Password", command=showHidePassword)
     showPassword.place(x=width / 2 + 130, y=120, anchor=CENTER)
 
+    currentImage = 0
+
+    # Metodo que cambia la imagen de los idiomas
+    def changeImage():
+        global currentImage
+
+        if currentImage == 0:
+            currentImage = 1
+        elif currentImage == 1:
+            currentImage = 2
+        else:
+            currentImage = 0
+
+        imagen = imagenes[currentImage]
+        btnFlags.config(image=imagen)
+
+    # Carga tus tres imágenes aquí (reemplaza 'imagen1.png', 'imagen2.png', 'imagen3.png' con las rutas de tus imágenes)
+    imagen1 = tk.PhotoImage(file='Flags/espFlag.png')
+    imagen2 = tk.PhotoImage(file='Flags/ingFlag.png')
+    imagen3 = tk.PhotoImage(file='Flags/frnFlag.png')
+
+    # Redimenciona las imagenes
+    img1 = imagen1.subsample(25)
+    img2 = imagen2.subsample(25)
+    img3 = imagen3.subsample(25)
+
+    # Crea una lista con las imagenes
+    imagenes = [img1, img2, img3]
+
+    btnFlags = Button(root, image=imagenes[currentImage], command=lambda:(changeImage(), print("Action")), bd=0 , relief="sunken", bg=BG, activebackground=BG )
+    btnFlags.place( x = width / 60, y = height / 45)
 
     # Entries con canciones agregadas
     entrySA = Entry(root, width=20)

@@ -101,6 +101,13 @@ class GUIBuilder:
         btn.bind("<Leave>", change1)  # Sale
         btn.bind("<Enter>", change2)  # Entra
 
+    def buttonImage(self, img, action, a, b):
+
+        imageBtn = Button(self.root, image=img, command=action, bd=0, relief="sunken", bg = self.BG, activebackground= self.BG)
+        imageBtn.place(x=a, y=b, anchor=CENTER)
+        return imageBtn
+
+
 
     # Metodo que cierra la ventana
     def closeEnvironment(self):
