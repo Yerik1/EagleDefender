@@ -32,8 +32,8 @@ class GUIBuilder:
         #self.languageCombobox.bind("<<ComboboxSelected>>", self.updateLanguage)
 
         # Crea botones para cerrar o minimizar la ventana
-        self.closeButton=self.buttons(" x ", self.closeEnvironment, "Red","Blue", width-23, -0.5)
-        self.minimizeButton=self.buttons(" - ", self.minimize, "Red", "Blue", width-45, -0.5)
+        self.closeButton=self.buttons(" x ", self.closeEnvironment, "Red","Blue", width/1.01, height/100)
+        self.minimizeButton=self.buttons(" - ", self.minimize, "Red", "Blue", width/1.02, height/100)
 
 
 
@@ -44,7 +44,6 @@ class GUIBuilder:
             'musicDefender': self.addLabel("Music", width/15, 2*(height/37), "flat"),
         }
         '''
-
 
 
     def updateLanguage(self,event):
@@ -70,18 +69,17 @@ class GUIBuilder:
     # Agrega canvas y define el fondo y el borde
     def addCanvas(self, w, h, a, b,BG):
         canvas = Canvas(self.root, width=w, height=h, bg=self.BG,  highlightbackground=BG)
-        canvas.place(x=a, y=b)
+        canvas.place(x=a, y=b) # Aqui hay que agregar anchor="center" pero lo hacemos luego
         return canvas
 
-
+    # Agrega un label y define en donde se desea poner y con que relieve
     def addLabel(self, txt, a, b, r):
         label = Label(self.root, text=" "+txt, bg=self.BG, relief=r)
-        label.place(x=a, y=b)
+        label.place(x=a, y=b, anchor="center")
         return label
 
-    def editLabel(self,txt,label):
+    def editLabel(self, txt, label):
         label.config(text=txt)
-
 
 
     # Metodo constructor de botones
@@ -89,7 +87,7 @@ class GUIBuilder:
 
         btn = Button(self.root, text=title, command=action, bd=0, relief="sunken", activebackground=self.BG)
         btn.config(bg=color1)
-        btn.place(x=a, y=b)
+        btn.place(x=a, y=b, anchor="center")
 
         # Define el fondo del boton cuando el puntero sale
         def change1(event):
@@ -113,6 +111,7 @@ class GUIBuilder:
     def minimize(self):
         self.root.iconify()
 
+    # Metodo que agrega un Combox a una ventana
     def addCombox (self):
         self.languages = ["English", "Español"]
         self.currentLanguage = tk.StringVar()
@@ -120,10 +119,18 @@ class GUIBuilder:
         self.languageCombobox.pack()
         return self.languageCombobox
 
+    # Metodo para eliminar un label
     def deleteLbl(self):
         print("")
 
-    def changeStatus(self,state):
-        self.status=state
+    def changeStatus(self, state):
+        self.status = state
 
+    # Funcion que agrega entrys a la ventana
+    # Los parametros que pide son w el tamaño, s que es lo que se desea que se muestre y si no es asi solo se pone ""
+    #  x,y que son las coordenadas en la pantalla.
+    def addEntry(self, w, s, x, y):
+        entry = Entry(self.root, width = w, show = s )
+        entry.place(x = x, y = y, anchor = CENTER)
+        return entry
 
