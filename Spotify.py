@@ -13,15 +13,14 @@ token1 = util.prompt_for_user_token(username, scope, clientId, clientSecret, red
 token = util.prompt_for_user_token(username, scope1, clientId, clientSecret, redirectUri)
 sp = spotipy.Spotify(auth=token1)
 sp1 = spotipy.Spotify(auth=token)
+
+'''CREACION DE LA PLAYLIST'''
 songs = []
 for i in range(3):
-    song = input(f'Ingrese el nombre de la cancion {i+1}:')
+    song = input(f'Ingrese el nombre de la cancion {i + 1}:')
     songs.append(song)
 
-'''songName = "la santa"
-results = sp.search(q=songName, type='track', limit=1)'''
-
-playlistName = 'Playlist Prueba1'
+playlistName = 'Playlist Prueba2'
 playlist = sp.user_playlist_create(user=username, name=playlistName, public=True)
 
 for song in songs:
@@ -30,17 +29,32 @@ for song in songs:
         trackId = results['tracks']['items'][0]['id']
         sp.playlist_add_items(playlist['id'], [trackId])
 
+        '''trackUri = results['tracks']['items'][0]['uri']
+        sp.start_playback(uris=trackUri)'''
+
 print(f'se han agregado las canciones a: {playlistName}')
 
-'''if results['tracks']['items']:
+# GENERAR EL LOOP
+'''currentTrack = sp.current_playback()
+if currentTrack:
+    currentTrackUri = currentTrack['item']['uri']
+
+    while True:
+        time.sleep(1)
+
+        if currentTrack['progress_ms'] >= currentTrack['item']['duration_ms']:
+            sp.start_playback(uris=currentTrackUri)'''
+
+results = sp.search(q=songs, type='track', limit=1)
+if results['tracks']['items']:
     trackUri = results['tracks']['items'][0]['uri']
 else:
     print("fuck it")
-    exit()'''
-
+    exit()
+sp.start_playback(uris=[trackUri])
+'''ACCEDER A LAS AUDIO FEATURES'''
 playlistID = playlist['id']
 playlistSongs = sp.playlist_items(playlistID)
-
 
 for item in playlistSongs['items']:
     track = item['track']
@@ -54,5 +68,3 @@ for item in playlistSongs['items']:
     print(f'Tempo: {audioFeatures["tempo"]}')
     print(f'Energía: {audioFeatures["energy"]}')
     print(f'Danza: {audioFeatures["danceability"]}')
-
-#sp.start_playback(uris=[trackUri])
