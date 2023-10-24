@@ -6,7 +6,8 @@ import os
 import glob
 from PIL import ImageDraw, ImageTk, Image, ImageFilter
 import ColorFilter
-
+import Spotify
+import random
 player1Rounds=0
 player2Rounds=0
 win=False
@@ -29,11 +30,15 @@ for element in archivos:
     # Agrega las rutas de los archivos encontrados a la lista de imágenes
     imagenes.append(image)
 
-print(imagenes)
-
+songList=["Memorias","Ferxxo 151","Solia","Una Vez","Im still standing","Torero"]
+songInfo=Spotify.createPlaylist(songList)
 class Game:
     def __init__(self,player1,player2):
         pygame.init()
+        self.songNumber=random.randrange(5)
+        self.songTempo=0
+        self.songTime=0
+        self.songBeats=0
         # Configuración de la pantalla
         self.window_width, self.window_height = 1300, 600
         self.screen = pygame.display.set_mode((self.window_width, self.window_height))
@@ -58,7 +63,7 @@ class Game:
         self.game=False
         self.direction=False
     def begin(self):
-        global win, imagenes
+        global win, imagenes, songInfo
         self.running = True
         self.cursor_x, self.cursor_y = self.window_width // 4, self.window_height // 2
         self.player_x, self.player_y = 3 * self.window_width // 4, self.window_height // 2
@@ -133,6 +138,12 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                    try:
+                        Spotify.pauseSong()
+                    except: pass
+                    try:
+                        pygame.mixer.music.stop()
+                    except: pass
                     pygame.quit()
                     pygame.display.quit()
                 if event.type == pygame.KEYDOWN:
@@ -167,6 +178,15 @@ class Game:
                                             self.movementThreads.append(movement_thread)
                                             movement_thread.start()
                                             power.amount -= 1
+                                            if power==self.power1:
+                                                pygame.mixer.music.load("SoundEfects/WaterBall.mp3")
+                                                pygame.mixer.music.play()
+                                            if power==self.power2:
+                                                pygame.mixer.music.load("SoundEfects/FireBall.mp3")
+                                                pygame.mixer.music.play()
+                                            if power==self.power3:
+                                                pygame.mixer.music.load("SoundEfects/Bomb.mp3")
+                                                pygame.mixer.music.play()
 
 
                         else:
@@ -260,12 +280,12 @@ class Game:
             pygame.draw.rect(self.screen, self.player_color, self.player, 2)
 
             # Crear una superficie de texto (etiqueta)
-            text1 = self.font.render(str(self.image1.amount), True, (255, 255, 255))
-            text2 = self.font.render(str(self.image2.amount), True, (255, 255, 255))
-            text3 = self.font.render(str(self.image3.amount), True, (255, 255, 255))
-            text4 = self.font.render(str(self.power1.amount), True, (255, 255, 255))
-            text5 = self.font.render(str(self.power2.amount), True, (255, 255, 255))
-            text6 = self.font.render(str(self.power3.amount), True, (255, 255, 255))
+            text1 = self.font.render(str(self.image1.amount), True, (0, 0, 0))
+            text2 = self.font.render(str(self.image2.amount), True, (0, 0, 0))
+            text3 = self.font.render(str(self.image3.amount), True, (0, 0, 0))
+            text4 = self.font.render(str(self.power1.amount), True, (0, 0, 0))
+            text5 = self.font.render(str(self.power2.amount), True, (0, 0, 0))
+            text6 = self.font.render(str(self.power3.amount), True, (0, 0, 0))
 
             if self.game:
                 textTime= self.font.render(str(self.timeGame), True, (0, 0, 0))
@@ -275,17 +295,17 @@ class Game:
 
             # Posición de la etiqueta
             text1_rect = text1.get_rect()
-            text1_rect.center = (self.window_width // 4 - 190, 75)
+            text1_rect.center = (self.window_width // 4 - 190, 100)
             text2_rect = text2.get_rect()
-            text2_rect.center = (self.window_width // 4 - 40, 75)
+            text2_rect.center = (self.window_width // 4 - 40, 100)
             text3_rect = text3.get_rect()
-            text3_rect.center = (self.window_width // 4 + 110, 75)
+            text3_rect.center = (self.window_width // 4 + 110, 100)
             text4_rect = text1.get_rect()
-            text4_rect.center = (3 * self.window_width // 4 - 190, 75)
+            text4_rect.center = (3 * self.window_width // 4 - 190, 100)
             text5_rect = text2.get_rect()
-            text5_rect.center = (3 * self.window_width // 4 - 40, 75)
+            text5_rect.center = (3 * self.window_width // 4 - 40, 100)
             text6_rect = text3.get_rect()
-            text6_rect.center = (3 * self.window_width // 4 + 110, 75)
+            text6_rect.center = (3 * self.window_width // 4 + 110, 100)
             timer_rect = textTime.get_rect()
             timer_rect.center = (self.window_width // 2, 20)
 
@@ -325,6 +345,8 @@ class Game:
         def temporizador():
             if not self.game:
                 self.timeDefense = times  # 60 segundos = 1 minuto
+                pygame.mixer.music.load("SoundEfects/Waiting.mp3")
+                pygame.mixer.music.play()
                 while self.timeDefense > 0:
                     minutos, segundos = divmod(self.timeDefense, 60)
                     tiempo_text = f"Tiempo restante: {minutos:02d}:{segundos:02d}"
@@ -332,17 +354,35 @@ class Game:
                     if not self.timeDefense==0:
                         self.timeDefense-= 1
                 self.game=True
+                pygame.mixer.music.stop()
                 self.start_timer(10)
             else:
-                    self.timeGame = times  # 60 segundos = 1 minuto
-                    while self.timeGame > 0:
+                list = Spotify.playSong(songInfo[0], songInfo[1], self.songNumber)
+                self.songTime = list[0]
+                self.songTempo = list[1]
+                self.timeGame = self.songTime//1000  # 60 segundos = 1 minuto
+                beats=0
+                songBeat=self.songTempo//60
+                while self.timeGame > 0:
+                    if self.running:
+                        if self.timeGame%songBeat==0:
+                            beats+=1
+                            print(beats)
+                            if beats%25==0:
+                                self.image1.amount+=1
+                                self.image2.amount += 1
+                                self.image3.amount += 1
+                            if beats%30==0:
+                                self.power1.amount+=1
+                                self.power2.amount += 1
+                                self.power3.amount += 1
                         minutos, segundos = divmod(self.timeGame, 60)
                         tiempo_text = f"Tiempo restante: {minutos:02d}:{segundos:02d}"
                         time.sleep(1)
-                        if not self.timeGame == 0:
-                            self.timeGame -= 1
-                    if self.running:
-                        self.stop(self.player1)
+                    if not self.timeGame == 0:
+                        self.timeGame -= 1
+                if self.running:
+                    self.stop(self.player1)
         self.timer_thread = threading.Thread(target=temporizador)
         self.timer_thread.start()
     def move_player(self):
@@ -562,7 +602,7 @@ class Game:
     def stop(self,player):
         global player1Rounds, player2Rounds, win
         self.running = False  # Detiene el bucle principal del juego
-
+        Spotify.pauseSong()
         # Detén los hilos de movimiento si es necesario (esto dependerá de cómo estén implementados)
         self.stop_threads()  # Detiene los hilos de movimiento
         # Limpia la pantalla
@@ -571,21 +611,28 @@ class Game:
         font = pygame.font.Font(None, 72)
         if player == self.player2:
             player2Rounds += 1
-            if player1Rounds == 2 or player2Rounds == 2:
+            if player2Rounds == 2:
                 text = font.render(player + " Ganó la partida", True, (0, 0, 255)) \
                     if player1Rounds == 2 else font.render(
                     player + " Ganó la partida", True, (255, 0, 0))
+                pygame.mixer.music.load("SoundEfects/GameWin.mp3")
+                pygame.mixer.music.play()
             else:
                 text = font.render(player + " Ganó", True, (255, 0, 0))
-        else:
+                pygame.mixer.music.load("SoundEfects/RoundWin.mp3")
+                pygame.mixer.music.play()
+        if player == self.player1:
             player1Rounds += 1
-            if player1Rounds == 2 or player2Rounds == 2:
+            if player1Rounds == 2:
                 text = font.render(player + " Ganó la partida", True, (0, 0, 255)) \
                     if player1Rounds == 2 else font.render(
                     player + " Ganó la partida", True, (255, 0, 0))
+                pygame.mixer.music.load("SoundEfects/GameWin.mp3")
+                pygame.mixer.music.play()
             else:
                 text = font.render(player + " Ganó", True, (0, 0, 255))
-
+                pygame.mixer.music.load("SoundEfects/RoundWin.mp3")
+                pygame.mixer.music.play()
         if player1Rounds==2 or player2Rounds==2:
             win=True
         text_rect = text.get_rect(center=(self.window_width // 2, self.window_height // 2))
