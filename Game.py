@@ -14,7 +14,6 @@ class Game:
         self.player1Rounds=0
         self.player2Rounds=0
         self.win=False
-
         # Ruta de la carpeta que contiene las imágenes
         self.carpeta_imagenes = "Goblin"  # Reemplaza con la ruta de tu carpeta de imágenes
 
@@ -35,8 +34,16 @@ class Game:
 
         self.songList=["Memorias","Ferxxo 151","Solia","Una Vez","Im still standing","Torero"]
         self.songInfo=Spotify.createPlaylist(self.songList)
-        main=Round("Juan", "Pepe",self)
+        self.initialize(player1, player2)
+
+    def initialize(self,player1,player2):
+        main = Round(player1, player2, self)
         main.begin()
+        while True:
+            if self.win:
+                return False
+
+
 class Round:
     def __init__(self,player1,player2,game):
         pygame.init()
@@ -131,7 +138,7 @@ class Round:
         # Convierte la imagen de PIL de nuevo a Pygame
         self.bg_image2 = pygame.image.fromstring(self.bg_image2.tobytes(), self.bg_image2.size, self.bg_image2.mode)
 
-        self.defenderPic = Image.open("ProfilePics/Yerik1/PROFILEPIC.png")
+        self.defenderPic = Image.open("ProfilePics/"+self.player1+"/PROFILEPIC.png")
         self.defenderPic = self.defenderPic.resize((70, 70))
         # Crear una máscara en forma de óvalo
         ancho, alto = self.defenderPic.size
@@ -143,6 +150,21 @@ class Round:
         self.defenderPict = Image.new("RGBA", (ancho, alto))
         self.defenderPict.paste(self.defenderPic, mask=mascara)
         self.defenderPict=pygame.image.fromstring(self.defenderPict.tobytes(), self.defenderPict.size, self.defenderPict.mode)
+
+        self.atackerPic = Image.open("ProfilePics/" + self.player2 + "/PROFILEPIC.png")
+        self.atackerPic = self.atackerPic.resize((70, 70))
+        # Crear una máscara en forma de óvalo
+        ancho, alto = self.atackerPic.size
+        mascara = Image.new("L", (ancho, alto), 0)
+        draw = ImageDraw.Draw(mascara)
+        draw.ellipse((0, 0, ancho, alto), fill=255)
+
+        # Aplicar la máscara a la imagen original
+        self.atackerPict = Image.new("RGBA", (ancho, alto))
+        self.atackerPict.paste(self.atackerPic, mask=mascara)
+        self.atackerPict = pygame.image.fromstring(self.atackerPict.tobytes(), self.atackerPict.size,
+                                                    self.atackerPict.mode)
+
         # Crear puntero
         self.pointer_rect = pygame.Rect(0, 0, 50, 50)
         self.pointer_rect.center = (self.window_width // 4, self.window_height // 2)
@@ -284,6 +306,7 @@ class Round:
             pygame.draw.rect(self.screen, self.RED, (675, 350, 600, 400), 2)
             self.screen.blit(self.bg_image2, (675, 350))
             self.screen.blit(self.defenderPict,(self.window_width // 4, 50))
+            self.screen.blit(self.atackerPict, (3*self.window_width // 4, 50))
             # Mantener el puntero dentro del área verde
             self.cursor_x = max(75, min(self.cursor_x, 625))
             self.cursor_y = max(350, min(self.cursor_y, 700))
@@ -632,7 +655,9 @@ class Round:
 
     def stop(self,player):
         self.running = False  # Detiene el bucle principal del juego
-        Spotify.pauseSong()
+        try:
+            Spotify.pauseSong()
+        except: pass
         # Detén los hilos de movimiento si es necesario (esto dependerá de cómo estén implementados)
         self.stop_threads()  # Detiene los hilos de movimiento
         # Limpia la pantalla
@@ -859,8 +884,4 @@ class Powers:
         copy.image_surface.blit(copy.image, (0, 0))
         copy.selected = False
         return copy
-
-
-main=Game("Juan", "Pepe")
-
 
