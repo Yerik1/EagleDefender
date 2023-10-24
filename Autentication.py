@@ -7,6 +7,7 @@ import Register as register
 from InitialEnvironment import begin
 import RegisterGUI
 import FacialRecognition
+from Game import Game
 
 
 logInScreen = GUIBuilder('#86895d')
@@ -78,7 +79,7 @@ def verificarUsuario():
 
             print("exito")
             logInScreen.closeEnvironment()
-            if not (begin(username)):
+            if not (Game("Yerik1","Luis")):
 
                 logInScreen.initialize()
 
@@ -104,7 +105,7 @@ def biometric():
     if(user!="#NO#"):
         if(user!="No Camera"):
             logInScreen.closeEnvironment()
-            if not(begin(user)):
+            if not(Game("Yerik1","Luis")):
                 logInScreen.initialize()
         else:
             #Label con exepcion de que no hay camara
