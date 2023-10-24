@@ -90,9 +90,7 @@ def register1():
     logInScreen.closeEnvironment()
     registerWindow = RegisterGUI
     if not(registerWindow.begin(0,"")):
-        print("me cago en yoibill")
         logInScreen.initialize()
-        print("si yo tambien")
 
 
 
@@ -112,6 +110,40 @@ def biometric():
             #Label con exepcion de que no hay camara
             print("No se detecta camara disponible")
 
+
+currentImage = 0
+# Metodo que cambia la imagen de los idiomas
+def changeImage():
+    global currentImage
+
+    if currentImage == 0:
+        currentImage = 1
+    elif currentImage == 1:
+        currentImage = 2
+    else:
+        currentImage = 0
+
+    imagen = imagenes[currentImage]
+    btnFlags.config(image=imagen)
+
+
+# Carga tus tres imágenes aquí (reemplaza 'imagen1.png', 'imagen2.png', 'imagen3.png' con las rutas de tus imágenes)
+imagen1 = tk.PhotoImage(file='Flags/espFlag.png')
+imagen2 = tk.PhotoImage(file='Flags/ingFlag.png')
+imagen3 = tk.PhotoImage(file='Flags/frnFlag.png')
+
+# Redimenciona las imagenes
+img1 = imagen1.subsample(25)
+img2 = imagen2.subsample(25)
+img3 = imagen3.subsample(25)
+
+# Crea una lista con las imagenes
+imagenes = [img1, img2, img3]
+
+btnFlags = logInScreen.buttonImage(img1, lambda:(changeImage(), print("Action")), width/60, height/45)
+
+
+
 # Boton mostrar contraseña
 showPasBtn = logInScreen.buttons("👁", "", "green", "orange", 1.15 * width / 4,  3 * height/8)
 
@@ -129,11 +161,8 @@ biometricBtn = logInScreen.buttons("Acept",lambda: biometric(), "orange", "green
 
 
 
-def startAutentication():
-    logInScreen.initialize()
+logInScreen.initialize()
 
-
-startAutentication()
 
 
 """
