@@ -5,19 +5,16 @@ import RegisterGUI
 import ColorFilter
 import PIL
 from PIL import Image
-#from PIL import Image, ImageTk
+# from PIL import Image, ImageTk
 from PIL import ImageDraw, ImageTk
 from tkinter import *
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from tkinter import colorchooser, filedialog, font
-
-
-
-
+from Game import Game
 
 
 def begin(user):
-    list= load(user)
+    list = load(user)
     # Colores predeterminados
     color1 = "#272b00"
     color2 = "#54582f"
@@ -28,124 +25,123 @@ def begin(user):
     # Crea la ventana del salon de la fama
     hallOfFameScreen = GUIBuilder("#86895d")
 
-    #titleLbl = hallOfFameScreen.addLabel("Hall of Fame", 0.4*(width/30), height/6.7, "flat")
-
+    # titleLbl = hallOfFameScreen.addLabel("Hall of Fame", 0.4*(width/30), height/6.7, "flat")
 
     # Obtener las dimensiones de la pantalla
-    width = hallOfFameScreen.root.winfo_screenwidth() # Ancho
-    height = hallOfFameScreen.root.winfo_screenheight() # Alto
+    width = hallOfFameScreen.root.winfo_screenwidth()  # Ancho
+    height = hallOfFameScreen.root.winfo_screenheight()  # Alto
 
-    titleLbl = hallOfFameScreen.addLabel("Hall of Fame", width/2-250, height/7, "flat")
-    titleLbl.config(font=("Arial",60))
+    titleLbl = hallOfFameScreen.addLabel("Hall of Fame", width / 2, height / 7, "flat")
+    titleLbl.config(font=("Arial", 60))
 
-    rolLbl = hallOfFameScreen.addLabel("Attackers", width/2-187, height/7-100,"flat")
-    rolLbl.config(font=("Arial",60))
+    rolLbl = hallOfFameScreen.addLabel("Defenders", width / 2, height / 20, "flat")
+    rolLbl.config(font=("Arial", 60))
 
+    # Define los labels de la posicion 1
+    user1Lbl = hallOfFameScreen.addLabel("", width / 3.50, height / 3.45, "flat")
+    user1Lbl.config(font=("Arial", 40))
+    dotsLbl = hallOfFameScreen.addLabel("............................", width / 2, height / 3.45, "flat")
+    dotsLbl.config(font=("Arial", 40))
 
-    user1Lbl= hallOfFameScreen.addLabel("User1", width/3-100,height/4+40,"flat")
-    user1Lbl.config(font=("Arial",40))
+    pts1Lbl = hallOfFameScreen.addLabel("points", width / 1.42, height / 3.45, "flat")
+    pts1Lbl.config(font=("Arial", 40))
 
-    pts1Lbl = hallOfFameScreen.addLabel("points",width/3+600,height/4+40,"flat")
-    pts1Lbl.config(font=("Arial",40))
-
-
-    user2Lbl = hallOfFameScreen.addLabel("User2", width / 3-100, height /4 +40+90, "flat")
+    # Define los labels de la posicion 2
+    user2Lbl = hallOfFameScreen.addLabel("", width / 3.50, height / 2.55, "flat")
     user2Lbl.config(font=("Arial", 40))
 
-    pts2Lbl = hallOfFameScreen.addLabel("points", width / 3 + 600, height / 4 + 40+90, "flat")
+    pts2Lbl = hallOfFameScreen.addLabel("points", width / 1.42, height / 2.55, "flat")
     pts2Lbl.config(font=("Arial", 40))
 
-    user3Lbl = hallOfFameScreen.addLabel("User3", width / 3-100, height /4 +40+180, "flat")
-    user3Lbl.config(font=("Arial", 40))
-
-    pts3Lbl = hallOfFameScreen.addLabel("points", width / 3 + 600, height / 4 + 40+180, "flat")
-    pts3Lbl.config(font=("Arial", 40))
-
-
-    pos4Lbl= hallOfFameScreen.addLabel("4.",width/3-170, height/4+40+270,"flat")
-    pos4Lbl.config(font=("Arial",40))
-
-    user4Lbl = hallOfFameScreen.addLabel("User4", width / 3-100, height /4+40+270 , "flat")
-    user4Lbl.config(font=("Arial", 40))
-
-    pts4Lbl = hallOfFameScreen.addLabel("points", width / 3 + 600, height / 4 + 40+270, "flat")
-    pts4Lbl.config(font=("Arial", 40))
-
-    pos5Lbl = hallOfFameScreen.addLabel("5.", width / 3 - 170, height / 4 + 40 + 360, "flat")
-    pos5Lbl.config(font=("Arial", 40))
-
-    user5Lbl = hallOfFameScreen.addLabel("User5", width / 3-100, height /4+40+360 , "flat")
-    user5Lbl.config(font=("Arial", 40))
-
-    pts5Lbl = hallOfFameScreen.addLabel("points", width / 3 + 600, height / 4 + 40+360, "flat")
-    pts5Lbl.config(font=("Arial", 40))
-
-    dotsLbl= hallOfFameScreen.addLabel(".....................", width/3+100,height/4+40,"flat")
-    dotsLbl.config(font=("Arial",40))
-
-    dotsLbl2 = hallOfFameScreen.addLabel(".....................", width / 3 + 100, height / 4 + 40+90, "flat")
+    dotsLbl2 = hallOfFameScreen.addLabel("............................", width / 2, height / 2.55, "flat")
     dotsLbl2.config(font=("Arial", 40))
 
-    dotsLbl3 = hallOfFameScreen.addLabel(".....................", width / 3 + 100, height / 4 + 40+180, "flat")
+    # Define los labels de la posicion 3
+    user3Lbl = hallOfFameScreen.addLabel("", width / 3.50, height / 2, "flat")
+    user3Lbl.config(font=("Arial", 40))
+
+    pts3Lbl = hallOfFameScreen.addLabel("", width / 1.42, height / 2, "flat")
+    pts3Lbl.config(font=("Arial", 40))
+
+    dotsLbl3 = hallOfFameScreen.addLabel("............................", width / 2, height / 2, "flat")
     dotsLbl3.config(font=("Arial", 40))
 
-    dotsLbl4 = hallOfFameScreen.addLabel(".....................", width / 3 + 100, height / 4 + 40+270, "flat")
+    # Determina los labels de la posicion 4
+    pos4Lbl = hallOfFameScreen.addLabel("4.", width / 5, height / 1.65, "flat")
+    pos4Lbl.config(font=("Arial", 40))
+
+    user4Lbl = hallOfFameScreen.addLabel("", width / 3.50, height / 1.65, "flat")
+    user4Lbl.config(font=("Arial", 40))
+
+    pts4Lbl = hallOfFameScreen.addLabel("points", width / 1.42, height / 1.65, "flat")
+    pts4Lbl.config(font=("Arial", 40))
+
+    dotsLbl4 = hallOfFameScreen.addLabel("............................", width / 2, height / 1.65, "flat")
     dotsLbl4.config(font=("Arial", 40))
 
-    dotsLbl5 = hallOfFameScreen.addLabel(".....................", width / 3 + 100, height / 4 + 40+360, "flat")
+    pos5Lbl = hallOfFameScreen.addLabel("5.", width / 5, height / 1.40, "flat")
+    pos5Lbl.config(font=("Arial", 40))
+
+    user5Lbl = hallOfFameScreen.addLabel("", width / 3.50, height / 1.40, "flat")
+    user5Lbl.config(font=("Arial", 40))
+
+    pts5Lbl = hallOfFameScreen.addLabel("points", width / 1.42, height / 1.40, "flat")
+    pts5Lbl.config(font=("Arial", 40))
+
+    dotsLbl5 = hallOfFameScreen.addLabel("............................", width / 2, height / 1.40, "flat")
     dotsLbl5.config(font=("Arial", 40))
 
-    firstPlace= "./HallOfFameImages/medallaOro.png"
-    #copyFirstPlace= Image.open(firstPlace)
-    myFirstPlace = ImageTk.PhotoImage(PIL.Image.open(firstPlace).resize((40,40)))
+    firstPlace = "./HallOfFameImages/medallaOro.png"
+    # copyFirstPlace= Image.open(firstPlace)
+    myFirstPlace = ImageTk.PhotoImage(PIL.Image.open(firstPlace).resize((40, 40)))
 
-    cFirstPlace = hallOfFameScreen.addCanvas(40,40,width/3-150,height/4+50, "Black")
+    cFirstPlace = hallOfFameScreen.addCanvas(40, 40, width / 5.20, height / 3.80, "Black")
     cFirstPlace.create_image(21.5, 21.5, image=myFirstPlace, anchor=CENTER)
 
-    secondPlace= "./HallOfFameImages/medallaPlata.png"
-    #copyFirstPlace= Image.open(firstPlace)
-    mySecondPlace = ImageTk.PhotoImage(PIL.Image.open(secondPlace).resize((42,42)))
+    secondPlace = "./HallOfFameImages/medallaPlata.png"
+    # copyFirstPlace= Image.open(firstPlace)
+    mySecondPlace = ImageTk.PhotoImage(PIL.Image.open(secondPlace).resize((42, 42)))
 
-    cSecondPlace = hallOfFameScreen.addCanvas(40,40,width/3-150,height/4+140, "Black")
+    cSecondPlace = hallOfFameScreen.addCanvas(40, 40, width / 5.20, height / 2.75, "Black")
     cSecondPlace.create_image(21.5, 21.5, image=mySecondPlace, anchor=CENTER)
 
-    thirdPlace= "./HallOfFameImages/medallaBronce.png"
-    #copyFirstPlace= Image.open(firstPlace)
-    myThirdPlace = ImageTk.PhotoImage(PIL.Image.open(thirdPlace).resize((42,42)))
+    thirdPlace = "./HallOfFameImages/medallaBronce.png"
+    # copyFirstPlace= Image.open(firstPlace)
+    myThirdPlace = ImageTk.PhotoImage(PIL.Image.open(thirdPlace).resize((42, 42)))
 
-    cThirdPlace = hallOfFameScreen.addCanvas(40,40,width/3-150,height/4+230, "Black")
+    cThirdPlace = hallOfFameScreen.addCanvas(40, 40, width / 5.20, height / 2.15, "Black")
     cThirdPlace.create_image(21.5, 21.5, image=myThirdPlace, anchor=CENTER)
 
-    logo1= "./HallOfFameImages/Logo.png"
-    #copyFirstPlace= Image.open(firstPlace)
-    myLogo1 = ImageTk.PhotoImage(PIL.Image.open(logo1).resize((200,200)))
+    logo1 = "./HallOfFameImages/Logo.png"
+    # copyFirstPlace= Image.open(firstPlace)
+    myLogo1 = ImageTk.PhotoImage(PIL.Image.open(logo1).resize((200, 200)))
 
-    clogo1 = hallOfFameScreen.addCanvas(200,200,width/3-480,height/4-200, "Black")
+    clogo1 = hallOfFameScreen.addCanvas(200, 200, width / 35, height / 40, "Black")
     clogo1.create_image(100, 100, image=myLogo1, anchor=CENTER)
 
-    logo2= "./HallOfFameImages/Logo.png"
-    #copyFirstPlace= Image.open(firstPlace)
-    myLogo2 = ImageTk.PhotoImage(PIL.Image.open(logo2).resize((200,200)))
+    logo2 = "./HallOfFameImages/Logo.png"
+    # copyFirstPlace= Image.open(firstPlace)
+    myLogo2 = ImageTk.PhotoImage(PIL.Image.open(logo2).resize((200, 200)))
 
-    cLogo2 = hallOfFameScreen.addCanvas(200,200,width/3+940,height/4-200, "Black")
+    cLogo2 = hallOfFameScreen.addCanvas(200, 200, width / 1.2, height / 40, "Black")
     cLogo2.create_image(100, 100, image=myLogo1, anchor=CENTER)
 
+    backBtn = hallOfFameScreen.buttons("Back", print('hola'), "White", "Blue", width / 2, height / 1.10)
+    backBtn.config(width=5, height=2)
 
-
-
-
-    if not(hallOfFameScreen.initialize()):
+    if not (hallOfFameScreen.initialize()):
         return False
 
+
 def load(user):
-    list=[]
+    list = []
     register.decrypt()
     # Cargar el archivo encriptado
     tree = ET.parse("DataBase.xml")
     root = tree.getroot()
     register.encrypt()
     for client in root.findall('Cliente'):
-        if client.find('User').text==user:
+        if client.find('User').text == user:
             for data in client:
                 print(data.text)
                 list.append(data.text)
