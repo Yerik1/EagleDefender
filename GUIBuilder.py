@@ -101,6 +101,9 @@ class GUIBuilder:
         btn.bind("<Leave>", change1)  # Sale
         btn.bind("<Enter>", change2)  # Entra
 
+        return btn
+
+
     def buttonImage(self, img, action, a, b):
 
         imageBtn = Button(self.root, image=img, command=action, bd=0, relief="sunken", bg = self.BG, activebackground= self.BG)
