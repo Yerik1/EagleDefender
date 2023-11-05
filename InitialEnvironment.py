@@ -48,19 +48,19 @@ def begin(user):
     wallsLb = initialEnvironmentScreen.addLabel("Walls: ", 0.4*(width/30), height/6.7, "flat")
 
     woodWalls=initialEnvironmentScreen.addCanvas(50,50, 0.4*(width/30)+150, height/6.7-17,"#000000")
-    woodWall=Image.open("./Barriers/Barrier1.PNG")
+    woodWall=Image.open("Barriers/Wood/Wood1.PNG")
     woodWall=woodWall.resize((50,50))
     woodWall=ImageTk.PhotoImage(woodWall)
     woodWalls.create_image(27, 27,image=woodWall)
 
     brickWalls = initialEnvironmentScreen.addCanvas(50, 50, 0.4 * (width / 30) + 250, height / 6.7 - 17, "#000000")
-    brickWall = Image.open("./Barriers/Barrier2.PNG")
+    brickWall = Image.open("Barriers/Stone/Stone1.PNG")
     brickWall = brickWall.resize((50, 50))
     brickWall = ImageTk.PhotoImage(brickWall)
     brickWalls.create_image(27, 27, image=brickWall)
 
     steelWalls = initialEnvironmentScreen.addCanvas(50, 50, 0.4 * (width / 30) + 350, height / 6.7 - 17, "#000000")
-    steelWall = Image.open("./Barriers/Barrier3.PNG")
+    steelWall = Image.open("Barriers/Steel/Steel1.PNG")
     steelWall = steelWall.resize((50, 50))
     steelWall = ImageTk.PhotoImage(steelWall)
     steelWalls.create_image(27, 27, image=steelWall)
@@ -173,6 +173,7 @@ def load(user):
     for client in root.findall('Cliente'):
         if client.find('User').text==user:
             for data in client:
+
                 print(data.text)
                 list.append(data.text)
 

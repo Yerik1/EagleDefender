@@ -1,3 +1,4 @@
+import time
 from tkinter import *
 from GUIBuilder import GUIBuilder
 import tkinter as tk
@@ -9,167 +10,186 @@ import RegisterGUI
 import FacialRecognition
 from Game import Game
 
+class Autenticacion:
 
-logInScreen = GUIBuilder('#86895d')
+    def __init__(self):
+        self.logInScreen = GUIBuilder('#86895d')
 
+        self.showHide=0
+        # Obtener las dimensiones de la pantalla
+        self.width = self.logInScreen.root.winfo_screenwidth()  # Ancho
+        self.height = self.logInScreen.root.winfo_screenheight()  # Alto
 
-# Obtener las dimensiones de la pantalla
-width = logInScreen.root.winfo_screenwidth()  # Ancho
-height = logInScreen.root.winfo_screenheight()  # Alto
+        # Crea el canva para la linea Vertical -> VL
+        self.canvaVL = self.logInScreen.addCanvas(2, self.height / 2, (self.width / 2) + 2, self.height / 8, "black")
+        # Parametros para crear VL (x1, y1, x2, y2, color, grosor)
+        self.canvaVL.create_line(2, 0, 2, self.height + 5, fill="black", width=4)
 
-# Crea el canva para la linea Vertical -> VL
-canvaVL = logInScreen.addCanvas(2, height / 2, (width / 2) + 2, height / 8, "black")
-# Parametros para crear VL (x1, y1, x2, y2, color, grosor)
-canvaVL.create_line(2, 0, 2, height + 5, fill="black", width=4)
+        # Entry del user
+        self.entryUser = self.logInScreen.addEntry(20, "", self.width / 4, self.height / 4)
 
-# Entry del user
-entryUser = logInScreen.addEntry(20, "", width / 4, height / 4)
-
-# Entry de la contrasena
-entryPassword = logInScreen.addEntry(20, "⧫", width / 4, 3 * height/8)
-
-
-
-
-# Label con el titulo de la ventana
-windowTitle = logInScreen.addLabel("Log In", width/2, (height)/100,"raised")
-
-# Label de la solicitud del Username
-userLb = logInScreen.addLabel("User Name: ", width/8, height/4, "flat")
-
-# Label de la solicitud del Password
-passwordLb = logInScreen.addLabel("Password: ", width/8, 3 * height/8, "flat")
-
-# Label de la biometrica
-biometricLb = logInScreen.addLabel("Biometric: ", width/1.7, height/3.4, "flat")
-
-# Label de crear una cuenta
-newAccountLb = logInScreen.addLabel("Create an account?", width/2, height/1.6, "flat")
-
-# Label de logearse como un invitado
-logInGuestLb = logInScreen.addLabel("Log In as guest?", width/2, height/1.3, "flat")
-
-
-def verificarUsuario():
-    global entryUser, entryPassword
-
-    print("Entro a verificr")
-
-    username = entryUser.get()
-    password = entryPassword.get()
-
-    # Descomentar al unir con las demás clases de devRegistro
-    register.decrypt()
-
-    # Cargar el archivo encriptado
-    tree = ET.parse("DataBase.xml")
-    root = tree.getroot()
-    register.encrypt()
-
-    # Desencriptar el contenido del archivo
-
-    # Analizar el XML desencriptado
-
-    for username2 in root.findall('Cliente'):
-        usernameSave = username2.find('User').text
-        passSave = username2.find('Password').text
-
-        # Comparar el nombre de usuario y la contraseña ingresados con los datos del XML desencriptado
-        if usernameSave == username and passSave == password:
-
-            print("exito")
-            logInScreen.closeEnvironment()
-
-            if not (Game("Yerik1","Luis").initialize("Yerik1","Luis")):
-
-
-                logInScreen.initialize()
-
-            return True
-    return False
-
-def register1():
-
-    logInScreen.closeEnvironment()
-    registerWindow = RegisterGUI
-    if not(registerWindow.begin(0,"")):
-        logInScreen.initialize()
+        # Entry de la contrasena
+        self.entryPassword = self.logInScreen.addEntry(20, "⧫", self.width / 4, 3 * self.height/8)
 
 
 
-def biometric():
-    print("entro")
-    faceRecogn=FacialRecognition
-    faceRecognClass=faceRecogn.Recogn
-    faceRecogn=faceRecogn.Recogn
-    user=faceRecogn.recognition1(faceRecognClass)
-    print(user)
-    if(user!="#NO#"):
-        if(user!="No Camera"):
-            logInScreen.closeEnvironment()
-            if not(Game("Yerik1","Luis")):
-                logInScreen.initialize()
-        else:
-            #Label con exepcion de que no hay camara
-            print("No se detecta camara disponible")
+
+        # Label con el titulo de la ventana
+        self.windowTitle = self.logInScreen.addLabel("Log In", self.width/2, (self.height)/100,"raised")
+
+        # Label de la solicitud del Username
+        self.userLb = self.logInScreen.addLabel("User Name: ", self.width/8, self.height/4, "flat")
+
+        # Label de la solicitud del Password
+        self.passwordLb = self.logInScreen.addLabel("Password: ", self.width/8, 3 * self.height/8, "flat")
+
+        # Label de la biometrica
+        self.biometricLb = self.logInScreen.addLabel("Biometric: ", self.width/1.7, self.height/3.4, "flat")
+
+        # Label de crear una cuenta
+        self.newAccountLb = self.logInScreen.addLabel("Create an account?", self.width/2, self.height/1.6, "flat")
+
+        # Label de logearse como un invitado
+        self.logInGuestLb = self.logInScreen.addLabel("Log In as guest?", self.width/2, self.height/1.3, "flat")
+        self.currentImage = 0
+
+        # Carga tus tres imágenes aquí (reemplaza 'imagen1.png', 'imagen2.png', 'imagen3.png' con las rutas de tus imágenes)
+        imagen1 = tk.PhotoImage(file='Flags/espFlag.png')
+        imagen2 = tk.PhotoImage(file='Flags/ingFlag.png')
+        imagen3 = tk.PhotoImage(file='Flags/frnFlag.png')
+
+        # Redimenciona las imagenes
+        img1 = imagen1.subsample(25)
+        img2 = imagen2.subsample(25)
+        img3 = imagen3.subsample(25)
+
+        # Crea una lista con las imagenes
+        self.imagenes = [img1, img2, img3]
+        self.btnFlags = self.logInScreen.buttonImage(img1, lambda: (self.changeImage(), print("Action")), self.width / 60, self.height / 45)
+
+        # Boton mostrar contraseña
+        self.showPasBtn = self.logInScreen.buttons("👁",self.showHidePassword, "green", "orange", 1.15 * self.width / 4, 3 * self.height / 8)
+
+        # Boton para hacer el log in
+        self.logInBtn = self.logInScreen.buttons("Log In", lambda: self.verificarUsuario(), "white", "red", self.width / 4, self.height / 1.7)
+
+        # Boton de registrarse
+        self.registerBtn = self.logInScreen.buttons("Register", lambda: self.register1(), "Red", "orange", self.width / 2, self.height / 1.5)
+
+        # Boton de guest
+        self.guestBtn = self.logInScreen.buttons("Guesst", lambda: print("Soy invitado"), "red", "black", self.width / 2, self.height / 1.2)
+
+        # Boton de biometrica
+        self.biometricBtn = self.logInScreen.buttons("Acept", lambda: self.biometric(), "orange", "green", self.width / 1.5, self.height / 3.4)
+        self.logInScreen.initialize()
+    def verificarUsuario(self):
+
+        print("Entro a verificr")
+
+        username = self.entryUser.get()
+        password = self.entryPassword.get()
+
+        # Descomentar al unir con las demás clases de devRegistro
+        register.decrypt()
+
+        # Cargar el archivo encriptado
+        tree = ET.parse("DataBase.xml")
+        root = tree.getroot()
+        register.encrypt()
+
+        # Desencriptar el contenido del archivo
+
+        # Analizar el XML desencriptado
+
+        for username2 in root.findall('Cliente'):
+            usernameSave = username2.find('User').text
+            passSave = username2.find('Password').text
+
+            # Comparar el nombre de usuario y la contraseña ingresados con los datos del XML desencriptado
+            if usernameSave == username and passSave == password:
+
+                print("exito")
+                self.logInScreen.closeEnvironment()
+                flag=True
+                game = Game(username, "Prueba")
+                game.initialize(game.player1, game.player2)
+                while(flag):
+                    if (game.win):
+                        time.sleep(2)
+                        print("entro")
+                        Autenticacion()
+                        flag=False
+
+                print("salio")
+                return True
+        return False
+
+    def register1(self):
+
+        self.logInScreen.closeEnvironment()
+        registerWindow = RegisterGUI
+        if not(registerWindow.begin(0,"")):
+            print("salio")
+            Autenticacion()
 
 
-currentImage = 0
+
+    def biometric(self):
+        print("entro")
+        faceRecogn=FacialRecognition
+        faceRecognClass=faceRecogn.Recogn
+        faceRecogn=faceRecogn.Recogn
+        user=faceRecogn.recognition1(faceRecognClass)
+        print(user)
+        if(user!="#NO#"):
+            if(user!="No Camera"):
+                self.logInScreen.closeEnvironment()
+                flag = True
+                game = Game(user, "Prueba")
+                game.initialize(game.player1, game.player2)
+                while (flag):
+                    if (game.win):
+                        time.sleep(2)
+                        print("entro")
+                        Autenticacion()
+                        flag = False
+
+                print("salio")
+            else:
+                #Label con exepcion de que no hay camara
+                print("No se detecta camara disponible")
+
+
+
 # Metodo que cambia la imagen de los idiomas
-def changeImage():
-    global currentImage
+    def changeImage(self):
 
-    if currentImage == 0:
-        currentImage = 1
-    elif currentImage == 1:
-        currentImage = 2
-    else:
-        currentImage = 0
+        if self.currentImage == 0:
+            self.currentImage = 1
+        elif self.currentImage == 1:
+            self.currentImage = 2
+        else:
+            self.currentImage = 0
 
-    imagen = imagenes[currentImage]
-    btnFlags.config(image=imagen)
+        imagen = self.imagenes[self.currentImage]
+        self.btnFlags.config(image=imagen)
 
-
-# Carga tus tres imágenes aquí (reemplaza 'imagen1.png', 'imagen2.png', 'imagen3.png' con las rutas de tus imágenes)
-imagen1 = tk.PhotoImage(file='Flags/espFlag.png')
-imagen2 = tk.PhotoImage(file='Flags/ingFlag.png')
-imagen3 = tk.PhotoImage(file='Flags/frnFlag.png')
-
-# Redimenciona las imagenes
-img1 = imagen1.subsample(25)
-img2 = imagen2.subsample(25)
-img3 = imagen3.subsample(25)
-
-# Crea una lista con las imagenes
-imagenes = [img1, img2, img3]
-
-btnFlags = logInScreen.buttonImage(img1, lambda:(changeImage(), print("Action")), width/60, height/45)
+    def showHidePassword(self):
+        if (self.showHide == 0):
+            self.entryPassword.configure(show="")
+            self.showHide=1
+        else:
+            self.entryPassword.configure(show="⧫")
+            self.showHide = 0
 
 
-
-# Boton mostrar contraseña
-showPasBtn = logInScreen.buttons("👁", "", "green", "orange", 1.15 * width / 4,  3 * height/8)
-
-# Boton para hacer el log in
-logInBtn = logInScreen.buttons("Log In", lambda: verificarUsuario(), "white", "red", width/4, height/1.7)
-
-# Boton de registrarse
-registerBtn = logInScreen.buttons("Register", lambda: register1(), "Red", "orange", width/2, height/1.5)
-
-# Boton de guest
-guestBtn = logInScreen.buttons("Guesst", lambda: print("Soy invitado"), "red", "black", width/2, height/1.2)
-
-# Boton de biometrica
-biometricBtn = logInScreen.buttons("Acept",lambda: biometric(), "orange", "green", width/1.5, height/3.4)
-
-
-
-logInScreen.initialize()
+Autenticacion()
 
 
 
 """
 Clase donde se realiza la autenticacion
+"""
 """
 class Autentication:
     def __init__(self, window):
@@ -269,6 +289,6 @@ class Autentication:
 
 
 #Autentication(tk.Tk())
-
+"""
 
 

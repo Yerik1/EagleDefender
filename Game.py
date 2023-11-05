@@ -8,6 +8,8 @@ from PIL import ImageDraw, ImageTk, Image, ImageFilter
 import ColorFilter
 import Spotify
 import random
+import Register as register
+import xml.etree.ElementTree as ET
 
 class Game:
     def __init__(self,player1,player2):
@@ -25,30 +27,55 @@ class Game:
 
         # Utiliza la función glob para buscar archivos que coincidan con el patrón en la carpeta
         self.archivos = glob.glob(os.path.join(self.carpeta_imagenes, self.patron))
-
+        self.songList =[]
         for element in self.archivos:
             image = pygame.image.load(element)
             image = pygame.transform.scale(image, (50, 50))
             # Agrega las rutas de los archivos encontrados a la lista de imágenes
             self.imagenes.append(image)
 
-        self.songList=["Memorias","Ferxxo 151","Solia","Una Vez","Im still standing","Torero"]
+        self.player1=self.load(player1)
+        self.player2=self.load(player2)
+        for item in self.player1:
+            if item==self.player1[5] or item==self.player1[6] or item==self.player1[7]:
+                if item is not None:
+                    self.songList.append(item)
+        for item in self.player2:
+            if item==self.player2[5] or item==self.player2[6] or item==self.player2[7]:
+                if item is not None:
+                    self.songList.append(item)
         self.songInfo=Spotify.createPlaylist(self.songList)
-        self.initialize(player1, player2)
 
+
+    def load(self,user):
+        list = []
+        register.decrypt()
+        # Cargar el archivo encriptado
+        tree = ET.parse("DataBase.xml")
+        root = tree.getroot()
+        register.encrypt()
+        for client in root.findall('Cliente'):
+            if client.find('User').text == user:
+                for data in client:
+                    if (data.tag == "Music" or data.tag=="Colors"):
+                        for song in data:
+                            print(song.text)
+                            list.append(song.text)
+                    else:
+                        print(data.text)
+                        list.append(data.text)
+        return list
     def initialize(self,player1,player2):
         main = Round(player1, player2, self)
         main.begin()
-        while True:
-            if self.win:
-                return False
+
 
 
 class Round:
     def __init__(self,player1,player2,game):
         pygame.init()
         self.Game=game
-        self.songNumber=random.randrange(6)
+        self.songNumber=random.randrange(len(game.songList))
         self.songTempo=0
         self.songTime=0
         self.songBeats=0
@@ -80,6 +107,7 @@ class Round:
         self.timeGame=0
         self.game=False
         self.direction=False
+
     def begin(self):
         self.running = True
         self.cursor_x, self.cursor_y = self.window_width // 4, self.window_height // 2
@@ -96,16 +124,19 @@ class Round:
 
 
 
+
         # Crear instancias para las cuatro imágenes
-        self.image1 = Barriers("Barriers/Barrier1.PNG", self.window_width // 4 - 200, 200, 1, 10,self)
-        self.image2 = Barriers("Barriers/Barrier2.PNG", self.window_width // 4 - 50, 200, 2, 10,self)
-        self.image3 = Barriers("Barriers/Barrier3.PNG", self.window_width // 4 + 100, 200, 3, 10,self)
+        self.image1 = Barriers("Barriers/Wood/Wood"+self.player2[14]+".PNG", self.window_width // 4 - 200, 200, 1, 10, self)
+        self.image2 = Barriers("Barriers/Stone/Stone"+self.player2[14]+".PNG", self.window_width // 4 - 50, 200, 2, 10, self)
+        self.image3 = Barriers("Barriers/Steel/Steel"+self.player2[14]+".PNG", self.window_width // 4 + 100, 200, 3, 10, self)
         self.image4 = Barriers("Eagle/Eagle.png", 75, 525, 3, 1,self)
 
+        self.selectBarrier_thread = threading.Thread(target=self.selectBarrier)
+        self.selectBarrier_thread.start()
         # Crear instancias para las imágenes de Poderes
-        self.power1 = Powers("Powers/WaterBalls/WB1.PNG", 3 * self.window_width // 4 - 200, 200, 1, 3,self)
-        self.power2 = Powers("Powers/FireBalls/FB1.PNG", 3 * self.window_width // 4 - 50, 200, 2, 2,self)
-        self.power3 = Powers("Powers/Bombs/Bomb1.PNG", 3 * self.window_width // 4 + 100, 200, 3, 4,self)
+        self.power1 = Powers("Powers/WaterBalls/WB"+self.player2[15]+".PNG", 3 * self.window_width // 4 - 200, 200, 1, 3,self)
+        self.power2 = Powers("Powers/FireBalls/FB"+self.player2[15]+".PNG", 3 * self.window_width // 4 - 50, 200, 2, 2,self)
+        self.power3 = Powers("Powers/Bombs/Bomb"+self.player2[15]+".PNG", 3 * self.window_width // 4 + 100, 200, 3, 4,self)
 
         # Establecer la posición inicial
         self.image1.initial_x, self.image1.initial_y = self.image1.original_x, self.image1.original_y
@@ -122,9 +153,8 @@ class Round:
         self.bg_image1 = pygame.transform.scale(self.bg_image1, (600,400))
         self.bg_image1 = Image.frombytes("RGB", self.bg_image1.get_size(),
                                         pygame.image.tostring(self.bg_image1, "RGB", False))
-        self.bg_image1 = ColorFilter.colorFilter("#%02x%02x%02x" % self.GREEN, self.bg_image1)
+        self.bg_image1 = ColorFilter.colorFilter(self.player1[11], self.bg_image1)
         # Aplica el filtro de color con PIL
-        # En este ejemplo, se aplica un filtro de desenfoque a la imagen
         # Convierte la imagen de PIL de nuevo a Pygame
         self.bg_image1 = pygame.image.fromstring(self.bg_image1.tobytes(), self.bg_image1.size, self.bg_image1.mode)
 
@@ -132,13 +162,13 @@ class Round:
         self.bg_image2 = pygame.transform.scale(self.bg_image2, (600, 400))
         self.bg_image2 = Image.frombytes("RGB", self.bg_image2.get_size(),
                                          pygame.image.tostring(self.bg_image2, "RGB", False))
-        self.bg_image2 = ColorFilter.colorFilter("#%02x%02x%02x" % self.RED, self.bg_image2)
+        self.bg_image2 = ColorFilter.colorFilter(self.player2[11], self.bg_image2)
         # Aplica el filtro de color con PIL
         # En este ejemplo, se aplica un filtro de desenfoque a la imagen
         # Convierte la imagen de PIL de nuevo a Pygame
         self.bg_image2 = pygame.image.fromstring(self.bg_image2.tobytes(), self.bg_image2.size, self.bg_image2.mode)
 
-        self.defenderPic = Image.open("ProfilePics/"+self.player1+"/PROFILEPIC.png")
+        self.defenderPic = Image.open(self.player1[8])
         self.defenderPic = self.defenderPic.resize((70, 70))
         # Crear una máscara en forma de óvalo
         ancho, alto = self.defenderPic.size
@@ -151,7 +181,7 @@ class Round:
         self.defenderPict.paste(self.defenderPic, mask=mascara)
         self.defenderPict=pygame.image.fromstring(self.defenderPict.tobytes(), self.defenderPict.size, self.defenderPict.mode)
 
-        self.atackerPic = Image.open("ProfilePics/" + self.player2 + "/PROFILEPIC.png")
+        self.atackerPic = Image.open(self.player2[8])
         self.atackerPic = self.atackerPic.resize((70, 70))
         # Crear una máscara en forma de óvalo
         ancho, alto = self.atackerPic.size
@@ -195,6 +225,7 @@ class Round:
                         self.timeDefense = 0
                 if event.type == pygame.MOUSEBUTTONDOWN :
                     if event.button == 1 :  # Botón izquierdo del ratón
+                        print("click")
                         selection_x, selection_y = pygame.mouse.get_pos()
                         print(self.timeDefense<=0)
                         if self.is_inside_green_area(selection_x, selection_y) :
@@ -238,54 +269,6 @@ class Round:
                             for power in [self.power1, self.power2, self.power3]:
                                 if self.check_click(power, selection_x, selection_y):
                                     self.selected_image_to_move = power
-            keys = pygame.key.get_pressed()
-            other_rects = []
-            if self.timeDefense <= 0:
-                self.image4.selected = False
-                self.image4.check_collision()
-                self.image4.movable=False
-            for image in [self.image1, self.image2, self.image3, self.image4]:
-                if image.selected:
-                    other_rects.extend(image.copies)
-
-            for image in [self.image1, self.image2, self.image3, self.image4]:
-                if keys[pygame.K_f] and image.selected:
-                    image.selected = False
-                    image.check_collision()
-
-
-            if keys[pygame.K_1]:
-                if self.image1.movable and not self.image2.selected and not self.image3.selected and not self.image4.selected:
-                    if not self.image1.selected:
-                        self.image1.selected = True
-                    else:
-                        self.image1.selected = False
-                        self.image1.original_x, self.image1.original_y = self.image1.initial_x, self.image1.initial_y
-                    time.sleep(0.2)
-            if keys[pygame.K_2]:
-                if self.image2.movable and not self.image1.selected and not self.image3.selected and not self.image4.selected:
-                    if not self.image2.selected:
-                        self.image2.selected = True
-                    else:
-                        self.image2.selected = False
-                        self.image2.original_x, self.image2.original_y = self.image2.initial_x, self.image2.initial_y
-                    time.sleep(0.2)
-            if keys[pygame.K_3]:
-                if self.image3.movable and not self.image1.selected and not self.image2.selected and not self.image4.selected:
-                    if not self.image3.selected:
-                        self.image3.selected = True
-                    else:
-                        self.image3.selected = False
-                        self.image3.original_x, self.image3.original_y = self.image3.initial_x, self.image3.initial_y
-                    time.sleep(0.2)
-            if keys[pygame.K_4]:
-                if self.image4.movable and not self.image1.selected and not self.image2.selected and not self.image3.selected:
-                    if not self.image4.selected:
-                        self.image4.selected = True
-                    else:
-                        self.image4.selected = False
-                        self.image4.check_collision()
-                    time.sleep(0.2)
 
 
 
@@ -362,8 +345,8 @@ class Round:
             points_rect2.center = (3*self.window_width // 4, 175)
 
             # Crear etiquetas para los nombres de los jugadores
-            player1_label = self.font.render(self.player1, True, (0, 0, 255))
-            player2_label = self.font.render(self.player2, True, (255, 0, 0))
+            player1_label = self.font.render(self.player1[0], True, (0, 0, 255))
+            player2_label = self.font.render(self.player2[0], True, (255, 0, 0))
 
             # Posiciones de las etiquetas de nombres
             player1_rect = player1_label.get_rect()
@@ -389,10 +372,9 @@ class Round:
             self.screen.blit(self.goblin,(self.player_x, self.player_y))
             pygame.display.flip()
         pygame.time.wait(2400)
-        if not self.Game.win:
-            print("win")
-            pygame.quit()
-            pygame.display.quit()
+        print("win")
+        pygame.quit()
+        pygame.display.quit()
 
     def start_timer(self,times):
         def temporizador():
@@ -403,7 +385,7 @@ class Round:
                 while self.timeDefense > 0:
                     minutos, segundos = divmod(self.timeDefense, 60)
                     tiempo_text = f"Tiempo restante: {minutos:02d}:{segundos:02d}"
-                    time.sleep(1)
+                    pygame.time.wait(1000)
                     if not self.timeDefense==0:
                         self.timeDefense-= 1
                 self.game=True
@@ -432,7 +414,7 @@ class Round:
                                 self.power3.amount += 1
                         minutos, segundos = divmod(self.timeGame, 60)
                         tiempo_text = f"Tiempo restante: {minutos:02d}:{segundos:02d}"
-                        time.sleep(1)
+                        pygame.time.wait(1000)
                     if not self.timeGame == 0:
                         self.timeGame -= 1
                 if self.running:
@@ -450,68 +432,68 @@ class Round:
                         self.player_x -= 5
                         self.goblin = self.Game.imagenes[3]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x -= 5
                         self.goblin = self.Game.imagenes[16]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x -= 5
                         self.goblin = self.Game.imagenes[17]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x -= 5
                         self.goblin = self.Game.imagenes[18]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x -= 5
                         self.goblin = self.Game.imagenes[19]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                     if keys[pygame.K_RIGHT]:
                         self.direction = True
                         self.player_x += 5
                         self.goblin = self.Game.imagenes[1]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x += 5
                         self.goblin = self.Game.imagenes[8]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x += 5
                         self.goblin = self.Game.imagenes[9]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x += 5
                         self.goblin = self.Game.imagenes[10]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
+                        pygame.time.wait(50)
                         self.player_x += 5
                         self.goblin = self.Game.imagenes[11]
                         self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                        time.sleep(0.05)
-                    time.sleep(0.03)
+                        pygame.time.wait(50)
+                    pygame.time.wait(30)
                     if keys[pygame.K_UP]:
                         if not self.direction:
                             self.player_y -= 5
                             self.goblin = self.Game.imagenes[0]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y -= 5
                             self.goblin = self.Game.imagenes[4]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y -= 5
                             self.goblin = self.Game.imagenes[5]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y -= 5
                             self.goblin = self.Game.imagenes[6]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y -= 5
                             self.goblin = self.Game.imagenes[7]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                         else:
                             self.player_y -= 15
                     if keys[pygame.K_DOWN]:
@@ -519,23 +501,23 @@ class Round:
                             self.player_y += 5
                             self.goblin = self.Game.imagenes[2]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y += 5
                             self.goblin = self.Game.imagenes[12]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y += 5
                             self.goblin = self.Game.imagenes[13]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y += 5
                             self.goblin = self.Game.imagenes[14]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                             self.player_y += 5
                             self.goblin = self.Game.imagenes[15]
                             self.screen.blit(self.goblin, (self.player_x, self.player_y))
-                            time.sleep(0.05)
+                            pygame.time.wait(50)
                         else:
                             self.player_y += 15
                     self.goblin = self.Game.imagenes[3]
@@ -556,9 +538,61 @@ class Round:
                     self.cursor_x -= 5
                 if keys[pygame.K_d]:
                     self.cursor_x += 5
-                time.sleep(0.03)
+                pygame.time.wait(30)
         except: pass
 
+    def selectBarrier(self):
+        try:
+            while self.running:
+                keys = pygame.key.get_pressed()
+                other_rects = []
+                if self.timeDefense <= 0:
+                    self.image4.selected = False
+                    self.image4.check_collision()
+                    self.image4.movable = False
+                for image in [self.image1, self.image2, self.image3, self.image4]:
+                    if image.selected:
+                        other_rects.extend(image.copies)
+
+                for image in [self.image1, self.image2, self.image3, self.image4]:
+                    if keys[pygame.K_f] and image.selected:
+                        image.selected = False
+                        image.check_collision()
+
+                if keys[pygame.K_1]:
+                    if self.image1.movable and not self.image2.selected and not self.image3.selected and not self.image4.selected:
+                        if not self.image1.selected:
+                            self.image1.selected = True
+                        else:
+                            self.image1.selected = False
+                            self.image1.original_x, self.image1.original_y = self.image1.initial_x, self.image1.initial_y
+                        pygame.time.wait(200)
+
+                if keys[pygame.K_2]:
+                    if self.image2.movable and not self.image1.selected and not self.image3.selected and not self.image4.selected:
+                        if not self.image2.selected:
+                            self.image2.selected = True
+                        else:
+                            self.image2.selected = False
+                            self.image2.original_x, self.image2.original_y = self.image2.initial_x, self.image2.initial_y
+                        pygame.time.wait(200)
+                if keys[pygame.K_3]:
+                    if self.image3.movable and not self.image1.selected and not self.image2.selected and not self.image4.selected:
+                        if not self.image3.selected:
+                            self.image3.selected = True
+                        else:
+                            self.image3.selected = False
+                            self.image3.original_x, self.image3.original_y = self.image3.initial_x, self.image3.initial_y
+                        pygame.time.wait(200)
+                if keys[pygame.K_4]:
+                    if self.image4.movable and not self.image1.selected and not self.image2.selected and not self.image3.selected:
+                        if not self.image4.selected:
+                            self.image4.selected = True
+                        else:
+                            self.image4.selected = False
+                            self.image4.check_collision()
+                        pygame.time.wait(200)
+        except: pass
 
     def check_click(self,image, cursor_x, cursor_y):
         if image.original_x < cursor_x < image.original_x + image.rect_width and \
@@ -580,27 +614,33 @@ class Round:
         # Calcular el ángulo y la distancia entre la posición actual y el destino
         angle = math.atan2(dest_y - y, dest_x - x)
         distance = math.hypot(dest_x - x, dest_y - y)
+        movement=True
         while distance > 0:
-            if self.running:
+            if self.running and movement:
                 step = min(1, distance)  # Mover hasta 1 píxel en cada paso
                 x += 3*step * math.cos(angle)
                 y += 3* step * math.sin(angle)
-                distance -= step
-                # Actualizar la posición final de la copia
-                image_copy.original_x = x
-                image_copy.original_y = y
+                if 75<x and 350<y and y<725:
+                    distance -= step
+                    # Actualizar la posición final de la copia
+                    image_copy.original_x = x
+                    image_copy.original_y = y
+                else:
+                    print("fuera")
+                    movement=False
+
 
                 # Actualizar la copia en la pantalla
 
                 try:
                     self.screen.blit(image_copy.image_surface, (image_copy.original_x, image_copy.original_y))
-                    time.sleep(0.0001)
+                    pygame.time.wait(1)
                 except:
-                    pass
+                    movement=False
 
                 # Verificar colisiones con copias de Barrier
                 for barrier in [self.image1, self.image2, self.image3, self.image4]:
-                    if barrier == self.image4:
+                    if barrier == self.image4 and movement:
                         self.image4.combinedRect = pygame.Rect(self.image4.original_x, self.image4.original_y, self.image4.rect_width,
                                                           self.image4.rect_height)
                         if pygame.Rect(x, y, image_copy.rect_width, image_copy.rect_height).colliderect(
@@ -608,6 +648,7 @@ class Round:
                             # Colisión detectada, detener el movimiento y eliminar la copia de Barrier
                             distance = 0
                             print("entro")
+                            movement=False
                             if (barrier.recieveDamage(image_copy.damage, self.image4)):
                                 self.image4.remove_original()
                     else:
@@ -664,28 +705,28 @@ class Round:
         self.screen.fill(self.WHITE)
         pygame.display.flip()
         font = pygame.font.Font(None, 72)
-        if player == self.player2:
+        if player[0] == self.player2[0]:
             self.Game.player2Rounds += 1
             if self.Game.player2Rounds == 2:
-                text = font.render(player + " Ganó la partida", True, (0, 0, 255)) \
+                text = font.render(player[0] + " Ganó la partida", True, (0, 0, 255)) \
                     if self.Game.player1Rounds == 2 else font.render(
-                    player + " Ganó la partida", True, (255, 0, 0))
+                    player[0] + " Ganó la partida", True, (255, 0, 0))
                 pygame.mixer.music.load("SoundEfects/GameWin.mp3")
                 pygame.mixer.music.play()
             else:
-                text = font.render(player + " Ganó", True, (255, 0, 0))
+                text = font.render(player[0] + " Ganó", True, (255, 0, 0))
                 pygame.mixer.music.load("SoundEfects/RoundWin.mp3")
                 pygame.mixer.music.play()
-        if player == self.player1:
+        if player[0] == self.player1[0]:
             self.Game.player1Rounds += 1
             if self.Game.player1Rounds == 2:
-                text = font.render(player + " Ganó la partida", True, (0, 0, 255)) \
+                text = font.render(player[0] + " Ganó la partida", True, (0, 0, 255)) \
                     if self.Game.player1Rounds == 2 else font.render(
-                    player + " Ganó la partida", True, (255, 0, 0))
+                    player[0] + " Ganó la partida", True, (255, 0, 0))
                 pygame.mixer.music.load("SoundEfects/GameWin.mp3")
                 pygame.mixer.music.play()
             else:
-                text = font.render(player + " Ganó", True, (0, 0, 255))
+                text = font.render(player[0] + " Ganó", True, (0, 0, 255))
                 pygame.mixer.music.load("SoundEfects/RoundWin.mp3")
                 pygame.mixer.music.play()
         if self.Game.player1Rounds==2 or self.Game.player2Rounds==2:

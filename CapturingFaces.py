@@ -11,7 +11,6 @@ class Biometric:
     def __init__(self):
         self.root= Tk()
         self.root.title("Instrucciones")
-        self.root.protocol("WM_DELETE_WINDOW", self.training(self.root))
 
     """
     funcion que inicializa la ventana
@@ -110,8 +109,12 @@ class Biometric:
         print("Entrenando...")
         faceRecognizer.train(facesData, np.array(labels))
 
-        os.removedirs('modeloEigenFace.xml')
-        #Almacenar el modelo obtenido
+        # Ruta al archivo XML que deseas borrar
+        archivo_xml = "modeloEigenFace.xml"
+
+        # Abre el archivo en modo escritura, lo que borrará su contenido
+        with open(archivo_xml, "w") as archivo:
+            archivo.truncate(0)
         faceRecognizer.write('modeloEigenFace.xml')
         print("Almacenando el modelo")
         self.root.quit()

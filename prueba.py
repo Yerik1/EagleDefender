@@ -57,15 +57,15 @@ image3_copies = []
 grid_matrix = [[0] * grid_cols for _ in range(grid_rows)]
 
 # Cargar una imagen inicial
-image2 = pygame.image.load("Barriers/Barrier2.PNG")
+image2 = pygame.image.load("Barriers/Stone/Stone1.PNG")
 image2 = pygame.transform.scale(image2, (blue_rect.width, blue_rect.height))
 
 # Cargar una imagen inicial
-image1 = pygame.image.load("Barriers/Barrier1.PNG")
+image1 = pygame.image.load("Barriers/Wood/Wood1.PNG")
 image1 = pygame.transform.scale(image1, (blue_rect.width, blue_rect.height))
 
 # Cargar una imagen inicial
-image3 = pygame.image.load("Barriers/Barrier3.PNG")
+image3 = pygame.image.load("Barriers/Steel/Steel1.PNG")
 image3 = pygame.transform.scale(image3, (blue_rect.width, blue_rect.height))
 
 
@@ -219,22 +219,22 @@ while running:
             red_sqr.x -= red_sqr_speed
             moving_left = False
             # keys_pressed.discard(pygame.K_LEFT)
-            time.sleep(0.1)
+            pygame.time.wait(10)
         if moving_right:
             red_sqr.x += red_sqr_speed
             moving_right = False
             #keys_pressed.discard(pygame.K_RIGHT)
-            time.sleep(0.1)
+            pygame.time.wait(10)
         if moving_up:
             red_sqr.y -= red_sqr_speed
             moving_up = False
             #keys_pressed.discard(pygame.K_UP)
-            time.sleep(0.1)
+            pygame.time.wait(10)
         if moving_down:
             red_sqr.y += red_sqr_speed
             moving_down = False
             #keys_pressed.discard(pygame.K_DOWN)
-            time.sleep(0.1)
+            pygame.time.wait(10)
         #red_sqr_timer = pygame.time.get_ticks()
 
 
