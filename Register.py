@@ -188,11 +188,13 @@ def validate(user,password):
             if(checkUser(user)):
                 print("safe")
                 return True
+            else:
+                return("Usuario ya existe")
         else:
-            print("Contraseña invalida")
+            return("Contraseña invalida")
     else:
-        print("Usuario invalido")
-    return False
+        return("Usuario invalido")
+
 
 """
 funcion que verifica si se puede usar el usuario

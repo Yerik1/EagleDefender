@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk
+from tkinter import ttk
 from tkinter import colorchooser, filedialog, font
 from tkinterdnd2 import DND_FILES, TkinterDnD
 import os
@@ -13,6 +14,8 @@ from PictureTaker import CamApp
 import xml.etree.ElementTree as ET
 import cv2
 import shutil
+import colorsys
+import Spotify as sp
 width=""
 height=""
 root=""
@@ -49,6 +52,8 @@ profilePic=""
 profilePicPath=""
 picLabel=""
 extention=""
+combo=""
+labelError=""
 biometric=False
 status=True
 
@@ -89,6 +94,7 @@ def addLabel(txt, a, b, r, s):
     titleFont = font.Font(family="Times New Romans", size=s)
     label = Label(root, text=txt, bg=BG, relief=r, font=titleFont)
     label.place(x=a, y=b)
+    return label
 
 # Funcion que cierra la ventana
 def closeEnvironment():
@@ -123,35 +129,16 @@ def colorpic(e):
     # Creacion de paleta de colores
     b1 = Image.open(imageName).resize((100, 100)).convert("RGB")
     b1 = b1.getpixel((e.x, e.y))
-    b2 = (b1[1], b1[0], b1[2])
-    if (b2[2] <= 130):
-        b3 = (b2[0], b2[1], b2[2] + 125)
-    elif (b2[1] <= 130):
-        b3 = (b2[0], b2[1] + 125, b2[2])
-    else:
-        b3 = (b2[0], b2[1], b2[2] - 125)
-
-    b4 = (b1[2], abs(b1[1] - 255), b1[0])
-
-    if (b4[2] <= 130):
-        b5 = (b4[0], b4[1], b4[2] + 125)
-
-    elif (b4[1] <= 130):
-        b5 = (b4[0], b4[1] + 125, b4[2])
-    else:
-        b5 = (b4[0], b4[1], b4[2] - 125)
-
+    palette=generateColorPalette(b1)
     # Colores en hexadecimal
-    color = _from_rgb(b1)
-    color2 = _from_rgb(b2)
-    color3 = _from_rgb(b3)
-    color4 = _from_rgb(b4)
-    color5 = _from_rgb(b5)
+    color =  palette[0]
+    color2 = palette[1]
+    color3 = palette[2]
+    color4 = palette[3]
+    color5 = palette[4]
 
     # ordena los colores de menor a mayor en hexadecimal
     hex = [color, color2, color3, color4, color5]
-    hex.sort()
-
     # Se edita las entries de los colores para mostrar el codigo de color
     entryA.config(state="normal")
     entryA.delete(0, END)
@@ -181,6 +168,24 @@ def colorpic(e):
     dispD.config(bg=hex[3], fg=hex[3])
     dispE.config(bg=hex[4], fg=hex[4])
 
+
+# Función para generar paleta de colores
+def generateColorPalette(baseColor):
+    # Convierte los valores RGB en valores HSV
+    base_hsv = colorsys.rgb_to_hsv(*[x / 255.0 for x in baseColor])
+
+    # Calcula colores complementarios
+    color_palette = []
+    for i in range(5):
+        hue = (base_hsv[0] + (i / 5)) % 0.75 # Asegúrate de que el valor de matiz esté en el rango [0, 1]
+        rgb = colorsys.hsv_to_rgb(hue, base_hsv[1], base_hsv[2])
+        rgb = tuple(int(x * 255) for x in rgb)
+        color = '#{:02x}{:02x}{:02x}'.format(*rgb)
+        color_palette.append(color)
+
+
+    return color_palette
+
 """
 funcion que recopila la informacion de los entries
 """
@@ -203,22 +208,25 @@ def showHidePassword():
         entryConfPassword.configure(show="⧫")
         showPassword.config(text="Show Password")
 
-def addSong(event):
+def addSong(song):
     if (entrySA.get() == ""):
         entrySA.config(state="normal")
-        entrySA.insert(0, entryMusic.get())
+        entrySA.insert(0, song)
         entrySA.config(state="disabled")
         buttonSA.config(state="normal", bg="red")
+        entryMusic.delete(0,"end")
     elif (entrySB.get() == ""):
         entrySB.config(state="normal")
-        entrySB.insert(0, entryMusic.get())
+        entrySB.insert(0, song)
         entrySB.config(state="disabled")
         buttonSB.config(state="normal", bg="red")
+        entryMusic.delete(0, "end")
     elif (entrySC.get() == ""):
         entrySC.config(state="normal")
-        entrySC.insert(0, entryMusic.get())
+        entrySC.insert(0, song)
         entrySC.config(state="disabled")
         buttonSC.config(state="normal", bg="red")
+        entryMusic.delete(0, "end")
 
 def deleteSong1():
     entrySA.config(state="normal")
@@ -249,6 +257,25 @@ def deleteSong3():
     if (entrySC.get() == ""):
         buttonSC.config(state="disabled", bg="SystemButtonFace")
 
+def updateComboBox(e):
+    global combo, root
+    list=sp.searchSong(entryMusic.get())
+    combo.delete(0, 'end')
+    if not (entryMusic.get() == ""):
+        for item in list:
+            combo.insert(tk.END,item)
+        combo.place(x=width / 2, y=250, anchor=CENTER)
+    else:
+        combo.place(x=width / 2, y=230, anchor=CENTER)
+
+def selectOption(e):
+
+    try:
+        selected_option = combo.get(combo.curselection())
+        addSong(selected_option)
+        entryMusic.delete(0, tk.END)
+        updateComboBox("")
+    except: pass
 def selectSetBarriers(event, number):
     entrySetBarriers.config(state="normal")
     entrySetBarriers.delete(0, END)
@@ -274,7 +301,10 @@ def profilePicMaker():
     profilePicPlacer(pictureRoute)
 
 def profilePicPlacer(pictureRoute):
-    global profilePicPath, profilePic
+    global picLabel,profilePicPath, profilePic
+    try:
+        picLabel.destroy()
+    except : pass
     originalPic = Image.open(pictureRoute)
     profilePicPath = originalPic
     # Cambiar el tamaño de la imagen original a 200x200 píxeles
@@ -302,6 +332,7 @@ def profilePicPlacer(pictureRoute):
 
 def dragPic(event):
     global profilePicPath, extention
+
     picture = event.data
     # Obtener la extensión del archivo
     _, format = os.path.splitext(picture)
@@ -345,7 +376,7 @@ def editProfile(user):
 
 
 def registerGUI(case):
-    global profilePicPath, extention, biometric, status
+    global labelError, profilePicPath, extention, biometric, status
     list = [entryUser, entryPassword, entryConfPassword, entryName, entryEmail, entryAge, entrySA, entrySB, entrySC,
             entryA, entryB
         , entryC, entryD, entryE, entrySetBarriers, entrySetPowers]
@@ -364,7 +395,8 @@ def registerGUI(case):
                     break
 
         if flag:
-            if validate(list2[0], list2[1]):
+            text=validate(list2[0], list2[1])
+            if isinstance(text,bool):
                 bmt=""
                 if (case == 1):
                     deleteProfile(entryUser.get())
@@ -383,13 +415,18 @@ def registerGUI(case):
                     fileRoute=fileRoute + "/PROFILEPIC." + extention
                     register(list2, fileRoute)
                     closeEnvironment()
+                else:
+                    labelError.config(text="Fallo en la biometrica")
+            else:
+                labelError.config(text=text)
 
 
         else:
-            print("Porfavor llenar todos los espacios")
+            labelError.config(text="Porfavor llenar todos los espacios")
     else:
-        print("No coinciden las contraseñas")
-
+        labelError.config(text="No coinciden las contraseñas")
+    labelError.config(fg="red")
+    labelError.place(x=width/2,y=650, anchor="center")
 def toggle_checkbox():
     global biometric
     if varCheckbox.get():
@@ -405,23 +442,33 @@ def takepicture(event):
     global picLabel, profilePic, extention
     try:
         picLabel.destroy()
-    except Exception as e:
-        print(e)
+    except : pass
     picLabel = Label(profilePic)
     picLabel.place(x=100, y=100, anchor=CENTER)
     picLabel.bind("<Button-1>", takepicture)
     camera=CamApp(picLabel)
     route=camera.begin()
     #bg=("#%02x%02x%02x" % (root.winfo_rgb(profilePic.cget("image"))))
-    _, format = os.path.splitext(route)
-    extention = format[1:].lower()
-    profilePicPlacer(route)
-    picLabel.configure(image="",text="")
-    picLabel.destroy()
+    if not(isinstance(route,bool)):
+        _, format = os.path.splitext(route)
+        extention = format[1:].lower()
+        profilePicPlacer(route)
+    else:
+        try:
+            picLabel.destroy()
+        except:
+            pass
+        profilePic.create_oval(1, 1, 200, 200, fill="#ffffff")
+        font1 = font.Font(family="Times New Romans", size=25)
+        picLabel = Label(profilePic, text="+", bg="#ffffff", font=font1)
+        picLabel.place(x=100, y=100, anchor=CENTER)
+        profilePic.bind("<Button-1>", takepicture)
+        picLabel.bind("<Button-1>", takepicture)
+
 
 
 def begin(case,user):
-    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entrySetBarriers, entrySetPowers, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage
+    global labelError, combo, width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entrySetBarriers, entrySetPowers, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -484,7 +531,13 @@ def begin(case,user):
 
     entryMusic = Entry(root, width=20)
     entryMusic.place(x=width / 2, y=210, anchor=CENTER)
-    entryMusic.bind("<Return>",addSong)
+    #entryMusic.bind("<Return>",addSong)
+    entryMusic.bind("<KeyRelease>",updateComboBox)
+
+    combo= Listbox(root, width=20, height=-50,selectmode="single")
+    combo.place(x=width / 2, y=230, anchor=CENTER)
+    combo.lift()
+    combo.bind("<Button-1>", selectOption)
 
     # Boton mostrar contraseña
     showPassword = Button(root, text="Show Password", command=showHidePassword)
@@ -523,30 +576,30 @@ def begin(case,user):
     btnFlags.place( x = width / 60, y = height / 45)
 
     # Entries con canciones agregadas
-    entrySA = Entry(root, width=20)
-    entrySA.place(x=width / 2 + 140, y=185, anchor=CENTER)
+    entrySA = Entry(root, width=30)
+    entrySA.place(x=width / 2 + 160, y=185, anchor=CENTER)
     entrySA.config(state="disabled")
-    entrySB = Entry(root, width=20)
-    entrySB.place(x=width / 2 + 140, y=210, anchor=CENTER)
+    entrySB = Entry(root, width=30)
+    entrySB.place(x=width / 2 + 160, y=210, anchor=CENTER)
     entrySB.config(state="disabled")
-    entrySC = Entry(root, width=20)
-    entrySC.place(x=width / 2 + 140, y=235, anchor=CENTER)
+    entrySC = Entry(root, width=30)
+    entrySC.place(x=width / 2 + 160, y=235, anchor=CENTER)
     entrySC.config(state="disabled")
 
     # Botones para eliminar las canciones
     buttonSA = Button(root, text="X", command=deleteSong1)
-    buttonSA.place(x=width / 2 + 230, y=185, anchor=CENTER)
+    buttonSA.place(x=width / 2 + 265, y=185, anchor=CENTER)
     buttonSA.config(state="disabled")
     buttonSB = Button(root, text="X", command=deleteSong2)
-    buttonSB.place(x=width / 2 + 230, y=210, anchor=CENTER)
+    buttonSB.place(x=width / 2 + 265, y=210, anchor=CENTER)
     buttonSB.config(state="disabled")
     buttonSC = Button(root, text="X", command=deleteSong3)
-    buttonSC.place(x=width / 2 + 230, y=235, anchor=CENTER)
+    buttonSC.place(x=width / 2 + 265, y=235, anchor=CENTER)
     buttonSC.config(state="disabled")
 
     # se crea el canvas de la rueda de color
     c = Canvas(root, width=97, height=95, bg="black", highlightbackground=BG)
-    c.place(x=(width / 2), y=300, anchor=CENTER)
+    c.place(x=(width / 2), y=375, anchor=CENTER)
     imageName="./ColorWheel.png"
     myImg=cargarImagen(imageName)
     # se agrega la rueda de color como imagen
@@ -571,26 +624,26 @@ def begin(case,user):
 
     # Se crean los lugares donde aparece el codigo de color y se muestra el color
     entryA = Entry(root, width=10, state="disabled")
-    entryA.place(x=width / 2 + 50, y=250)
+    entryA.place(x=width / 2 + 50, y=325)
     entryB = Entry(root, width=10, state="disabled")
-    entryB.place(x=width / 2 + 50, y=270)
+    entryB.place(x=width / 2 + 50, y=345)
     entryC = Entry(root, width=10, state="disabled")
-    entryC.place(x=width / 2 + 50, y=290)
+    entryC.place(x=width / 2 + 50, y=365)
     entryD = Entry(root, width=10, state="disabled")
-    entryD.place(x=width / 2 + 50, y=310)
+    entryD.place(x=width / 2 + 50, y=385)
     entryE = Entry(root, width=10, state="disabled")
-    entryE.place(x=width / 2 + 50, y=330)
+    entryE.place(x=width / 2 + 50, y=405)
 
     dispA = Button(root, text="  ", state="disabled")
-    dispA.place(x=width / 2 + 100, y=250)
+    dispA.place(x=width / 2 + 100, y=325)
     dispB = Button(root, text="  ", state="disabled")
-    dispB.place(x=width / 2 + 100, y=270)
+    dispB.place(x=width / 2 + 100, y=345)
     dispC = Button(root, text="  ", state="disabled")
-    dispC.place(x=width / 2 + 100, y=290)
+    dispC.place(x=width / 2 + 100, y=365)
     dispD = Button(root, text="  ", state="disabled")
-    dispD.place(x=width / 2 + 100, y=310)
+    dispD.place(x=width / 2 + 100, y=385)
     dispE = Button(root, text="  ", state="disabled")
-    dispE.place(x=width / 2 + 100, y=330)
+    dispE.place(x=width / 2 + 100, y=405)
 
     # Seleccion de imagenes
     wd1 = "Barriers/Wood/Wood1.PNG"
@@ -792,6 +845,9 @@ def begin(case,user):
     # Crear la casilla de verificación
     checkbox = Checkbutton(root, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
     checkbox.place(x=width / 4, y=300)
+
+    labelError = addLabel("", width / 2 -30, 650, "flat", 12)
+    labelError.config(fg="red",anchor="center")
     #Abre la ventana
     root.mainloop()
     return False

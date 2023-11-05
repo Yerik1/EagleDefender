@@ -76,5 +76,16 @@ def playSong(playlist,songs,number):
 def pauseSong():
     sp.pause_playback()
 
+def searchSong(songName):
+    results = []
+    search_results = sp.search(q=f'track:{songName}', type='track')
+
+    for track in search_results['tracks']['items'][:3]:
+        track_name = track['name']
+        track_artist = track['artists'][0]['name']  # Supongo que tomas al primer artista de la lista si hay varios
+        results.append(track_name+" "+track_artist)
+    print(results)
+    return results
+
 #play=createPlaylist()
 #playSong(play[0],play[1])

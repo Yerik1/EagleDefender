@@ -164,7 +164,6 @@ class Round:
                                          pygame.image.tostring(self.bg_image2, "RGB", False))
         self.bg_image2 = ColorFilter.colorFilter(self.player2[11], self.bg_image2)
         # Aplica el filtro de color con PIL
-        # En este ejemplo, se aplica un filtro de desenfoque a la imagen
         # Convierte la imagen de PIL de nuevo a Pygame
         self.bg_image2 = pygame.image.fromstring(self.bg_image2.tobytes(), self.bg_image2.size, self.bg_image2.mode)
 
@@ -648,6 +647,15 @@ class Round:
                             # Colisión detectada, detener el movimiento y eliminar la copia de Barrier
                             distance = 0
                             print("entro")
+                            if (image_copy.damage == 1):
+                                pygame.mixer.music.load("SoundEfects/WaterBallColide.mp3")
+                                pygame.mixer.music.play()
+                            elif (image_copy.damage == 2):
+                                pygame.mixer.music.load("SoundEfects/FireBallColide.mp3")
+                                pygame.mixer.music.play()
+                            else:
+                                pygame.mixer.music.load("SoundEfects/BombColide.mp3")
+                                pygame.mixer.music.play()
                             movement=False
                             if (barrier.recieveDamage(image_copy.damage, self.image4)):
                                 self.image4.remove_original()
@@ -658,6 +666,15 @@ class Round:
                                 # Colisión detectada, detener el movimiento y eliminar la copia de Barrier
                                 distance = 0
                                 print("entro")
+                                if(image_copy.damage==1):
+                                    pygame.mixer.music.load("SoundEfects/WaterBallColide.mp3")
+                                    pygame.mixer.music.play()
+                                elif(image_copy.damage==2):
+                                    pygame.mixer.music.load("SoundEfects/FireBallColide.mp3")
+                                    pygame.mixer.music.play()
+                                else:
+                                    pygame.mixer.music.load("SoundEfects/BombColide.mp3")
+                                    pygame.mixer.music.play()
                                 if (barrier.recieveDamage(image_copy.damage, copy)):  # Actualiza la vida y elimina la copia
                                     barrier.copies.remove(copy)  # Elimina la copia
                                     try:
@@ -861,10 +878,24 @@ class Barriers:
     def draw(self):
         self.game.screen.blit(self.image_surface, (self.original_x, self.original_y))
         for copy_rect in self.copies:
-            self.game.screen.blit(self.image_surface, (copy_rect.original_x, copy_rect.original_y))
+            self.game.screen.blit(copy_rect.image_surface, (copy_rect.original_x, copy_rect.original_y))
 
     def recieveDamage(self,damage,copy_rect):
         copy_rect.life -= damage
+        if(copy_rect.life==2):
+            copy_rect.image = Image.frombytes("RGB", copy_rect.image.get_size(),
+                                             pygame.image.tostring(self.image, "RGB", False))
+            copy_rect.image = ColorFilter.colorFilter("#FFA500", copy_rect.image)
+            copy_rect.image = pygame.image.fromstring(copy_rect.image.tobytes(), copy_rect.image.size, copy_rect.image.mode)
+            copy_rect.image_surface.blit(copy_rect.image, (0, 0))
+        elif (copy_rect.life==1):
+            copy_rect.image = Image.frombytes("RGB", copy_rect.image.get_size(),
+                                              pygame.image.tostring(self.image, "RGB", False))
+            copy_rect.image = ColorFilter.colorFilter("#FF0000", copy_rect.image)
+            copy_rect.image = pygame.image.fromstring(copy_rect.image.tobytes(), copy_rect.image.size,
+                                                      copy_rect.image.mode)
+            copy_rect.image_surface.blit(copy_rect.image, (0, 0))
+
         print("Vida de Barrier:", copy_rect.life)
         if copy_rect.life <= 0:
             return True
