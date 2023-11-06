@@ -57,4 +57,7 @@ class CamApp:
         self.window.mainloop()
         while (True):
             if not self.status:
-                return self.path
+                if self.path=="":
+                    return False
+                else:
+                    return self.path

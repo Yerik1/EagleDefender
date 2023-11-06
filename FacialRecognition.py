@@ -16,7 +16,7 @@ class Recogn:
         dataPath = "./FacialRecognition/"
         imagePath = os.listdir(dataPath)
 
-        faceRecognizer = cv2.face.EigenFaceRecognizer_create()
+        faceRecognizer = cv2.face.EigenFaceRecognizer.create()
 
         # Leyendo el modelo o datos guardados en el entrenamiento
         faceRecognizer.read("modeloEigenFace.xml")

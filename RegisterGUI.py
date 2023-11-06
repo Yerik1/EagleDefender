@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk
+from tkinter import ttk
 from tkinter import colorchooser, filedialog, font
 from tkinterdnd2 import DND_FILES, TkinterDnD
 import os
@@ -13,6 +14,8 @@ from PictureTaker import CamApp
 import xml.etree.ElementTree as ET
 import cv2
 import shutil
+import colorsys
+import Spotify as sp
 width=""
 height=""
 root=""
@@ -37,11 +40,8 @@ entrySB=""
 buttonSB=""
 entrySC=""
 buttonSC=""
-entryBg=""
-entryBr=""
-entryWb=""
-entryFb=""
-entryBmb=""
+entrySetBarriers= ""
+entrySetPowers= ""
 buttonProfPic=""
 entryUser=""
 entryName=""
@@ -49,11 +49,22 @@ entryEmail=""
 entryAge=""
 varCheckbox=""
 profilePic=""
+profilePicPath=""
 picLabel=""
+extention=""
+combo=""
+labelError=""
+biometric=False
 status=True
 
 #myImg = ImageTk.PhotoImage(Image.open(imageName).resize((100, 100)))
-
+def checkStatus():
+    global status
+    print("entro")
+    while (True):
+        if not status:
+            closeEnvironment()
+            return False
 def cargarImagen(imageName):
     img=Image.open(imageName)
     return img
@@ -83,17 +94,18 @@ def addLabel(txt, a, b, r, s):
     titleFont = font.Font(family="Times New Romans", size=s)
     label = Label(root, text=txt, bg=BG, relief=r, font=titleFont)
     label.place(x=a, y=b)
+    return label
 
 # Funcion que cierra la ventana
 def closeEnvironment():
-    global status
-    root.protocol("WM_DELETE_WINDOW",changeStatus(False))
+    global status, root
+    root.protocol("WM_DELETE_WINDOW")
     try:
         os.remove("Temp/foto_capturada.png")
     except Exception as e:
-        print(e)
+        pass
     root.destroy()
-    status=False
+
 
 # Funcion que minimiza la ventana
 def minimize():
@@ -117,35 +129,16 @@ def colorpic(e):
     # Creacion de paleta de colores
     b1 = Image.open(imageName).resize((100, 100)).convert("RGB")
     b1 = b1.getpixel((e.x, e.y))
-    b2 = (b1[1], b1[0], b1[2])
-    if (b2[2] <= 130):
-        b3 = (b2[0], b2[1], b2[2] + 125)
-    elif (b2[1] <= 130):
-        b3 = (b2[0], b2[1] + 125, b2[2])
-    else:
-        b3 = (b2[0], b2[1], b2[2] - 125)
-
-    b4 = (b1[2], abs(b1[1] - 255), b1[0])
-
-    if (b4[2] <= 130):
-        b5 = (b4[0], b4[1], b4[2] + 125)
-
-    elif (b4[1] <= 130):
-        b5 = (b4[0], b4[1] + 125, b4[2])
-    else:
-        b5 = (b4[0], b4[1], b4[2] - 125)
-
+    palette=generateColorPalette(b1)
     # Colores en hexadecimal
-    color = _from_rgb(b1)
-    color2 = _from_rgb(b2)
-    color3 = _from_rgb(b3)
-    color4 = _from_rgb(b4)
-    color5 = _from_rgb(b5)
+    color =  palette[0]
+    color2 = palette[1]
+    color3 = palette[2]
+    color4 = palette[3]
+    color5 = palette[4]
 
     # ordena los colores de menor a mayor en hexadecimal
     hex = [color, color2, color3, color4, color5]
-    hex.sort()
-
     # Se edita las entries de los colores para mostrar el codigo de color
     entryA.config(state="normal")
     entryA.delete(0, END)
@@ -175,6 +168,24 @@ def colorpic(e):
     dispD.config(bg=hex[3], fg=hex[3])
     dispE.config(bg=hex[4], fg=hex[4])
 
+
+# Función para generar paleta de colores
+def generateColorPalette(baseColor):
+    # Convierte los valores RGB en valores HSV
+    base_hsv = colorsys.rgb_to_hsv(*[x / 255.0 for x in baseColor])
+
+    # Calcula colores complementarios
+    color_palette = []
+    for i in range(5):
+        hue = (base_hsv[0] + (i / 5)) % 0.75 # Asegúrate de que el valor de matiz esté en el rango [0, 1]
+        rgb = colorsys.hsv_to_rgb(hue, base_hsv[1], base_hsv[2])
+        rgb = tuple(int(x * 255) for x in rgb)
+        color = '#{:02x}{:02x}{:02x}'.format(*rgb)
+        color_palette.append(color)
+
+
+    return color_palette
+
 """
 funcion que recopila la informacion de los entries
 """
@@ -197,22 +208,25 @@ def showHidePassword():
         entryConfPassword.configure(show="⧫")
         showPassword.config(text="Show Password")
 
-def addSong(event):
+def addSong(song):
     if (entrySA.get() == ""):
         entrySA.config(state="normal")
-        entrySA.insert(0, entryMusic.get())
+        entrySA.insert(0, song)
         entrySA.config(state="disabled")
         buttonSA.config(state="normal", bg="red")
+        entryMusic.delete(0,"end")
     elif (entrySB.get() == ""):
         entrySB.config(state="normal")
-        entrySB.insert(0, entryMusic.get())
+        entrySB.insert(0, song)
         entrySB.config(state="disabled")
         buttonSB.config(state="normal", bg="red")
+        entryMusic.delete(0, "end")
     elif (entrySC.get() == ""):
         entrySC.config(state="normal")
-        entrySC.insert(0, entryMusic.get())
+        entrySC.insert(0, song)
         entrySC.config(state="disabled")
         buttonSC.config(state="normal", bg="red")
+        entryMusic.delete(0, "end")
 
 def deleteSong1():
     entrySA.config(state="normal")
@@ -243,35 +257,36 @@ def deleteSong3():
     if (entrySC.get() == ""):
         buttonSC.config(state="disabled", bg="SystemButtonFace")
 
-def selectBackground(event, number):
-    entryBg.config(state="normal")
-    entryBg.delete(0, END)
-    entryBg.insert(0, number)
-    entryBg.config(state="disabled")
+def updateComboBox(e):
+    global combo, root
+    list=sp.searchSong(entryMusic.get())
+    combo.delete(0, 'end')
+    if not (entryMusic.get() == ""):
+        for item in list:
+            combo.insert(tk.END,item)
+        combo.place(x=width / 2, y=250, anchor=CENTER)
+    else:
+        combo.place(x=width / 2, y=230, anchor=CENTER)
 
-def selectBarrier(event, number):
-    entryBr.config(state="normal")
-    entryBr.delete(0, END)
-    entryBr.insert(0, number)
-    entryBr.config(state="disabled")
+def selectOption(e):
 
-def selectWB(event, number):
-    entryWb.config(state="normal")
-    entryWb.delete(0, END)
-    entryWb.insert(0, number)
-    entryWb.config(state="disabled")
+    try:
+        selected_option = combo.get(combo.curselection())
+        addSong(selected_option)
+        entryMusic.delete(0, tk.END)
+        updateComboBox("")
+    except: pass
+def selectSetBarriers(event, number):
+    entrySetBarriers.config(state="normal")
+    entrySetBarriers.delete(0, END)
+    entrySetBarriers.insert(0, number)
+    entrySetBarriers.config(state="disabled")
 
-def selectFB(event, number):
-    entryFb.config(state="normal")
-    entryFb.delete(0, END)
-    entryFb.insert(0, number)
-    entryFb.config(state="disabled")
-
-def selectBmb(event, number):
-    entryBmb.config(state="normal")
-    entryBmb.delete(0, END)
-    entryBmb.insert(0, number)
-    entryBmb.config(state="disabled")
+def selectSetPowers(event, number):
+    entrySetPowers.config(state="normal")
+    entrySetPowers.delete(0, END)
+    entrySetPowers.insert(0, number)
+    entrySetPowers.config(state="disabled")
 
 def profilePicMaker():
     global extention
@@ -286,7 +301,10 @@ def profilePicMaker():
     profilePicPlacer(pictureRoute)
 
 def profilePicPlacer(pictureRoute):
-    global profilePicPath, profilePic
+    global picLabel,profilePicPath, profilePic
+    try:
+        picLabel.destroy()
+    except : pass
     originalPic = Image.open(pictureRoute)
     profilePicPath = originalPic
     # Cambiar el tamaño de la imagen original a 200x200 píxeles
@@ -314,6 +332,7 @@ def profilePicPlacer(pictureRoute):
 
 def dragPic(event):
     global profilePicPath, extention
+
     picture = event.data
     # Obtener la extensión del archivo
     _, format = os.path.splitext(picture)
@@ -329,7 +348,9 @@ def deleteProfile(user):
         usernameSave = username2.find('User').text
         if usernameSave == user:
             root.remove(username2)
-            shutil.rmtree("./FacialRecognition/"+user)
+            try:
+                shutil.rmtree("./FacialRecognition/"+user)
+            except: pass
             shutil.rmtree("./ProfilePics/"+user)
             break
 def editProfile(user):
@@ -355,10 +376,10 @@ def editProfile(user):
 
 
 def registerGUI(case):
-    global profilePicPath, extention, biometric, status
+    global labelError, profilePicPath, extention, biometric, status
     list = [entryUser, entryPassword, entryConfPassword, entryName, entryEmail, entryAge, entrySA, entrySB, entrySC,
             entryA, entryB
-        , entryC, entryD, entryE, entryBr, entryBg, entryWb, entryFb, entryBmb]
+        , entryC, entryD, entryE, entrySetBarriers, entrySetPowers]
     list2 = []
     fileRoute = ""
     flag = True
@@ -368,35 +389,44 @@ def registerGUI(case):
             list2.append(item.get())
             # info opcional
             if item != list[6] and item != list[7] and item != list[8] and item != list[9] and item != list[
-                10] and item != list[11] and item != list[12] and item != list[13] and item != list[14] and item != list[15] and item != list[16] and item != list[17] and item != list[18]:
+                10] and item != list[11] and item != list[12] and item != list[13] and item != list[14] and item != list[15]:
                 if (item.get() == ""):
                     flag = False
                     break
 
         if flag:
-            if validate(list2[0], list2[1]):
+            text=validate(list2[0], list2[1])
+            if isinstance(text,bool):
                 bmt=""
                 if (case == 1):
                     deleteProfile(entryUser.get())
-                if (profilePicPath != ""):
-                    fileRoute = "./ProfilePics/" + list2[0]
 
+                fileRoute = "./ProfilePics/" + list2[0]
                 if (biometric):
                     bmt = Biometric()
                     bmt.initialice(list2[0], root)
                     print("finish")
                 if(bmt!="#NO#"and bmt!="No Camera"):
                     os.makedirs(fileRoute)
+                    if(profilePicPath==""):
+                        profilePicPlacer("./Default/default.jpg")
+                        extention="jpg"
                     profilePicPath.save(fileRoute + "/PROFILEPIC." + extention)
+                    fileRoute=fileRoute + "/PROFILEPIC." + extention
                     register(list2, fileRoute)
-                    status=False
+                    closeEnvironment()
+                else:
+                    labelError.config(text="Fallo en la biometrica")
+            else:
+                labelError.config(text=text)
 
 
         else:
-            print("Porfavor llenar todos los espacios")
+            labelError.config(text="Porfavor llenar todos los espacios")
     else:
-        print("No coinciden las contraseñas")
-
+        labelError.config(text="No coinciden las contraseñas")
+    labelError.config(fg="red")
+    labelError.place(x=width/2,y=650, anchor="center")
 def toggle_checkbox():
     global biometric
     if varCheckbox.get():
@@ -404,31 +434,41 @@ def toggle_checkbox():
     else:
         biometric = False
 
-def changeStatus(state):
+def changeStatus():
     global status
-    status=state
+    status=False
 
 def takepicture(event):
     global picLabel, profilePic, extention
     try:
         picLabel.destroy()
-    except Exception as e:
-        print(e)
+    except : pass
     picLabel = Label(profilePic)
     picLabel.place(x=100, y=100, anchor=CENTER)
     picLabel.bind("<Button-1>", takepicture)
     camera=CamApp(picLabel)
     route=camera.begin()
     #bg=("#%02x%02x%02x" % (root.winfo_rgb(profilePic.cget("image"))))
-    _, format = os.path.splitext(route)
-    extention = format[1:].lower()
-    profilePicPlacer(route)
-    picLabel.configure(image="",text="")
-    picLabel.destroy()
+    if not(isinstance(route,bool)):
+        _, format = os.path.splitext(route)
+        extention = format[1:].lower()
+        profilePicPlacer(route)
+    else:
+        try:
+            picLabel.destroy()
+        except:
+            pass
+        profilePic.create_oval(1, 1, 200, 200, fill="#ffffff")
+        font1 = font.Font(family="Times New Romans", size=25)
+        picLabel = Label(profilePic, text="+", bg="#ffffff", font=font1)
+        picLabel.place(x=100, y=100, anchor=CENTER)
+        profilePic.bind("<Button-1>", takepicture)
+        picLabel.bind("<Button-1>", takepicture)
+
 
 
 def begin(case,user):
-    global width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entryBg, entryBr, entryWb, entryFb, entryBmb, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage
+    global labelError, combo, width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entrySetBarriers, entrySetPowers, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -491,7 +531,13 @@ def begin(case,user):
 
     entryMusic = Entry(root, width=20)
     entryMusic.place(x=width / 2, y=210, anchor=CENTER)
-    entryMusic.bind("<Return>",addSong)
+    #entryMusic.bind("<Return>",addSong)
+    entryMusic.bind("<KeyRelease>",updateComboBox)
+
+    combo= Listbox(root, width=20, height=-50,selectmode="single")
+    combo.place(x=width / 2, y=230, anchor=CENTER)
+    combo.lift()
+    combo.bind("<Button-1>", selectOption)
 
     # Boton mostrar contraseña
     showPassword = Button(root, text="Show Password", command=showHidePassword)
@@ -513,7 +559,7 @@ def begin(case,user):
         imagen = imagenes[currentImage]
         btnFlags.config(image=imagen)
 
-    # Carga tus tres imágenes aquí (reemplaza 'imagen1.png', 'imagen2.png', 'imagen3.png' con las rutas de tus imágenes)
+    # Carga tus tres imágenes aquí
     imagen1 = tk.PhotoImage(file='Flags/espFlag.png')
     imagen2 = tk.PhotoImage(file='Flags/ingFlag.png')
     imagen3 = tk.PhotoImage(file='Flags/frnFlag.png')
@@ -530,30 +576,30 @@ def begin(case,user):
     btnFlags.place( x = width / 60, y = height / 45)
 
     # Entries con canciones agregadas
-    entrySA = Entry(root, width=20)
-    entrySA.place(x=width / 2 + 140, y=185, anchor=CENTER)
+    entrySA = Entry(root, width=30)
+    entrySA.place(x=width / 2 + 160, y=185, anchor=CENTER)
     entrySA.config(state="disabled")
-    entrySB = Entry(root, width=20)
-    entrySB.place(x=width / 2 + 140, y=210, anchor=CENTER)
+    entrySB = Entry(root, width=30)
+    entrySB.place(x=width / 2 + 160, y=210, anchor=CENTER)
     entrySB.config(state="disabled")
-    entrySC = Entry(root, width=20)
-    entrySC.place(x=width / 2 + 140, y=235, anchor=CENTER)
+    entrySC = Entry(root, width=30)
+    entrySC.place(x=width / 2 + 160, y=235, anchor=CENTER)
     entrySC.config(state="disabled")
 
     # Botones para eliminar las canciones
     buttonSA = Button(root, text="X", command=deleteSong1)
-    buttonSA.place(x=width / 2 + 230, y=185, anchor=CENTER)
+    buttonSA.place(x=width / 2 + 265, y=185, anchor=CENTER)
     buttonSA.config(state="disabled")
     buttonSB = Button(root, text="X", command=deleteSong2)
-    buttonSB.place(x=width / 2 + 230, y=210, anchor=CENTER)
+    buttonSB.place(x=width / 2 + 265, y=210, anchor=CENTER)
     buttonSB.config(state="disabled")
     buttonSC = Button(root, text="X", command=deleteSong3)
-    buttonSC.place(x=width / 2 + 230, y=235, anchor=CENTER)
+    buttonSC.place(x=width / 2 + 265, y=235, anchor=CENTER)
     buttonSC.config(state="disabled")
 
     # se crea el canvas de la rueda de color
     c = Canvas(root, width=97, height=95, bg="black", highlightbackground=BG)
-    c.place(x=(width / 2), y=300, anchor=CENTER)
+    c.place(x=(width / 2), y=375, anchor=CENTER)
     imageName="./ColorWheel.png"
     myImg=cargarImagen(imageName)
     # se agrega la rueda de color como imagen
@@ -578,90 +624,114 @@ def begin(case,user):
 
     # Se crean los lugares donde aparece el codigo de color y se muestra el color
     entryA = Entry(root, width=10, state="disabled")
-    entryA.place(x=width / 2 + 50, y=250)
+    entryA.place(x=width / 2 + 50, y=325)
     entryB = Entry(root, width=10, state="disabled")
-    entryB.place(x=width / 2 + 50, y=270)
+    entryB.place(x=width / 2 + 50, y=345)
     entryC = Entry(root, width=10, state="disabled")
-    entryC.place(x=width / 2 + 50, y=290)
+    entryC.place(x=width / 2 + 50, y=365)
     entryD = Entry(root, width=10, state="disabled")
-    entryD.place(x=width / 2 + 50, y=310)
+    entryD.place(x=width / 2 + 50, y=385)
     entryE = Entry(root, width=10, state="disabled")
-    entryE.place(x=width / 2 + 50, y=330)
+    entryE.place(x=width / 2 + 50, y=405)
 
     dispA = Button(root, text="  ", state="disabled")
-    dispA.place(x=width / 2 + 100, y=250)
+    dispA.place(x=width / 2 + 100, y=325)
     dispB = Button(root, text="  ", state="disabled")
-    dispB.place(x=width / 2 + 100, y=270)
+    dispB.place(x=width / 2 + 100, y=345)
     dispC = Button(root, text="  ", state="disabled")
-    dispC.place(x=width / 2 + 100, y=290)
+    dispC.place(x=width / 2 + 100, y=365)
     dispD = Button(root, text="  ", state="disabled")
-    dispD.place(x=width / 2 + 100, y=310)
+    dispD.place(x=width / 2 + 100, y=385)
     dispE = Button(root, text="  ", state="disabled")
-    dispE.place(x=width / 2 + 100, y=330)
+    dispE.place(x=width / 2 + 100, y=405)
 
     # Seleccion de imagenes
-    bg1 = "./Backgrounds/Background1.PNG"
-    copyBg1 = Image.open(bg1)
-    myBg1 = ImageTk.PhotoImage(Image.open(bg1).resize((100, 100)))
+    wd1 = "Barriers/Wood/Wood1.PNG"
+    copyBg1 = Image.open(wd1)
+    myWd1 = ImageTk.PhotoImage(Image.open(wd1).resize((100, 100)))
 
-    cbg1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbg1.place(x=(width / 3 - 100), y=410, anchor=CENTER)
-    cbg1.create_image(50, 50, image=myBg1, anchor=CENTER)
-    cbg1.bind("<Button-1>", lambda event, p=1: selectBackground(event, p))
+    cwd1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwd1.place(x=(width / 4 - 100), y=410, anchor=CENTER)
+    cwd1.create_image(50, 50, image=myWd1, anchor=CENTER)
+    cwd1.bind("<Button-1>", lambda event, p=1: selectSetBarriers(event, p))
 
-    bg2 = "./Backgrounds/Background2.PNG"
-    copyBg2 = Image.open(bg2)
-    myBg2 = ImageTk.PhotoImage(Image.open(bg2).resize((100, 100)))
+    sn1 = "Barriers/Stone/Stone1.PNG"
+    copyBg1 = Image.open(sn1)
+    mySn1 = ImageTk.PhotoImage(Image.open(sn1).resize((100, 100)))
 
-    cbg2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbg2.place(x=(width / 3), y=410, anchor=CENTER)
-    cbg2.create_image(50, 50, image=myBg2, anchor=CENTER)
-    cbg2.bind("<Button-1>", lambda event, p=2: selectBackground(event, p))
+    csn1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    csn1.place(x=(width / 4 ), y=410, anchor=CENTER)
+    csn1.create_image(50, 50, image=mySn1, anchor=CENTER)
+    csn1.bind("<Button-1>", lambda event, p=1: selectSetBarriers(event, p))
 
-    bg3 = "./Backgrounds/Background3.PNG"
-    copyBg3 = Image.open(bg3)
-    myBg3 = ImageTk.PhotoImage(Image.open(bg3).resize((100, 100)))
+    st1 = "Barriers/Steel/Steel1.PNG"
+    copyBg1 = Image.open(st1)
+    mySt1 = ImageTk.PhotoImage(Image.open(st1).resize((100, 100)))
 
-    cbg3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbg3.place(x=(width / 3 + 100), y=410, anchor=CENTER)
-    cbg3.create_image(50, 50, image=myBg3, anchor=CENTER)
-    cbg3.bind("<Button-1>", lambda event, p=3: selectBackground(event, p))
+    cst1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cst1.place(x=(width / 4 + 100), y=410, anchor=CENTER)
+    cst1.create_image(50, 50, image=mySt1, anchor=CENTER)
+    cst1.bind("<Button-1>", lambda event, p=1: selectSetBarriers(event, p))
 
-    entryBg = Entry(root, width=20)
-    entryBg.place(x=(width / 3), y=475, anchor=CENTER)
-    entryBg.config(state="disabled")
+    #set 2
+    wd2 = "Barriers/Wood/Wood2.PNG"
+    copyBg1 = Image.open(wd1)
+    myWd2 = ImageTk.PhotoImage(Image.open(wd2).resize((100, 100)))
 
-    # Seleccion de imagenes barreras
-    br1 = "./Barriers/Barrier1.PNG"
-    copyBr1 = Image.open(br1)
-    myBr1 = ImageTk.PhotoImage(Image.open(br1).resize((100, 100)))
+    cwd2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwd2.place(x=(width / 4 - 100), y=515, anchor=CENTER)
+    cwd2.create_image(50, 50, image=myWd2, anchor=CENTER)
+    cwd2.bind("<Button-1>", lambda event, p=2: selectSetBarriers(event, p))
 
-    cbr1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbr1.place(x=(2 * width / 3 - 100), y=410, anchor=CENTER)
-    cbr1.create_image(50, 50, image=myBr1, anchor=CENTER)
-    cbr1.bind("<Button-1>", lambda event, p=1: selectBarrier(event, p))
+    sn2 = "Barriers/Stone/Stone2.PNG"
+    copyBg2 = Image.open(sn2)
+    mySn2 = ImageTk.PhotoImage(Image.open(sn2).resize((100, 100)))
 
-    br2 = "./Barriers/Barrier2.PNG"
-    copyBr2 = Image.open(bg2)
-    myBr2 = ImageTk.PhotoImage(Image.open(br2).resize((100, 100)))
+    csn2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    csn2.place(x=(width / 4), y=515, anchor=CENTER)
+    csn2.create_image(50, 50, image=mySn2, anchor=CENTER)
+    csn2.bind("<Button-1>", lambda event, p=2: selectSetBarriers(event, p))
 
-    cbr2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbr2.place(x=(2 * width / 3), y=410, anchor=CENTER)
-    cbr2.create_image(50, 50, image=myBr2, anchor=CENTER)
-    cbr2.bind("<Button-1>", lambda event, p=2: selectBarrier(event, p))
+    st2 = "Barriers/Steel/Steel2.PNG"
+    copyBg2 = Image.open(st2)
+    mySt2 = ImageTk.PhotoImage(Image.open(st2).resize((100, 100)))
 
-    br3 = "./Barriers/Barrier3.PNG"
-    copyBr3 = Image.open(bg3)
-    myBr3 = ImageTk.PhotoImage(Image.open(br3).resize((100, 100)))
+    cst2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cst2.place(x=(width / 4 + 100), y=515, anchor=CENTER)
+    cst2.create_image(50, 50, image=mySt2, anchor=CENTER)
+    cst2.bind("<Button-1>", lambda event, p=2: selectSetBarriers(event, p))
 
-    cbr3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbr3.place(x=(2 * width / 3 + 100), y=410, anchor=CENTER)
-    cbr3.create_image(50, 50, image=myBr3, anchor=CENTER)
-    cbr3.bind("<Button-1>", lambda event, p=3: selectBarrier(event, p))
+    wd3 = "Barriers/Wood/Wood3.PNG"
+    copyBg3 = Image.open(wd3)
+    myWd3 = ImageTk.PhotoImage(Image.open(wd3).resize((100, 100)))
 
-    entryBr = Entry(root, width=20)
-    entryBr.place(x=(2 * width / 3), y=475, anchor=CENTER)
-    entryBr.config(state="disabled")
+    cwd3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwd3.place(x=(width / 4 - 100), y=620, anchor=CENTER)
+    cwd3.create_image(50, 50, image=myWd3, anchor=CENTER)
+    cwd3.bind("<Button-1>", lambda event, p=3: selectSetBarriers(event, p))
+
+    sn3 = "Barriers/Stone/Stone3.PNG"
+    copyBg1 = Image.open(sn3)
+    mySn3 = ImageTk.PhotoImage(Image.open(sn3).resize((100, 100)))
+
+    csn3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    csn3.place(x=(width / 4), y=620, anchor=CENTER)
+    csn3.create_image(50, 50, image=mySn3, anchor=CENTER)
+    csn3.bind("<Button-1>", lambda event, p=3: selectSetBarriers(event, p))
+
+    st3 = "Barriers/Steel/Steel3.PNG"
+    copyBg3 = Image.open(st3)
+    mySt3 = ImageTk.PhotoImage(Image.open(st3).resize((100, 100)))
+
+    cst3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cst3.place(x=(width / 4 + 100), y=620, anchor=CENTER)
+    cst3.create_image(50, 50, image=mySt3, anchor=CENTER)
+    cst3.bind("<Button-1>", lambda event, p=3: selectSetBarriers(event, p))
+
+    entrySetBarriers = Entry(root, width=20)
+    entrySetBarriers.place(x=(width / 4), y=725, anchor=CENTER)
+    entrySetBarriers.config(state="disabled")
+
 
     # Seleccion de imagenes bola agua
     wb1 = "./Powers/WaterBalls/WB1.PNG"
@@ -669,31 +739,28 @@ def begin(case,user):
     myWb1 = ImageTk.PhotoImage(Image.open(wb1).resize((100, 100)))
 
     cwb1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cwb1.place(x=(width / 4 - 100), y=550, anchor=CENTER)
+    cwb1.place(x=(3*width / 4 - 100), y=410, anchor=CENTER)
     cwb1.create_image(50, 50, image=myWb1, anchor=CENTER)
-    cwb1.bind("<Button-1>", lambda event, p=1: selectWB(event, p))
+    cwb1.bind("<Button-1>", lambda event, p=1: selectSetPowers(event, p))
 
     wb2 = "./Powers/WaterBalls/WB2.PNG"
     copyWb2 = Image.open(wb1)
     myWb2 = ImageTk.PhotoImage(Image.open(wb2).resize((100, 100)))
 
     cwb2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cwb2.place(x=(width / 4), y=550, anchor=CENTER)
+    cwb2.place(x=(3*width / 4 - 100), y=515, anchor=CENTER)
     cwb2.create_image(50, 50, image=myWb2, anchor=CENTER)
-    cwb2.bind("<Button-1>", lambda event, p=2: selectWB(event, p))
+    cwb2.bind("<Button-1>", lambda event, p=2: selectSetPowers(event, p))
 
     wb3 = "./Powers/WaterBalls/WB3.PNG"
     copyWb3 = Image.open(wb3)
     myWb3 = ImageTk.PhotoImage(Image.open(wb3).resize((100, 100)))
 
     cwb3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cwb3.place(x=(width / 4) + 100, y=550, anchor=CENTER)
+    cwb3.place(x=(3*width / 4 - 100), y=620, anchor=CENTER)
     cwb3.create_image(50, 50, image=myWb3, anchor=CENTER)
-    cwb3.bind("<Button-1>", lambda event, p=3: selectWB(event, p))
+    cwb3.bind("<Button-1>", lambda event, p=3: selectSetPowers(event, p))
 
-    entryWb = Entry(root, width=20)
-    entryWb.place(x=(width / 4), y=615, anchor=CENTER)
-    entryWb.config(state="disabled")
 
     # Seleccion de imagenes bola fuego
     fb1 = "./Powers/FireBalls/FB1.PNG"
@@ -701,31 +768,28 @@ def begin(case,user):
     myFb1 = ImageTk.PhotoImage(Image.open(fb1).resize((100, 100)))
 
     cfb1 = Canvas(root, width=100, height=100, bg="white", highlightbackground=BG)
-    cfb1.place(x=(width / 2 - 100), y=550, anchor=CENTER)
+    cfb1.place(x=(3*width / 4), y=410, anchor=CENTER)
     cfb1.create_image(50, 50, image=myFb1, anchor=CENTER)
-    cfb1.bind("<Button-1>", lambda event, p=1: selectFB(event, p))
+    cfb1.bind("<Button-1>", lambda event, p=1: selectSetPowers(event, p))
 
     fb2 = "./Powers/FireBalls/FB2.PNG"
     copyFb2 = Image.open(fb2)
     myFb2 = ImageTk.PhotoImage(Image.open(fb2).resize((100, 100)))
 
     cfb2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cfb2.place(x=(width / 2), y=550, anchor=CENTER)
+    cfb2.place(x=(3*width / 4), y=515, anchor=CENTER)
     cfb2.create_image(50, 50, image=myFb2, anchor=CENTER)
-    cfb2.bind("<Button-1>", lambda event, p=2: selectFB(event, p))
+    cfb2.bind("<Button-1>", lambda event, p=2: selectSetPowers(event, p))
 
     fb3 = "./Powers/FireBalls/FB3.PNG"
     copyFb3 = Image.open(fb3)
     myFb3 = ImageTk.PhotoImage(Image.open(fb3).resize((100, 100)))
 
     cfb3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cfb3.place(x=(width / 2) + 100, y=550, anchor=CENTER)
+    cfb3.place(x=(3*width / 4), y=620, anchor=CENTER)
     cfb3.create_image(50, 50, image=myFb3, anchor=CENTER)
-    cfb3.bind("<Button-1>", lambda event, p=3: selectFB(event, p))
+    cfb3.bind("<Button-1>", lambda event, p=3: selectSetPowers(event, p))
 
-    entryFb = Entry(root, width=20)
-    entryFb.place(x=(width / 2), y=615, anchor=CENTER)
-    entryFb.config(state="disabled")
 
     # Seleccion de imagenes bola fuego
     bmb1 = "./Powers/Bombs/Bomb1.PNG"
@@ -733,31 +797,31 @@ def begin(case,user):
     myBmb1 = ImageTk.PhotoImage(Image.open(bmb1).resize((100, 100)))
 
     cbmb1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbmb1.place(x=(3 * width / 4 - 100), y=550, anchor=CENTER)
+    cbmb1.place(x=(3*width / 4 + 100), y=410, anchor=CENTER)
     cbmb1.create_image(50, 50, image=myBmb1, anchor=CENTER)
-    cbmb1.bind("<Button-1>", lambda event, p=1: selectBmb(event, p))
+    cbmb1.bind("<Button-1>", lambda event, p=1: selectSetPowers(event, p))
 
     bmb2 = "./Powers/Bombs/Bomb2.PNG"
     copyBmb2 = Image.open(bmb2)
     myBmb2 = ImageTk.PhotoImage(Image.open(bmb2).resize((100, 100)))
 
     cbmb2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbmb2.place(x=(3 * width / 4), y=550, anchor=CENTER)
+    cbmb2.place(x=(3*width / 4 + 100), y=515, anchor=CENTER)
     cbmb2.create_image(50, 50, image=myBmb2, anchor=CENTER)
-    cbmb2.bind("<Button-1>", lambda event, p=2: selectBmb(event, p))
+    cbmb2.bind("<Button-1>", lambda event, p=2: selectSetPowers(event, p))
 
     bmb3 = "./Powers/Bombs/Bomb3.PNG"
     copyBmb3 = Image.open(bmb3)
     myBmb3 = ImageTk.PhotoImage(Image.open(bmb3).resize((100, 100)))
 
     cbmb3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
-    cbmb3.place(x=(3 * width / 4 + 100), y=550, anchor=CENTER)
+    cbmb3.place(x=(3*width / 4 + 100), y=620, anchor=CENTER)
     cbmb3.create_image(50, 50, image=myBmb3, anchor=CENTER)
-    cbmb3.bind("<Button-1>", lambda event, p=3: selectBmb(event, p))
+    cbmb3.bind("<Button-1>", lambda event, p=3: selectSetPowers(event, p))
 
-    entryBmb = Entry(root, width=20)
-    entryBmb.place(x=(3 * width / 4), y=615, anchor=CENTER)
-    entryBmb.config(state="disabled")
+    entrySetPowers = Entry(root, width=20)
+    entrySetPowers.place(x=(3 * width / 4), y=720, anchor=CENTER)
+    entrySetPowers.config(state="disabled")
 
     buttonProfPic = Button(root, text="Add Profile Picture", command=profilePicMaker)
     buttonProfPic.place(x=width / 4, y=25, anchor=CENTER)
@@ -781,9 +845,11 @@ def begin(case,user):
     # Crear la casilla de verificación
     checkbox = Checkbutton(root, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
     checkbox.place(x=width / 4, y=300)
+
+    labelError = addLabel("", width / 2 -30, 650, "flat", 12)
+    labelError.config(fg="red",anchor="center")
     #Abre la ventana
     root.mainloop()
-    while(True):
-        if not status:
-            return False
-    
+    return False
+
+
