@@ -112,11 +112,14 @@ class Autenticacion:
                 print("exito")
                 self.logInScreen.closeEnvironment()
                 flag=True
-                Lobby()
+                lobby=Lobby(username, "")
                 # game = Game(username, "Prueba")
                 # game.initialize(game.player1, game.player2)
                 while(flag):
-                   """ if (game.win):
+                    if not (lobby.initialize()):
+                        Autenticacion()
+                        flag=False
+                    """ if (game.win):
                         time.sleep(2)
                         print("entro")
                         Autenticacion()
@@ -146,13 +149,12 @@ class Autenticacion:
         if(user!="#NO#"):
             if(user!="No Camera"):
                 self.logInScreen.closeEnvironment()
+                lobby = Lobby(user, "")
                 flag = True
-                game = Game(user, "Prueba")
-                game.initialize(game.player1, game.player2)
+                #game = Game(user, "Prueba")
+                #game.initialize(game.player1, game.player2)
                 while (flag):
-                    if (game.win):
-                        time.sleep(2)
-                        print("entro")
+                    if not (lobby.initialize()):
                         Autenticacion()
                         flag = False
 

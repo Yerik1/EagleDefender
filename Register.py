@@ -189,11 +189,11 @@ def validate(user,password):
                 print("safe")
                 return True
             else:
-                return("Usuario ya existe")
+                return("User already exists")
         else:
-            return("Contraseña invalida")
+            return("Invalid Password")
     else:
-        return("Usuario invalido")
+        return("Invalid User")
 
 
 """
