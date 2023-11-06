@@ -9,13 +9,14 @@ from InitialEnvironment import begin
 import RegisterGUI
 import FacialRecognition
 from Game import Game
+from lobbyScreen import Lobby
 
 class Autenticacion:
 
     def __init__(self):
         self.logInScreen = GUIBuilder('#86895d')
 
-        self.showHide=0
+        self.showHide = 0
         # Obtener las dimensiones de la pantalla
         self.width = self.logInScreen.root.winfo_screenwidth()  # Ancho
         self.height = self.logInScreen.root.winfo_screenheight()  # Alto
@@ -35,7 +36,7 @@ class Autenticacion:
 
 
         # Label con el titulo de la ventana
-        self.windowTitle = self.logInScreen.addLabel("Log In", self.width/2, (self.height)/100,"raised")
+        self.windowTitle = self.logInScreen.addLabel("Log In", self.width/2, (self.height)/100,"flat")
 
         # Label de la solicitud del Username
         self.userLb = self.logInScreen.addLabel("User Name: ", self.width/8, self.height/4, "flat")
@@ -50,7 +51,7 @@ class Autenticacion:
         self.newAccountLb = self.logInScreen.addLabel("Create an account?", self.width/2, self.height/1.6, "flat")
 
         # Label de logearse como un invitado
-        self.logInGuestLb = self.logInScreen.addLabel("Log In as guest?", self.width/2, self.height/1.3, "flat")
+        # self.logInGuestLb = self.logInScreen.addLabel("Log In as guest?", self.width/2, self.height/1.3, "flat")
         self.currentImage = 0
 
         # Carga tus tres imágenes aquí (reemplaza 'imagen1.png', 'imagen2.png', 'imagen3.png' con las rutas de tus imágenes)
@@ -77,7 +78,7 @@ class Autenticacion:
         self.registerBtn = self.logInScreen.buttons("Register", lambda: self.register1(), "Red", "orange", self.width / 2, self.height / 1.5)
 
         # Boton de guest
-        self.guestBtn = self.logInScreen.buttons("Guesst", lambda: print("Soy invitado"), "red", "black", self.width / 2, self.height / 1.2)
+        # self.guestBtn = self.logInScreen.buttons("Guesst", lambda: print("Soy invitado"), "red", "black", self.width / 2, self.height / 1.2)
 
         # Boton de biometrica
         self.biometricBtn = self.logInScreen.buttons("Acept", lambda: self.biometric(), "orange", "green", self.width / 1.5, self.height / 3.4)
@@ -111,14 +112,15 @@ class Autenticacion:
                 print("exito")
                 self.logInScreen.closeEnvironment()
                 flag=True
-                game = Game(username, "Prueba")
-                game.initialize(game.player1, game.player2)
+                Lobby()
+                # game = Game(username, "Prueba")
+                # game.initialize(game.player1, game.player2)
                 while(flag):
-                    if (game.win):
+                   """ if (game.win):
                         time.sleep(2)
                         print("entro")
                         Autenticacion()
-                        flag=False
+                        flag=False"""
 
                 print("salio")
                 return True

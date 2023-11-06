@@ -88,6 +88,7 @@ def buttons(title, action, color1, color2, a, b):
     # Cambia el color del boton cuando el puntero pasa por este
     btn.bind("<Leave>", change1)  # Sale
     btn.bind("<Enter>", change2)  # Entra
+    return btn
 
 # Funcion que Agrega labels
 def addLabel(txt, a, b, r, s):
