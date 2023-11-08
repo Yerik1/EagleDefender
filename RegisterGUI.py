@@ -88,6 +88,7 @@ def buttons(title, action, color1, color2, a, b):
     # Cambia el color del boton cuando el puntero pasa por este
     btn.bind("<Leave>", change1)  # Sale
     btn.bind("<Enter>", change2)  # Entra
+    return btn
 
 # Funcion que Agrega labels
 def addLabel(txt, a, b, r, s):
@@ -416,15 +417,15 @@ def registerGUI(case):
                     register(list2, fileRoute)
                     closeEnvironment()
                 else:
-                    labelError.config(text="Fallo en la biometrica")
+                    labelError.config(text="Fail at Face Recognition")
             else:
                 labelError.config(text=text)
 
 
         else:
-            labelError.config(text="Porfavor llenar todos los espacios")
+            labelError.config(text="Please fill all the spaces with *")
     else:
-        labelError.config(text="No coinciden las contraseñas")
+        labelError.config(text="Passwords don't match")
     labelError.config(fg="red")
     labelError.place(x=width/2,y=650, anchor="center")
 def toggle_checkbox():
@@ -490,17 +491,17 @@ def begin(case,user):
 
     # Agrega los labels de la ventana de Registro
 
-    addLabel("Name", width / 2 - 110, 48, "flat", 12)
+    addLabel("*Name", width / 2 - 120, 48, "flat", 12)
 
-    addLabel("User", width / 2 - 103, 74, "flat", 12)
+    addLabel("*User", width / 2 - 113, 74, "flat", 12)
 
-    addLabel("Password", width / 2 - 140, 98, "flat", 12)
+    addLabel("*Password", width / 2 - 150, 98, "flat", 12)
 
-    addLabel("Confirm Password", width / 2 - 198, 123, "flat", 12)
+    addLabel("*Confirm Password", width / 2 - 208, 123, "flat", 12)
 
-    addLabel("Email", width / 2 - 110, 148, "flat", 12)
+    addLabel("*Email", width / 2 - 120, 148, "flat", 12)
 
-    addLabel("Age", width / 2 - 99, 173, "flat", 12)
+    addLabel("*Age", width / 2 - 109, 173, "flat", 12)
 
     addLabel("Music", width / 2 - 111, 199, "flat", 12)
 
@@ -644,6 +645,18 @@ def begin(case,user):
     dispD.place(x=width / 2 + 100, y=385)
     dispE = Button(root, text="  ", state="disabled")
     dispE.place(x=width / 2 + 100, y=405)
+
+    addLabel("Set 1", (width / 4 - 250), 410, "flat", 25)
+    addLabel("Set 2", (width / 4 - 250), 515, "flat", 25)
+    addLabel("Set 3", (width / 4 - 250), 620, "flat", 25)
+    addLabel("Set 1", (3*width / 4 + 150), 410, "flat", 25)
+    addLabel("Set 2", (3*width / 4 + 150), 515, "flat", 25)
+    addLabel("Set 3", (3*width / 4 + 150), 620, "flat", 25)
+    addLabel("Choose a Barrier Set (Click)", (width / 4-130), 325, "flat", 15)
+    addLabel("Choose a Power Set (Click)", (3 * width / 4-130), 325, "flat", 15)
+    addLabel("Choose a color palette (Click)", (width / 2-75), 300, "flat", 12)
+    text="User can only have Letters, Numbers and '_' \nPassword must have: 8 characters, 1 Capital Letter,\n1 Lowercase Letter and 1 Number or Symbol"
+    addLabel(text, (3*width / 4 - 100), 70, "flat", 12)
 
     # Seleccion de imagenes
     wd1 = "Barriers/Wood/Wood1.PNG"
@@ -844,7 +857,7 @@ def begin(case,user):
 
     # Crear la casilla de verificación
     checkbox = Checkbutton(root, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
-    checkbox.place(x=width / 4, y=300)
+    checkbox.place(x=width / 4-40, y=275)
 
     labelError = addLabel("", width / 2 -30, 650, "flat", 12)
     labelError.config(fg="red",anchor="center")

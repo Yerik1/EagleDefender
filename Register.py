@@ -111,13 +111,20 @@ def register(list,profPicRoute):
     newAge.text = list[5]
     #Se crea el elemento de la lista de canciones
     newSongList = eT.Element('Music')
-
-    newSongA =eT.SubElement(newSongList, 'SongA') #cancion A
-    newSongA.text=list[6]
-    newSongB = eT.SubElement(newSongList, 'SongB') #cancion B
-    newSongB.text = list[7]
-    newSongC = eT.SubElement(newSongList, 'SongC') #cancion C
-    newSongC.text = list[8]
+    if list[6]!="":
+        newSongA =eT.SubElement(newSongList, 'SongA') #cancion A
+        newSongA.text=list[6]
+        newSongB = eT.SubElement(newSongList, 'SongB') #cancion B
+        newSongB.text = list[7]
+        newSongC = eT.SubElement(newSongList, 'SongC') #cancion C
+        newSongC.text = list[8]
+    else:
+        newSongA = eT.SubElement(newSongList, 'SongA')  # cancion A
+        newSongA.text = "Battle Without Honor Or Humanity HOTEI"
+        newSongB = eT.SubElement(newSongList, 'SongB')  # cancion B
+        newSongB.text = "Duel of the Fates John Williams"
+        newSongC = eT.SubElement(newSongList, 'SongC')  # cancion C
+        newSongC.text = "Adiemus Karl Jenkins"
 
     #se agrega la lista de canciones al cliente
     newClient.append(newSongList)
@@ -189,11 +196,11 @@ def validate(user,password):
                 print("safe")
                 return True
             else:
-                return("Usuario ya existe")
+                return("User already exists")
         else:
-            return("Contraseña invalida")
+            return("Invalid Password")
     else:
-        return("Usuario invalido")
+        return("Invalid User")
 
 
 """

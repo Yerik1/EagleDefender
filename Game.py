@@ -131,8 +131,7 @@ class Round:
         self.image3 = Barriers("Barriers/Steel/Steel"+self.player2[14]+".PNG", self.window_width // 4 + 100, 200, 3, 10, self)
         self.image4 = Barriers("Eagle/Eagle.png", 75, 525, 3, 1,self)
 
-        self.selectBarrier_thread = threading.Thread(target=self.selectBarrier)
-        self.selectBarrier_thread.start()
+
         # Crear instancias para las imágenes de Poderes
         self.power1 = Powers("Powers/WaterBalls/WB"+self.player2[15]+".PNG", 3 * self.window_width // 4 - 200, 200, 1, 3,self)
         self.power2 = Powers("Powers/FireBalls/FB"+self.player2[15]+".PNG", 3 * self.window_width // 4 - 50, 200, 2, 2,self)
@@ -207,6 +206,8 @@ class Round:
         self.font = pygame.font.Font(None, 36)  # Fuente predeterminada con un tamaño de 36 puntos
 
         self.start_timer(60)
+        self.selectBarrier_thread = threading.Thread(target=self.selectBarrier)
+        self.selectBarrier_thread.start()
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
