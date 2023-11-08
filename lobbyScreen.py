@@ -9,7 +9,9 @@ import xml.etree.ElementTree as ET
 from PIL import ImageDraw, ImageTk, Image, ImageFilter
 from LogIn import LogIn
 from Game import Game
+from Instructions import Instructions
 import time
+import HallOfFame
 
 # Clase que crea la ventana para la pantalla del Lobby
 class Lobby:
@@ -49,6 +51,25 @@ class Lobby:
         lobby = Lobby(self.user1[0],logIn.begin())
         print("salio")
         lobby.initialize()
+
+    def tutorial(self):
+        self.lobbyScreen.closeEnvironment()
+        Instructions().initialize()
+        if self.user2==[]:
+            lobby = Lobby(self.user1[0], "")
+        else:
+            lobby = Lobby(self.user1[0], self.user2[0])
+        lobby.initialize()
+
+    def hallOfFame(self):
+        self.lobbyScreen.closeEnvironment()
+        HallOfFame.begin()
+        if self.user2 == []:
+            lobby = Lobby(self.user1[0], "")
+        else:
+            lobby = Lobby(self.user1[0], self.user2[0])
+        lobby.initialize()
+
     def load(self,user):
         list = []
         register.decrypt()
@@ -136,13 +157,13 @@ class Lobby:
                                                  "White", 3.5 * self.width / 8, self.height / 2)
         onlineGameBtn.config(state="disabled")
 
-        tutorialBtn = self.lobbyScreen.buttons("Tutorial", lambda: (print("Esto aun no hace nada")), "Orange",
+        tutorialBtn = self.lobbyScreen.buttons("Tutorial", lambda: (self.tutorial()), "Orange",
                                                "White", 4.5 * self.width / 8, self.height / 2)
-        tutorialBtn.config(state="disabled")
+        #tutorialBtn.config(state="disabled")
 
-        hallOfFamebtn = self.lobbyScreen.buttons("Hall of Fame", lambda: (print("Esto aun no hace nada")), "Orange",
+        hallOfFamebtn = self.lobbyScreen.buttons("Hall of Fame", lambda: (self.hallOfFame()), "Orange",
                                                  "White", 5.5 * self.width / 8, self.height / 2)
-        hallOfFamebtn.config(state="disabled")
+        #hallOfFamebtn.config(state="disabled")
         if not self.lobbyScreen.initialize():
             return False
 

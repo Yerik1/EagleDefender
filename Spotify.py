@@ -87,5 +87,9 @@ def searchSong(songName):
     print(results)
     return results
 
+def play(song):
+    results = sp1.search(q=f'track:{song}', type='track', limit=1)
+    trackUri = results['tracks']['items'][0]['uri']
+    sp1.start_playback(uris=[trackUri])
 #play=createPlaylist()
 #playSong(play[0],play[1])
