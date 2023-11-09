@@ -71,7 +71,7 @@ def playSong(playlist,songs,number):
     print(f'Energía: {audioFeatures["energy"]}')
     print(f'Danza: {audioFeatures["danceability"]}')
 
-    return[audioFeatures["duration_ms"],audioFeatures["tempo"]]
+    return[audioFeatures["duration_ms"],audioFeatures["tempo"],audioFeatures["key"],audioFeatures["valence"],audioFeatures["energy"],audioFeatures["danceability"],audioFeatures["instrumentalness"],audioFeatures["acousticness"]]
 
 def pauseSong():
     sp.pause_playback()

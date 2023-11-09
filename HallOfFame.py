@@ -9,7 +9,6 @@ from tkinter import *
 import xml.etree.ElementTree as ET
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from tkinter import colorchooser, filedialog, font
-from Game import Game
 import Spotify as sp
 
 list=[]
@@ -40,7 +39,7 @@ def begin():
 
     #Define los labels de la posicion 1
     user1Lbl= hallOfFameScreen.addLabel(list[0][0], width/3.50,height/3.45,"flat")
-    user1Lbl.config(font=("Arial",36))
+    user1Lbl.config(font=("Arial",30))
     dotsLbl = hallOfFameScreen.addLabel("............................", width / 2, height / 3.45, "flat")
     dotsLbl.config(font=("Arial", 36))
 
@@ -49,7 +48,7 @@ def begin():
 
     #Define los labels de la posicion 2
     user2Lbl = hallOfFameScreen.addLabel(list[1][0], width / 3.50, height /2.55, "flat")
-    user2Lbl.config(font=("Arial", 36))
+    user2Lbl.config(font=("Arial", 30))
 
     pts2Lbl = hallOfFameScreen.addLabel(str(list[1][1])+" points", width / 1.39, height / 2.55, "flat")
     pts2Lbl.config(font=("Arial", 36))
@@ -59,7 +58,7 @@ def begin():
 
     #Define los labels de la posicion 3
     user3Lbl = hallOfFameScreen.addLabel(list[2][0], width / 3.50, height /2, "flat")
-    user3Lbl.config(font=("Arial", 36))
+    user3Lbl.config(font=("Arial", 30))
 
     pts3Lbl = hallOfFameScreen.addLabel("", width / 1.42 , height / 2, "flat")
     pts3Lbl.config(font=("Arial", 36))
@@ -75,7 +74,7 @@ def begin():
     pos4Lbl.config(font=("Arial",36))
 
     user4Lbl = hallOfFameScreen.addLabel(list[3][0], width / 3.50, height /1.65, "flat")
-    user4Lbl.config(font=("Arial", 36))
+    user4Lbl.config(font=("Arial", 30))
 
     pts4Lbl = hallOfFameScreen.addLabel(str(list[3][1])+" points", width / 1.39, height / 1.65, "flat")
     pts4Lbl.config(font=("Arial", 36))
@@ -87,7 +86,7 @@ def begin():
     pos5Lbl.config(font=("Arial", 36))
 
     user5Lbl = hallOfFameScreen.addLabel(list[4][0], width / 3.50, height /1.40 , "flat")
-    user5Lbl.config(font=("Arial", 36))
+    user5Lbl.config(font=("Arial", 30))
 
     pts5Lbl = hallOfFameScreen.addLabel(str(list[4][1])+" points", width / 1.39, height / 1.40 , "flat")
     pts5Lbl.config(font=("Arial", 36))
@@ -99,37 +98,37 @@ def begin():
     #copyFirstPlace= Image.open(firstPlace)
     myFirstPlace = ImageTk.PhotoImage(PIL.Image.open(firstPlace).resize((40,40)))
 
-    cFirstPlace = hallOfFameScreen.addCanvas(40,40,width/5.20,height/3.80, "Black")
+    cFirstPlace = hallOfFameScreen.addCanvas(40,40,width/5.25,height/3.80, "Black")
     cFirstPlace.create_image(21.5, 21.5, image=myFirstPlace, anchor=CENTER)
 
     secondPlace= "./HallOfFameImages/medallaPlata.png"
     #copyFirstPlace= Image.open(firstPlace)
     mySecondPlace = ImageTk.PhotoImage(PIL.Image.open(secondPlace).resize((42,42)))
 
-    cSecondPlace = hallOfFameScreen.addCanvas(40,40,width/5.20,height/2.75, "Black")
+    cSecondPlace = hallOfFameScreen.addCanvas(40,40,width/5.25,height/2.75, "Black")
     cSecondPlace.create_image(21.5, 21.5, image=mySecondPlace, anchor=CENTER)
 
     thirdPlace= "./HallOfFameImages/medallaBronce.png"
     #copyFirstPlace= Image.open(firstPlace)
     myThirdPlace = ImageTk.PhotoImage(PIL.Image.open(thirdPlace).resize((42,42)))
 
-    cThirdPlace = hallOfFameScreen.addCanvas(40,40,width/5.20,height/2.15, "Black")
+    cThirdPlace = hallOfFameScreen.addCanvas(40,40,width/5.25,height/2.15, "Black")
     cThirdPlace.create_image(21.5, 21.5, image=myThirdPlace, anchor=CENTER)
 
     logo1= "./HallOfFameImages/Logo.png"
     #copyFirstPlace= Image.open(firstPlace)
-    myLogo1 = ImageTk.PhotoImage(PIL.Image.open(logo1).resize((200,200)))
+    myLogo1 = ImageTk.PhotoImage(PIL.Image.open(logo1).resize((150,150)))
 
-    clogo1 = hallOfFameScreen.addCanvas(200,200,width/35,height/40, "Black")
-    clogo1.create_image(100, 100, image=myLogo1, anchor=CENTER)
+    clogo1 = hallOfFameScreen.addCanvas(150,150,width/35,height/40, "Black")
+    clogo1.create_image(75, 75, image=myLogo1, anchor=CENTER)
 
 
     logo2= "./HallOfFameImages/Logo.png"
     #copyFirstPlace= Image.open(firstPlace)
-    myLogo2 = ImageTk.PhotoImage(PIL.Image.open(logo2).resize((200,200)))
+    myLogo2 = ImageTk.PhotoImage(PIL.Image.open(logo2).resize((150,150)))
 
-    cLogo2 = hallOfFameScreen.addCanvas(200,200,width/1.2,height/40, "Black")
-    cLogo2.create_image(100, 100, image=myLogo1, anchor=CENTER)
+    cLogo2 = hallOfFameScreen.addCanvas(150,150,width/1.2,height/40, "Black")
+    cLogo2.create_image(75, 75, image=myLogo1, anchor=CENTER)
 
     #BUTTONS
     bt1=hallOfFameScreen.buttons("Play",lambda: (playSongs(0,bt1,0)),"White","White",width/1.2,height/3.45)
