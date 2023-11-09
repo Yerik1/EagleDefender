@@ -10,6 +10,9 @@ import Spotify
 import random
 import Register as register
 import xml.etree.ElementTree as ET
+from HallOfFame import entryHallOfFame
+from scipy.stats import poisson
+from scipy.stats import expon
 
 class Game:
     def __init__(self,player1,player2):
@@ -27,7 +30,8 @@ class Game:
 
         # Utiliza la función glob para buscar archivos que coincidan con el patrón en la carpeta
         self.archivos = glob.glob(os.path.join(self.carpeta_imagenes, self.patron))
-        self.songList =[]
+        self.songList1 =[]
+        self.songList2 =[]
         for element in self.archivos:
             image = pygame.image.load(element)
             image = pygame.transform.scale(image, (50, 50))
@@ -39,12 +43,13 @@ class Game:
         for item in self.player1:
             if item==self.player1[5] or item==self.player1[6] or item==self.player1[7]:
                 if item is not None:
-                    self.songList.append(item)
+                    self.songList1.append(item)
         for item in self.player2:
             if item==self.player2[5] or item==self.player2[6] or item==self.player2[7]:
                 if item is not None:
-                    self.songList.append(item)
-        self.songInfo=Spotify.createPlaylist(self.songList)
+                    self.songList2.append(item)
+        self.songInfo1=Spotify.createPlaylist(self.songList1)
+        self.songInfo2 = Spotify.createPlaylist(self.songList2)
 
 
     def load(self,user):
@@ -59,10 +64,8 @@ class Game:
                 for data in client:
                     if (data.tag == "Music" or data.tag=="Colors"):
                         for song in data:
-                            print(song.text)
                             list.append(song.text)
                     else:
-                        print(data.text)
                         list.append(data.text)
         return list
     def initialize(self,player1,player2):
@@ -75,11 +78,31 @@ class Round:
     def __init__(self,player1,player2,game):
         pygame.init()
         self.Game=game
-        self.songNumber=random.randrange(len(game.songList))
-        self.songTempo=0
-        self.songTime=0
-        self.songBeats=0
+        self.songNumber1=random.randrange(len(game.songList1))
+        self.songNumber2 = random.randrange(len(game.songList2))
+        self.songTempoDef=0
+        self.songTimeDef=0
+        self.songKeyDef=0
+        self.songValenceDef=0
+        self.songEnergyDef=0
+        self.songDanceDef=0
+        self.songInstrumentalDef=0
+        self.songAcousticDef=0
         self.points=0
+        self.songTempoAtck = 0
+        self.songTimeAtck = 0
+        self.songKeyAtck = 0
+        self.songValenceAtck = 0
+        self.songEnergyAtck = 0
+        self.songDanceAtck = 0
+        self.songInstrumentalAtck = 0
+        self.songAcousticAtck = 0
+        self.points = 0
+        self.barriersPlaced = 0
+        self.barriersDestroyed = 0
+        self.timePassed = 0
+        self.pointsDef = 0
+        self.pointsAttack=0
         info = pygame.display.Info()
         # Utiliza las dimensiones del monitor principal
         self.window_width, self.window_height = info.current_w, info.current_h
@@ -107,7 +130,14 @@ class Round:
         self.timeGame=0
         self.game=False
         self.direction=False
-
+        self.timeB1=0
+        self.timeB2 = 0
+        self.timeB3 = 0
+        self.timeP1 = 0
+        self.timeP2 = 0
+        self.timeP3 = 0
+        self.listDef=[]
+        self.listAttck=[]
     def begin(self):
         self.running = True
         self.cursor_x, self.cursor_y = self.window_width // 4, self.window_height // 2
@@ -126,9 +156,9 @@ class Round:
 
 
         # Crear instancias para las cuatro imágenes
-        self.image1 = Barriers("Barriers/Wood/Wood"+self.player2[14]+".PNG", self.window_width // 4 - 200, 200, 1, 10, self)
-        self.image2 = Barriers("Barriers/Stone/Stone"+self.player2[14]+".PNG", self.window_width // 4 - 50, 200, 2, 10, self)
-        self.image3 = Barriers("Barriers/Steel/Steel"+self.player2[14]+".PNG", self.window_width // 4 + 100, 200, 3, 10, self)
+        self.image1 = Barriers("Barriers/Wood/Wood"+self.player1[14]+".PNG", self.window_width // 4 - 200, 200, 1, 10, self)
+        self.image2 = Barriers("Barriers/Stone/Stone"+self.player1[14]+".PNG", self.window_width // 4 - 50, 200, 2, 10, self)
+        self.image3 = Barriers("Barriers/Steel/Steel"+self.player1[14]+".PNG", self.window_width // 4 + 100, 200, 3, 10, self)
         self.image4 = Barriers("Eagle/Eagle.png", 75, 525, 3, 1,self)
 
 
@@ -208,6 +238,7 @@ class Round:
         self.start_timer(60)
         self.selectBarrier_thread = threading.Thread(target=self.selectBarrier)
         self.selectBarrier_thread.start()
+
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -253,6 +284,11 @@ class Round:
                                             self.movementThreads.append(movement_thread)
                                             movement_thread.start()
                                             power.amount -= 1
+                                            #power.cookAlgorithm(self.listAttck[1], self.listAttck[2],
+                                                                      #self.listAttck[3], self.listAttck[4],
+                                                                      #self.listAttck[5], self.listAttck[6],
+                                                                      #self.listAttck[7], self.listAttck[0])
+
                                             if power==self.power1:
                                                 pygame.mixer.music.load("SoundEfects/WaterBall.mp3")
                                                 pygame.mixer.music.play()
@@ -269,7 +305,6 @@ class Round:
                             for power in [self.power1, self.power2, self.power3]:
                                 if self.check_click(power, selection_x, selection_y):
                                     self.selected_image_to_move = power
-
 
 
             self.pointer_rect.topleft = (self.cursor_x, self.cursor_y)
@@ -318,12 +353,20 @@ class Round:
 
             if self.game:
                 textTime= self.font.render(str(self.timeGame), True, (0, 0, 0))
+                if(self.barriersPlaced!=0 and self.timeGame!=0):
+                    self.pointsDef = int((2 / (1 / self.barriersPlaced) + (1 / self.timeGame)))
+                else:
+                    self.pointsDef = 0
+                if(self.barriersDestroyed!=0 and self.timePassed!=0):
+                    self.pointsAttack = int((2 / (1 / self.barriersDestroyed)+ (1 / self.timePassed)))
+                else:
+                    self.pointsAttack = 0
 
             else:
                 textTime = self.font.render(str(self.timeDefense), True, (0, 0, 0))
 
-            textPoints1 = self.font.render("Puntos: " + str(self.points), True, (0, 0, 0))
-            textPoints2 = self.font.render("Puntos: " + str(self.timeGame), True, (0, 0, 0))
+            textPoints1 = self.font.render("Puntos: " + str(self.pointsDef), True, (0, 0, 0))
+            textPoints2 = self.font.render("Puntos: " + str(self.pointsAttack), True, (0, 0, 0))
             # Posición de la etiqueta
             text1_rect = text1.get_rect()
             text1_rect.center = (self.window_width // 4 - 190, 260)
@@ -379,9 +422,10 @@ class Round:
     def start_timer(self,times):
         def temporizador():
             if not self.game:
-                self.timeDefense = times  # 60 segundos = 1 minuto
-                pygame.mixer.music.load("SoundEfects/Waiting.mp3")
-                pygame.mixer.music.play()
+                self.listDef = Spotify.playSong(self.Game.songInfo1[0], self.Game.songInfo1[1], self.songNumber1)
+                self.timeDefense = self.listDef[0]//1000  # 60 segundos = 1 minuto
+                #pygame.mixer.music.load("SoundEfects/Waiting.mp3")
+                #pygame.mixer.music.play()
                 while self.timeDefense > 0:
                     minutos, segundos = divmod(self.timeDefense, 60)
                     tiempo_text = f"Tiempo restante: {minutos:02d}:{segundos:02d}"
@@ -389,31 +433,75 @@ class Round:
                     if not self.timeDefense==0:
                         self.timeDefense-= 1
                 self.game=True
-                pygame.mixer.music.stop()
+                #pygame.mixer.music.stop()
                 self.start_timer(10)
             else:
-                list = Spotify.playSong(self.Game.songInfo[0], self.Game.songInfo[1], self.songNumber)
-                self.songTime = list[0]
-                self.songTempo = list[1]
+                self.listAttck = Spotify.playSong(self.Game.songInfo2[0], self.Game.songInfo2[1], self.songNumber2)
+                self.songTime = self.listAttck[0]
+                self.songTempo = self.listAttck[1]
                 self.timeGame = self.songTime//1000  # 60 segundos = 1 minuto
-                beats=0
-                songBeat=self.songTempo//60
+                self.image1.listDef=self.listDef
+                self.image2.listDef = self.listDef
+                self.image3.listDef = self.listDef
+                self.power1.listAttck = self.listAttck
+                self.power2.listAttck = self.listAttck
+                self.power3.listAttck = self.listAttck
+                self.image1.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
+                self.image2.cookAlgorithm(self.listDef[1], self.listDef[2], self.listDef[3], self.listDef[4],
+                                          self.listDef[5], self.listDef[6], self.listDef[7], self.listDef[0])
+                self.image3.cookAlgorithm(self.listDef[1], self.listDef[2], self.listDef[3], self.listDef[4],
+                                          self.listDef[5], self.listDef[6], self.listDef[7], self.listDef[0])
+                self.power1.cookAlgorithm(self.listAttck[1], self.listAttck[2], self.listAttck[3], self.listAttck[4],
+                                          self.listAttck[5], self.listAttck[6], self.listAttck[7], self.listAttck[0])
+                self.power2.cookAlgorithm(self.listAttck[1], self.listAttck[2], self.listAttck[3], self.listAttck[4],
+                                          self.listAttck[5], self.listAttck[6], self.listAttck[7], self.listAttck[0])
+                self.power3.cookAlgorithm(self.listAttck[1], self.listAttck[2], self.listAttck[3], self.listAttck[4],
+                                          self.listAttck[5], self.listAttck[6], self.listAttck[7], self.listAttck[0])
+
                 while self.timeGame > 0:
                     if self.running:
-                        self.points +=1
-                        if self.timeGame%songBeat==0:
-                            beats+=1
-                            print(beats)
-                            if beats%25==0:
-                                self.image1.amount+=1
-                                self.image2.amount += 1
-                                self.image3.amount += 1
-                            if beats%30==0:
-                                self.power1.amount+=1
-                                self.power2.amount += 1
-                                self.power3.amount += 1
-                        minutos, segundos = divmod(self.timeGame, 60)
-                        tiempo_text = f"Tiempo restante: {minutos:02d}:{segundos:02d}"
+                        self.timePassed+=1
+                        self.timeB1+=1
+                        self.timeB2 += 1
+                        self.timeB3 += 1
+                        self.timeP1 += 1
+                        self.timeP2 += 1
+                        self.timeP3 += 1
+                        if self.timeB1 % int(self.image1.rechargeTime)==0:
+                            self.image1.amount+=1
+                            self.image1.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
+                            self.timeB1 =0
+                        if self.timeB2 % int(self.image2.rechargeTime) == 0:
+                            self.image2.amount += 1
+                            self.timeB2 = 0
+                            self.image2.cookAlgorithm(self.listDef[1], self.listDef[2], self.listDef[3],
+                                                      self.listDef[4], self.listDef[5], self.listDef[6],
+                                                      self.listDef[7], self.listDef[0])
+                        if self.timeB3 % int(self.image3.rechargeTime) == 0:
+                            self.image3.amount += 1
+                            self.timeB3 = 0
+                            self.image3.cookAlgorithm(self.listDef[1], self.listDef[2], self.listDef[3],
+                                                      self.listDef[4], self.listDef[5], self.listDef[6],
+                                                      self.listDef[7], self.listDef[0])
+                        if self.timeP1%int(self.power1.rechargeTime)==0:
+                            self.power1.amount+=1
+                            self.timeP1 = 0
+                            self.power1.cookAlgorithm(self.listAttck[1], self.listAttck[2], self.listAttck[3],
+                                                      self.listAttck[4], self.listAttck[5], self.listAttck[6],
+                                                      self.listAttck[7], self.listAttck[0])
+
+                        if self.timeP2 % int(self.power2.rechargeTime) == 0:
+                            self.power2.amount += 1
+                            self.timeP2 = 0
+                            self.power2.cookAlgorithm(self.listAttck[1], self.listAttck[2], self.listAttck[3],
+                                                      self.listAttck[4], self.listAttck[5], self.listAttck[6],
+                                                      self.listAttck[7], self.listAttck[0])
+                        if self.timeP3 % int(self.power3.rechargeTime) == 0:
+                            self.power3.amount += 1
+                            self.timeP3 = 0
+                            self.power3.cookAlgorithm(self.listAttck[1], self.listAttck[2], self.listAttck[3],
+                                                      self.listAttck[4], self.listAttck[5], self.listAttck[6],
+                                                      self.listAttck[7], self.listAttck[0])
                         pygame.time.wait(1000)
                     if not self.timeGame == 0:
                         self.timeGame -= 1
@@ -557,7 +645,8 @@ class Round:
                 for image in [self.image1, self.image2, self.image3, self.image4]:
                     if keys[pygame.K_f] and image.selected:
                         image.selected = False
-                        image.check_collision()
+                        if(image.check_collision()):
+                            self.barriersPlaced+=1
 
                 if keys[pygame.K_1]:
                     if self.image1.movable and not self.image2.selected and not self.image3.selected and not self.image4.selected:
@@ -676,6 +765,8 @@ class Round:
                                 else:
                                     pygame.mixer.music.load("SoundEfects/BombColide.mp3")
                                     pygame.mixer.music.play()
+                                self.barriersPlaced-=1
+                                self.barriersDestroyed+=1
                                 if (barrier.recieveDamage(image_copy.damage, copy)):  # Actualiza la vida y elimina la copia
                                     barrier.copies.remove(copy)  # Elimina la copia
                                     try:
@@ -725,6 +816,7 @@ class Round:
         font = pygame.font.Font(None, 72)
         if player[0] == self.player2[0]:
             self.Game.player2Rounds += 1
+            entryHallOfFame(player[0],self.pointsAttack)
             if self.Game.player2Rounds == 2:
                 text = font.render(player[0] + " Ganó la partida", True, (0, 0, 255)) \
                     if self.Game.player1Rounds == 2 else font.render(
@@ -737,6 +829,7 @@ class Round:
                 pygame.mixer.music.play()
         if player[0] == self.player1[0]:
             self.Game.player1Rounds += 1
+            entryHallOfFame(player[0], self.pointsDef)
             if self.Game.player1Rounds == 2:
                 text = font.render(player[0] + " Ganó la partida", True, (0, 0, 255)) \
                     if self.Game.player1Rounds == 2 else font.render(
@@ -763,6 +856,12 @@ class Round:
             temp = self.Game.player1Rounds
             self.Game.player1Rounds = self.Game.player2Rounds
             self.Game.player2Rounds = temp
+            temp = self.Game.songInfo1
+            self.Game.songInfo1=self.Game.songInfo2
+            self.Game.songInfo2=temp
+            temp = self.Game.songList1
+            self.Game.songList1 = self.Game.songList2
+            self.Game.songList2 = temp
             temp = self.player1
             self.player1 = self.player2
             self.player2 = temp
@@ -820,6 +919,8 @@ class Barriers:
         self.amount = amount
         self.combinedRect = pygame.Rect(self.original_x, self.original_y, self.rect_width, self.rect_height)
         self.game=game
+        self.rechargeTime=1000
+        self.listDef=[]
 
     def create_copy(self, player_x, player_y):
         copy = Barriers(self.image_path, self.original_x, self.original_y, self.life, 1,self, copy=True, original=self)
@@ -833,7 +934,7 @@ class Barriers:
         if outside_bounds:
             # Si está fuera de los límites, devuelve la imagen original a su posición inicial
             self.original_x, self.original_y = self.initial_x, self.initial_y
-            return
+            return False
 
         placed = False
 
@@ -841,7 +942,7 @@ class Barriers:
         if self != self.game.image4 and self.game.image4.combinedRect.colliderect(self.combinedRect):
             # No puedes colocar la copia en la ubicación de la imagen 4
             self.original_x, self.original_y = self.initial_x, self.initial_y
-            return
+            return False
 
         for image in [self.game.image1, self.game.image2, self.game.image3]:
             for copy in image.copies:
@@ -852,7 +953,7 @@ class Barriers:
                 if self.combinedRect.colliderect(copy.combinedRect):
                     # Copia detectada, detén el movimiento y devuelve la imagen original a su posición inicial
                     self.original_x, self.original_y = self.initial_x, self.initial_y
-                    return
+                    return False
 
             if rectangle_rect.contains(self.combinedRect):
                 placed = True
@@ -863,9 +964,12 @@ class Barriers:
                     self.combinedRect = self.combinedRect
                     self.copies.append(self.create_copy(self.original_x, self.original_y))
                     self.amount -= 1
+                    self.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
                 self.original_x, self.original_y = self.initial_x, self.initial_y
+                return True
             else:
                 self.game.image4.combinedRect = self.combinedRect
+                return False
 
 
     def moveDefender(self, cursor_x, cursor_y):
@@ -911,6 +1015,19 @@ class Barriers:
         if self==self.game.image4:
             self.game.stop(self.game.player2)
 
+    def cookAlgorithm(self,tempo,key,valence,energy,dance,intrumental,acuostic,duration):
+        if valence<0.7:
+            newValence=2
+        else:
+            newValence=1
+
+        if dance>0.7:
+            newDance=1
+        else:
+            newDance=2
+
+        self.rechargeTime= int(tempo+key+valence*newValence+energy+dance*newDance+(1-intrumental+acuostic)*duration//1000)//(abs(11-self.amount))
+        print(self.rechargeTime)
 # Clase para gestionar las imágenes y copias de Poderes
 class Powers:
     def __init__(self, image_path, x, y, damage, amount,game):
@@ -930,6 +1047,7 @@ class Powers:
         self.amount = amount
         self.clicked = False  # Variable para indicar si se ha hecho clic en la imagen
         self.game=game
+        self.rechargeTime=1000
 
     def check_collision(self):
         # El código de colisión es el mismo que en la clase Barriers
@@ -957,4 +1075,16 @@ class Powers:
         copy.image_surface.blit(copy.image, (0, 0))
         copy.selected = False
         return copy
+    def cookAlgorithm(self,tempo,key,valence,energy,dance,intrumental,acuostic,duration):
+        if valence<0.7:
+            newValence=2
+        else:
+            newValence=1
 
+        if dance>0.7:
+            newDance=1
+        else:
+            newDance=2
+
+        self.rechargeTime= int(tempo+key+valence/newValence+energy+dance/newDance+(1-intrumental+acuostic)/duration//1000)//(abs(10-self.amount))
+        print(self.rechargeTime)
