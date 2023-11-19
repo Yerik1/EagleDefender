@@ -124,6 +124,7 @@ class Round:
         self.movementThreads=[]
         self.player_thread=""
         self.pointer_thread=""
+        self.selectBarrier_thread=""
         self.timer_label=""
         self.font=""
         self.timeDefense=0
@@ -630,8 +631,9 @@ class Round:
         except: pass
 
     def selectBarrier(self):
-        try:
+
             while self.running:
+
                 keys = pygame.key.get_pressed()
                 other_rects = []
                 if self.timeDefense <= 0:
@@ -646,6 +648,8 @@ class Round:
                     if keys[pygame.K_f] and image.selected:
                         image.selected = False
                         if(image.check_collision()):
+                            if self.running:
+                                image.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
                             self.barriersPlaced+=1
 
                 if keys[pygame.K_1]:
@@ -681,7 +685,7 @@ class Round:
                             self.image4.selected = False
                             self.image4.check_collision()
                         pygame.time.wait(200)
-        except: pass
+
 
     def check_click(self,image, cursor_x, cursor_y):
         if image.original_x < cursor_x < image.original_x + image.rect_width and \
@@ -964,7 +968,7 @@ class Barriers:
                     self.combinedRect = self.combinedRect
                     self.copies.append(self.create_copy(self.original_x, self.original_y))
                     self.amount -= 1
-                    self.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
+
                 self.original_x, self.original_y = self.initial_x, self.initial_y
                 return True
             else:
