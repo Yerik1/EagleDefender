@@ -369,6 +369,8 @@ class Round:
 
             textPoints1 = self.font.render("Puntos: " + str(self.pointsDef), True, (0, 0, 0))
             textPoints2 = self.font.render("Puntos: " + str(self.pointsAttack), True, (0, 0, 0))
+            textDefender=self.font.render("Defender", True, (0, 0, 0))
+            textAtacker= self.font.render("Attacker", True, (0, 0, 0))
             # Posición de la etiqueta
             text1_rect = text1.get_rect()
             text1_rect.center = (self.window_width // 4 - 190, 260)
@@ -388,6 +390,10 @@ class Round:
             points_rect2=textPoints2.get_rect()
             points_rect1.center = (self.window_width // 4, 175)
             points_rect2.center = (3*self.window_width // 4, 175)
+            deffender_rect = textDefender.get_rect()
+            attacker_rect = textAtacker.get_rect()
+            deffender_rect.center = (self.window_width // 4, 325)
+            attacker_rect.center = (3 * self.window_width // 4, 325)
 
             # Crear etiquetas para los nombres de los jugadores
             player1_label = self.font.render(self.player1[0], True, (0, 0, 255))
@@ -410,6 +416,8 @@ class Round:
             self.screen.blit(textTime,timer_rect.center)
             self.screen.blit(textPoints1,points_rect1.center)
             self.screen.blit(textPoints2, points_rect2.center)
+            self.screen.blit(textDefender, deffender_rect.center)
+            self.screen.blit(textAtacker, attacker_rect.center)
 
             # Dibujar las etiquetas de nombres en la pantalla
             self.screen.blit(player1_label, player1_rect.center)
