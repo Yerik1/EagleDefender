@@ -24,8 +24,8 @@ class Instructions:
             return False
 
     def nextImage(self):
-        if self.position<6:
-            if self.position==5:
+        if self.position<8:
+            if self.position==7:
                 self.nextButton.destroy()
             self.position += 1
             if self.position==2:
@@ -44,7 +44,7 @@ class Instructions:
             if self.position==2:
                 self.prevButton.destroy()
             self.position -= 1
-            if self.position==5:
+            if self.position==7:
                 self.nextButton = self.instructionsScreen.buttons("next", self.nextImage, "White", "White",
                                                                   int(3*self.width / 4) + 50,
                                                                   int(3 * self.height / 4) + 60)

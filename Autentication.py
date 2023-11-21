@@ -22,34 +22,35 @@ class Autenticacion:
         self.height = self.logInScreen.root.winfo_screenheight()  # Alto
 
         # Crea el canva para la linea Vertical -> VL
-        self.canvaVL = self.logInScreen.addCanvas(2, self.height / 2, (self.width / 2) + 2, self.height / 8, "black")
+        #self.canvaVL = self.logInScreen.addCanvas(2, self.height / 2, (self.width / 2) + 2, self.height / 8, "black")
         # Parametros para crear VL (x1, y1, x2, y2, color, grosor)
-        self.canvaVL.create_line(2, 0, 2, self.height + 5, fill="black", width=4)
+        #self.canvaVL.create_line(2, 0, 2, self.height + 5, fill="black", width=4)
 
         # Entry del user
-        self.entryUser = self.logInScreen.addEntry(20, "", self.width / 4, self.height / 4)
+        self.entryUser = self.logInScreen.addEntry(int(self.width/52), "", 4*self.width/8, 3*self.height/10)
 
         # Entry de la contrasena
-        self.entryPassword = self.logInScreen.addEntry(20, "⧫", self.width / 4, 3 * self.height/8)
+        self.entryPassword = self.logInScreen.addEntry(int(self.width/52), "⧫", 4*self.width/8, 4*self.height/10)
 
 
 
 
         # Label con el titulo de la ventana
-        self.windowTitle = self.logInScreen.addLabel("Log In", self.width/2, (self.height)/100,"flat")
-
+        self.windowTitle = self.logInScreen.addLabel("Eagle Defender", self.width/2, (self.height)/10,"flat")
+        self.windowTitle.config(font=("Arial", 46))
         # Label de la solicitud del Username
-        self.userLb = self.logInScreen.addLabel("User Name: ", self.width/8, self.height/4, "flat")
-
+        self.userLb = self.logInScreen.addLabel("User Name: ", 3*self.width/8, 3*self.height/10, "flat")
+        self.userLb.config(font=("Arial", 22))
         # Label de la solicitud del Password
-        self.passwordLb = self.logInScreen.addLabel("Password: ", self.width/8, 3 * self.height/8, "flat")
+        self.passwordLb = self.logInScreen.addLabel("Password: ", 3*self.width/8, 4*self.height/10, "flat")
+        self.passwordLb.config(font=("Arial", 22))
 
         # Label de la biometrica
-        self.biometricLb = self.logInScreen.addLabel("Biometric: ", self.width/1.7, self.height/3.4, "flat")
-
+        self.biometricLb = self.logInScreen.addLabel("Biometric: ", 3*self.width/8, 5.5*self.height/10, "flat")
+        self.biometricLb.config(font=("Arial", 16))
         # Label de crear una cuenta
-        self.newAccountLb = self.logInScreen.addLabel("Create an account?", self.width/2, self.height/1.6, "flat")
-
+        self.newAccountLb = self.logInScreen.addLabel("Create an account?", self.width/2, 6.3*self.height/10, "flat")
+        self.newAccountLb.config(font=("Arial", 16))
         # Label de logearse como un invitado
         # self.logInGuestLb = self.logInScreen.addLabel("Log In as guest?", self.width/2, self.height/1.3, "flat")
         self.currentImage = 0
@@ -69,19 +70,20 @@ class Autenticacion:
         self.btnFlags = self.logInScreen.buttonImage(img1, lambda: (self.changeImage(), print("Action")), self.width / 60, self.height / 45)
 
         # Boton mostrar contraseña
-        self.showPasBtn = self.logInScreen.buttons("👁",self.showHidePassword, "green", "orange", 1.15 * self.width / 4, 3 * self.height / 8)
+        self.showPasBtn = self.logInScreen.buttons("👁",self.showHidePassword, "white", "green", 4*self.width/8+70, 4*self.height/10 )
 
         # Boton para hacer el log in
-        self.logInBtn = self.logInScreen.buttons("Log In", lambda: self.verificarUsuario(), "white", "red", self.width / 4, self.height / 1.7)
-
+        self.logInBtn = self.logInScreen.buttons("Log In", lambda: self.verificarUsuario(), "white", "green", 4*self.width/8, 4.5*self.height/10)
+        self.logInBtn.config(font=("Arial", 12),width=int((self.width/80)))
         # Boton de registrarse
-        self.registerBtn = self.logInScreen.buttons("Register", lambda: self.register1(), "Red", "orange", self.width / 2, self.height / 1.5)
-
+        self.registerBtn = self.logInScreen.buttons("Register", lambda: self.register1(), "white", "green", self.width / 2, self.height / 1.5)
+        self.registerBtn.config(font=("Arial", 12),width=int((self.width/80)))
         # Boton de guest
         # self.guestBtn = self.logInScreen.buttons("Guesst", lambda: print("Soy invitado"), "red", "black", self.width / 2, self.height / 1.2)
 
         # Boton de biometrica
-        self.biometricBtn = self.logInScreen.buttons("Acept", lambda: self.biometric(), "orange", "green", self.width / 1.5, self.height / 3.4)
+        self.biometricBtn = self.logInScreen.buttons("Accept", lambda: self.biometric(), "orange", "green", 4*self.width/8, 5.5*self.height/10)
+        self.biometricBtn.config(font=("Arial", 12),width=int((self.width/80)))
         self.logInScreen.initialize()
     def verificarUsuario(self):
 

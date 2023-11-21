@@ -124,6 +124,7 @@ class Round:
         self.movementThreads=[]
         self.player_thread=""
         self.pointer_thread=""
+        self.selectBarrier_thread=""
         self.timer_label=""
         self.font=""
         self.timeDefense=0
@@ -239,6 +240,7 @@ class Round:
         self.selectBarrier_thread = threading.Thread(target=self.selectBarrier)
         self.selectBarrier_thread.start()
 
+###JUEGO######################################################################################
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -367,6 +369,8 @@ class Round:
 
             textPoints1 = self.font.render("Puntos: " + str(self.pointsDef), True, (0, 0, 0))
             textPoints2 = self.font.render("Puntos: " + str(self.pointsAttack), True, (0, 0, 0))
+            textDefender=self.font.render("Defender", True, (0, 0, 0))
+            textAtacker= self.font.render("Attacker", True, (0, 0, 0))
             # Posición de la etiqueta
             text1_rect = text1.get_rect()
             text1_rect.center = (self.window_width // 4 - 190, 260)
@@ -386,6 +390,10 @@ class Round:
             points_rect2=textPoints2.get_rect()
             points_rect1.center = (self.window_width // 4, 175)
             points_rect2.center = (3*self.window_width // 4, 175)
+            deffender_rect = textDefender.get_rect()
+            attacker_rect = textAtacker.get_rect()
+            deffender_rect.center = (self.window_width // 4, 325)
+            attacker_rect.center = (3 * self.window_width // 4, 325)
 
             # Crear etiquetas para los nombres de los jugadores
             player1_label = self.font.render(self.player1[0], True, (0, 0, 255))
@@ -408,6 +416,8 @@ class Round:
             self.screen.blit(textTime,timer_rect.center)
             self.screen.blit(textPoints1,points_rect1.center)
             self.screen.blit(textPoints2, points_rect2.center)
+            self.screen.blit(textDefender, deffender_rect.center)
+            self.screen.blit(textAtacker, attacker_rect.center)
 
             # Dibujar las etiquetas de nombres en la pantalla
             self.screen.blit(player1_label, player1_rect.center)
@@ -418,6 +428,7 @@ class Round:
         print("win")
         pygame.quit()
         pygame.display.quit()
+###FIN JUEGO ################################################
 
     def start_timer(self,times):
         def temporizador():
@@ -435,6 +446,9 @@ class Round:
                 self.game=True
                 #pygame.mixer.music.stop()
                 self.start_timer(10)
+                self.image4.selected = False
+                self.image4.check_collision()
+                self.image4.movable = False
             else:
                 self.listAttck = Spotify.playSong(self.Game.songInfo2[0], self.Game.songInfo2[1], self.songNumber2)
                 self.songTime = self.listAttck[0]
@@ -630,14 +644,11 @@ class Round:
         except: pass
 
     def selectBarrier(self):
-        try:
+
             while self.running:
+
                 keys = pygame.key.get_pressed()
                 other_rects = []
-                if self.timeDefense <= 0:
-                    self.image4.selected = False
-                    self.image4.check_collision()
-                    self.image4.movable = False
                 for image in [self.image1, self.image2, self.image3, self.image4]:
                     if image.selected:
                         other_rects.extend(image.copies)
@@ -646,6 +657,8 @@ class Round:
                     if keys[pygame.K_f] and image.selected:
                         image.selected = False
                         if(image.check_collision()):
+                            if self.running:
+                                image.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
                             self.barriersPlaced+=1
 
                 if keys[pygame.K_1]:
@@ -681,7 +694,7 @@ class Round:
                             self.image4.selected = False
                             self.image4.check_collision()
                         pygame.time.wait(200)
-        except: pass
+
 
     def check_click(self,image, cursor_x, cursor_y):
         if image.original_x < cursor_x < image.original_x + image.rect_width and \
@@ -964,7 +977,9 @@ class Barriers:
                     self.combinedRect = self.combinedRect
                     self.copies.append(self.create_copy(self.original_x, self.original_y))
                     self.amount -= 1
-                    self.cookAlgorithm(self.listDef[1],self.listDef[2],self.listDef[3],self.listDef[4],self.listDef[5],self.listDef[6],self.listDef[7],self.listDef[0])
+                    if self.amount<0:
+                        self.amount=0
+
                 self.original_x, self.original_y = self.initial_x, self.initial_y
                 return True
             else:
@@ -1026,7 +1041,7 @@ class Barriers:
         else:
             newDance=2
 
-        self.rechargeTime= int(tempo+key+valence*newValence+energy+dance*newDance+(1-intrumental+acuostic)*duration//1000)//(abs(11-self.amount))
+        self.rechargeTime= abs(int(tempo+key+valence*newValence+energy+dance*newDance+(1-intrumental+acuostic)*duration//1000)//(abs(11-self.amount))-30)
         print(self.rechargeTime)
 # Clase para gestionar las imágenes y copias de Poderes
 class Powers:

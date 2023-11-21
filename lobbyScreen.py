@@ -105,10 +105,17 @@ class Lobby:
             print("salio")
     def initialize(self):
         # Labels usados en la ventana
+        self.windowTitle = self.lobbyScreen.addLabel("Eagle Defender", self.width / 2, (self.height) / 10, "flat")
+        self.windowTitle.config(font=("Arial", 46))
 
+        self.user1Lbl = self.lobbyScreen.addLabel("Player 1", self.width / 4, 3*(self.height) / 10, "flat")
+        self.user1Lbl.config(font=("Arial", 36))
+
+        self.user2Lbl = self.lobbyScreen.addLabel("Player 2", 3*self.width / 4, 3*(self.height) / 10, "flat")
+        self.user2Lbl.config(font=("Arial", 36))
         # Imagenes usadas para los botones
         imagen1 = Image.open(self.user1[8])
-        imagen1 = imagen1.resize((100, 100))
+        imagen1 = imagen1.resize((200, 200))
         # Crear una máscara en forma de óvalo
         ancho, alto = imagen1.size
         mascara = Image.new("L", (ancho, alto), 0)
@@ -120,13 +127,21 @@ class Lobby:
         img1 = ImageTk.PhotoImage(img1)
         if self.user2==[]:
 
-            imagen2 = tk.PhotoImage(file="Default/addUserPic.png")
-            img2 = imagen2.subsample(3)
-            self.lobbyScreen.addLabel("Register ->",10*self.width / 12,self.height / 10, "flat")
+            imagen2 = Image.open("Default/addUserPic.png")
+            imagen2 = imagen2.resize((200, 200))
+            # Crear una máscara en forma de óvalo
+            ancho, alto = imagen2.size
+            mascara = Image.new("L", (ancho, alto), 0)
+            draw = ImageDraw.Draw(mascara)
+            draw.ellipse((0, 0, ancho, alto), fill=255)
+            # Aplicar la máscara a la imagen original
+            img2 = Image.new("RGBA", (ancho, alto))
+            img2.paste(imagen2, mask=mascara)
+            img2 = ImageTk.PhotoImage(img2)
 
         else:
             imagen2 = Image.open(self.user2[8])
-            imagen2 = imagen2.resize((100, 100))
+            imagen2 = imagen2.resize((200, 200))
             # Crear una máscara en forma de óvalo
             ancho, alto = imagen2.size
             mascara = Image.new("L", (ancho, alto), 0)
@@ -140,30 +155,29 @@ class Lobby:
 
         # Bontones usados en la ventana
         self.edithUser1 = self.lobbyScreen.buttonImage(img1, lambda: (print("Aqui se edita")),
-                                                      self.width / self.width + 85, self.height / 10)
+                                                      self.width/4, 3*self.height / 6)
 
         if(self.user2==[]):
-            self.addUser = self.lobbyScreen.buttonImage(img2, lambda: (self.register1()), self.width / 1.1,
-                                                          self.height / 10)
-            self.logUser = self.lobbyScreen.buttons("Log In", lambda: (self.logIn()),"Orange","White", self.width / 1.1,
-                                                        self.height / 4.8)
+            self.addUser = self.lobbyScreen.buttonImage(img2, lambda: (print("Aqui se edita")), 3*self.width/4, 3*self.height / 6)
+            self.regButton = self.lobbyScreen.buttons("Register", lambda: (self.register1()),"Orange","White", 3*self.width/4-30, 4*self.height / 6)
+            self.logUser = self.lobbyScreen.buttons("Log In", lambda: (self.logIn()),"Orange","White", 3*self.width/4+30, 4*self.height / 6)
         else:
-            self.edithUser2 = self.lobbyScreen.buttonImage(img2, lambda: (print("Aqui se edita")), self.width / 1.1,
-                                                        self.height / 10)
+            self.edithUser2 = self.lobbyScreen.buttonImage(img2, lambda: (print("Aqui se edita")), 3*self.width/4, 3*self.height / 6)
         self.localGameBtn = self.lobbyScreen.buttons("Local Game", lambda: (self.play()), "Orange"
-                                                     , "White", 2.5 * self.width / 8, self.height / 2)
+                                                     , "White", self.width / 2, 2*self.height / 6)
 
-        onlineGameBtn = self.lobbyScreen.buttons("Online Game", lambda: (print("Esto aun no hace nada")), "Orange",
-                                                 "White", 3.5 * self.width / 8, self.height / 2)
-        onlineGameBtn.config(state="disabled")
+        self.localGameBtn.config(font=("Arial", 12),width=int((self.width/80)),height=int((self.width/500)))
+        #onlineGameBtn = self.lobbyScreen.buttons("Online Game", lambda: (print("Esto aun no hace nada")), "Orange",
+                                                 #"White", 3.5 * self.width / 8, self.height / 2)
+        #onlineGameBtn.config(state="disabled")
 
         tutorialBtn = self.lobbyScreen.buttons("Tutorial", lambda: (self.tutorial()), "Orange",
-                                               "White", 4.5 * self.width / 8, self.height / 2)
-        #tutorialBtn.config(state="disabled")
+                                               "White",self.width / 2, 3*self.height / 6)
+        tutorialBtn.config(font=("Arial", 12),width=int((self.width/80)),height=int((self.width/500)))
 
         hallOfFamebtn = self.lobbyScreen.buttons("Hall of Fame", lambda: (self.hallOfFame()), "Orange",
-                                                 "White", 5.5 * self.width / 8, self.height / 2)
-        #hallOfFamebtn.config(state="disabled")
+                                                 "White", self.width / 2, 4*self.height / 6)
+        hallOfFamebtn.config(font=("Arial", 12),width=int((self.width/80)),height=int((self.width/500)))
         if not self.lobbyScreen.initialize():
             return False
 

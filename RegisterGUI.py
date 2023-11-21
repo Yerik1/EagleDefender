@@ -54,6 +54,7 @@ picLabel=""
 extention=""
 combo=""
 labelError=""
+canvasStatus=False
 biometric=False
 status=True
 
@@ -91,10 +92,11 @@ def buttons(title, action, color1, color2, a, b):
     return btn
 
 # Funcion que Agrega labels
-def addLabel(txt, a, b, r, s):
+def addLabel(root,txt, a, b, r, s):
     titleFont = font.Font(family="Times New Romans", size=s)
     label = Label(root, text=txt, bg=BG, relief=r, font=titleFont)
-    label.place(x=a, y=b)
+    label.place(x=a, y=b,anchor=E)
+
     return label
 
 # Funcion que cierra la ventana
@@ -265,9 +267,10 @@ def updateComboBox(e):
     if not (entryMusic.get() == ""):
         for item in list:
             combo.insert(tk.END,item)
-        combo.place(x=width / 2, y=250, anchor=CENTER)
+        combo.place(x=width / 2, y=220, anchor=CENTER)
     else:
-        combo.place(x=width / 2, y=230, anchor=CENTER)
+        combo.place(x=width / 2, y=185, anchor=CENTER)
+        entryMusic.place(x=width / 2, y=185, anchor=CENTER)
 
 def selectOption(e):
 
@@ -469,7 +472,10 @@ def takepicture(event):
 
 
 def begin(case,user):
-    global labelError, combo, width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entrySetBarriers, entrySetPowers, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage
+    global labelError, combo, width, height, root, BG, imageName, entryA, entryB, entryC, entryD, entryE, dispA, dispB, dispC, dispD, dispE, showPassword, entryPassword, entryConfPassword, entrySA, entryMusic, buttonSA, entrySB, buttonSB, entrySC, buttonSC, entrySetBarriers, entrySetPowers, buttonProfPic, entryUser, entryName, entryEmail, entryAge, varCheckbox, status, profilePic,picLabel, currentImage,canvaStatus
+
+
+
     # Creacion de la ventana
     root=TkinterDnD.Tk()
     root.config(background="#86895d")
@@ -486,24 +492,31 @@ def begin(case,user):
     buttons(" x ", closeEnvironment, "Red", "Blue", width - 23, -0.5)
     buttons(" - ", minimize, "Red", "Blue", width - 45, -0.5)
 
+    titleFont = font.Font(family="Times New Romans", size=35)
+    label = Label(root, text="Register", bg=BG, relief="flat", font=titleFont)
+    label.place(x=width / 2, y=1 * (height / 10),anchor=CENTER)
     # Agraga el label del titulo
-    addLabel("Register", width / 2 - 60, 0.1 * (height / 30), "flat", 25)
+    #addLabel("Register", width / 2, 1 * (height / 10), "flat", 35)
 
     # Agrega los labels de la ventana de Registro
 
-    addLabel("*Name", width / 2 - 120, 48, "flat", 12)
+    addLabel(root,"*Name", 2*width / 5, 3 * (height / 10), "flat", 20)
 
-    addLabel("*User", width / 2 - 113, 74, "flat", 12)
+    addLabel(root,"*User", 2*width / 5, 4 * (height / 10), "flat", 20)
 
-    addLabel("*Password", width / 2 - 150, 98, "flat", 12)
+    addLabel(root,"*Password", 2*width / 5, 5 * (height / 10), "flat", 20)
 
-    addLabel("*Confirm Password", width / 2 - 208, 123, "flat", 12)
+    addLabel(root,"*Confirm Password", 2*width / 5, 6 * (height / 10), "flat", 20)
 
-    addLabel("*Email", width / 2 - 120, 148, "flat", 12)
+    addLabel(root,"*Email", 2*width / 5, 7 * (height / 10), "flat", 20)
 
-    addLabel("*Age", width / 2 - 109, 173, "flat", 12)
+    addLabel(root,"*Age", 2*width / 5, 8 * (height / 10), "flat", 20)
 
-    addLabel("Music", width / 2 - 111, 199, "flat", 12)
+    text = "User can only have Letters, Numbers and '_' \nPassword must have: 8 characters, 1 Capital Letter,\n1 Lowercase Letter and 1 Number or Symbol"
+    titleFont = font.Font(family="Times New Romans", size=15)
+    label = Label(root, text=text, bg=BG, relief="flat", font=titleFont)
+    label.place(x=3 * (width / 4 ), y=2*(height / 5), anchor=CENTER)
+    #addLabel(text, (3 * width / 4 - 100), 70, "flat", 16)
 
     profilePicPath = ""
     extention = ""
@@ -513,36 +526,28 @@ def begin(case,user):
 
     # Se crean las entries del registro
     entryUser = Entry(root, width=20)
-    entryUser.place(x=width / 2, y=85, anchor=CENTER)
+    entryUser.place(x=width / 2, y=3 * (height / 10), anchor=CENTER)
 
     entryPassword = Entry(root, width=20, show="⧫")
-    entryPassword.place(x=width / 2, y=110, anchor=CENTER)
+    entryPassword.place(x=width / 2, y=4 * (height / 10), anchor=CENTER)
 
     entryConfPassword = Entry(root, width=20, show="⧫")
-    entryConfPassword.place(x=width / 2, y=135, anchor=CENTER)
+    entryConfPassword.place(x=width / 2, y=5 * (height / 10), anchor=CENTER)
 
     entryName = Entry(root, width=20)
-    entryName.place(x=width / 2, y=60, anchor=CENTER)
+    entryName.place(x=width / 2, y=6 * (height / 10), anchor=CENTER)
 
     entryEmail = Entry(root, width=20)
-    entryEmail.place(x=width / 2, y=160, anchor=CENTER)
+    entryEmail.place(x=width / 2, y=7 * (height / 10), anchor=CENTER)
 
     entryAge = Entry(root, width=20)
-    entryAge.place(x=width / 2, y=185, anchor=CENTER)
+    entryAge.place(x=width / 2, y=8 * (height / 10), anchor=CENTER)
 
-    entryMusic = Entry(root, width=20)
-    entryMusic.place(x=width / 2, y=210, anchor=CENTER)
-    #entryMusic.bind("<Return>",addSong)
-    entryMusic.bind("<KeyRelease>",updateComboBox)
 
-    combo= Listbox(root, width=20, height=-50,selectmode="single")
-    combo.place(x=width / 2, y=230, anchor=CENTER)
-    combo.lift()
-    combo.bind("<Button-1>", selectOption)
 
     # Boton mostrar contraseña
     showPassword = Button(root, text="Show Password", command=showHidePassword)
-    showPassword.place(x=width / 2 + 130, y=120, anchor=CENTER)
+    showPassword.place(x=3*width / 5,y= 5.5 * (height / 10), anchor=CENTER)
 
     currentImage = 0
 
@@ -576,30 +581,59 @@ def begin(case,user):
     btnFlags = Button(root, image=imagenes[currentImage], command=lambda:(changeImage(), print("Action")), bd=0 , relief="sunken", bg=BG, activebackground=BG )
     btnFlags.place( x = width / 60, y = height / 45)
 
+    labelError = addLabel(root, "", width / 2 - 30, 650, "flat", 12)
+    labelError.config(fg="red", anchor="center")
+    if case==0:
+        # Boton para registrarse
+        buttonRegister = Button(root, text="Register", command=lambda:registerGUI(case), bd=0, relief="sunken",
+                                activebackground="SystemButtonFace")
+        buttonRegister.place(x=width / 2 - 30, y=700)
+    else:
+        # Boton para registrarse
+        buttonRegister = Button(root, text="Edit", command=lambda:editProfile(user), bd=0, relief="sunken",
+                                activebackground="SystemButtonFace")
+        buttonRegister.place(x=width / 2 - 30, y=700)
+    main_canvas = Canvas(root, width=width, height=height, bg=BG,highlightbackground=BG)
+    titleFont = font.Font(family="Times New Romans", size=35)
+    label = Label(main_canvas, text="Personalitation", bg=BG, relief="flat", font=titleFont)
+    label.place(x=width / 2, y=1 * (height / 10), anchor=CENTER)
+###MUSICA###
+    addLabel(main_canvas,"Music", width / 2 - 100, 199, "flat", 16)
+    combo = Listbox(main_canvas, width=20, height=-50, selectmode="single")
+    combo.place(x=width / 2, y=185, anchor=CENTER)
+    combo.lift()
+    combo.bind("<Button-1>", selectOption)
+    entryMusic = Entry(main_canvas, width=20)
+    entryMusic.place(x=width / 2, y=185, anchor=CENTER)
+    # entryMusic.bind("<Return>",addSong)
+    entryMusic.bind("<KeyRelease>", updateComboBox)
+
+
     # Entries con canciones agregadas
-    entrySA = Entry(root, width=30)
+    entrySA = Entry(main_canvas, width=30)
     entrySA.place(x=width / 2 + 160, y=185, anchor=CENTER)
     entrySA.config(state="disabled")
-    entrySB = Entry(root, width=30)
+    entrySB = Entry(main_canvas, width=30)
     entrySB.place(x=width / 2 + 160, y=210, anchor=CENTER)
     entrySB.config(state="disabled")
-    entrySC = Entry(root, width=30)
+    entrySC = Entry(main_canvas, width=30)
     entrySC.place(x=width / 2 + 160, y=235, anchor=CENTER)
     entrySC.config(state="disabled")
 
     # Botones para eliminar las canciones
-    buttonSA = Button(root, text="X", command=deleteSong1)
+    buttonSA = Button(main_canvas, text="X", command=deleteSong1)
     buttonSA.place(x=width / 2 + 265, y=185, anchor=CENTER)
     buttonSA.config(state="disabled")
-    buttonSB = Button(root, text="X", command=deleteSong2)
+    buttonSB = Button(main_canvas, text="X", command=deleteSong2)
     buttonSB.place(x=width / 2 + 265, y=210, anchor=CENTER)
     buttonSB.config(state="disabled")
-    buttonSC = Button(root, text="X", command=deleteSong3)
+    buttonSC = Button(main_canvas, text="X", command=deleteSong3)
     buttonSC.place(x=width / 2 + 265, y=235, anchor=CENTER)
     buttonSC.config(state="disabled")
-
+###MUSICA###
+###COLORES###
     # se crea el canvas de la rueda de color
-    c = Canvas(root, width=97, height=95, bg="black", highlightbackground=BG)
+    c = Canvas(main_canvas, width=97, height=95, bg="black", highlightbackground=BG)
     c.place(x=(width / 2), y=375, anchor=CENTER)
     imageName="./ColorWheel.png"
     myImg=cargarImagen(imageName)
@@ -612,7 +646,7 @@ def begin(case,user):
     except Exception as e:
         print("Error al cargar o procesar la imagen:", e)
 
-    profilePic = Canvas(root, width=200, height=200, bg="#86895d", highlightbackground="#86895d")
+    profilePic = Canvas(main_canvas, width=200, height=200, bg="#86895d", highlightbackground="#86895d")
     profilePic.place(x=width / 4 - 100, y=50)
     profilePic.create_oval(1,1,200,200, fill= "#ffffff")
     font1 = font.Font(family="Times New Romans", size=25)
@@ -624,46 +658,47 @@ def begin(case,user):
 
 
     # Se crean los lugares donde aparece el codigo de color y se muestra el color
-    entryA = Entry(root, width=10, state="disabled")
+    entryA = Entry(main_canvas, width=10, state="disabled")
     entryA.place(x=width / 2 + 50, y=325)
-    entryB = Entry(root, width=10, state="disabled")
+    entryB = Entry(main_canvas, width=10, state="disabled")
     entryB.place(x=width / 2 + 50, y=345)
-    entryC = Entry(root, width=10, state="disabled")
+    entryC = Entry(main_canvas, width=10, state="disabled")
     entryC.place(x=width / 2 + 50, y=365)
-    entryD = Entry(root, width=10, state="disabled")
+    entryD = Entry(main_canvas, width=10, state="disabled")
     entryD.place(x=width / 2 + 50, y=385)
-    entryE = Entry(root, width=10, state="disabled")
+    entryE = Entry(main_canvas, width=10, state="disabled")
     entryE.place(x=width / 2 + 50, y=405)
 
-    dispA = Button(root, text="  ", state="disabled")
+    dispA = Button(main_canvas, text="  ", state="disabled")
     dispA.place(x=width / 2 + 100, y=325)
-    dispB = Button(root, text="  ", state="disabled")
+    dispB = Button(main_canvas, text="  ", state="disabled")
     dispB.place(x=width / 2 + 100, y=345)
-    dispC = Button(root, text="  ", state="disabled")
+    dispC = Button(main_canvas, text="  ", state="disabled")
     dispC.place(x=width / 2 + 100, y=365)
-    dispD = Button(root, text="  ", state="disabled")
+    dispD = Button(main_canvas, text="  ", state="disabled")
     dispD.place(x=width / 2 + 100, y=385)
-    dispE = Button(root, text="  ", state="disabled")
+    dispE = Button(main_canvas, text="  ", state="disabled")
     dispE.place(x=width / 2 + 100, y=405)
-
-    addLabel("Set 1", (width / 4 - 250), 410, "flat", 25)
-    addLabel("Set 2", (width / 4 - 250), 515, "flat", 25)
-    addLabel("Set 3", (width / 4 - 250), 620, "flat", 25)
-    addLabel("Set 1", (3*width / 4 + 150), 410, "flat", 25)
-    addLabel("Set 2", (3*width / 4 + 150), 515, "flat", 25)
-    addLabel("Set 3", (3*width / 4 + 150), 620, "flat", 25)
-    addLabel("Choose a Barrier Set (Click)", (width / 4-130), 325, "flat", 15)
-    addLabel("Choose a Power Set (Click)", (3 * width / 4-130), 325, "flat", 15)
-    addLabel("Choose a color palette (Click)", (width / 2-75), 300, "flat", 12)
-    text="User can only have Letters, Numbers and '_' \nPassword must have: 8 characters, 1 Capital Letter,\n1 Lowercase Letter and 1 Number or Symbol"
-    addLabel(text, (3*width / 4 - 100), 70, "flat", 12)
+###COLORES###
+    
+###BARRERAS###
+    addLabel(main_canvas,"Set 1", (width / 4 - 150), 410, "flat", 25)
+    addLabel(main_canvas,"Set 2", (width / 4 - 150), 515, "flat", 25)
+    addLabel(main_canvas,"Set 3", (width / 4 - 150), 620, "flat", 25)
+    addLabel(main_canvas,"Set 1", (3*width / 4 +250), 410, "flat", 25)
+    addLabel(main_canvas,"Set 2", (3*width / 4 +250), 515, "flat", 25)
+    addLabel(main_canvas,"Set 3", (3*width / 4 +250), 620, "flat", 25)
+    addLabel(main_canvas,"Choose a Barrier Set (Click)", (width / 4)+125, 325, "flat", 15)
+    addLabel(main_canvas,"Choose a Power Set (Click)", (3 * width / 4)+125, 325, "flat", 15)
+    addLabel(main_canvas,"Choose a color palette (Click)", (width / 2)+125, 300, "flat", 12)
+    
 
     # Seleccion de imagenes
     wd1 = "Barriers/Wood/Wood1.PNG"
     copyBg1 = Image.open(wd1)
     myWd1 = ImageTk.PhotoImage(Image.open(wd1).resize((100, 100)))
 
-    cwd1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwd1 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cwd1.place(x=(width / 4 - 100), y=410, anchor=CENTER)
     cwd1.create_image(50, 50, image=myWd1, anchor=CENTER)
     cwd1.bind("<Button-1>", lambda event, p=1: selectSetBarriers(event, p))
@@ -672,7 +707,7 @@ def begin(case,user):
     copyBg1 = Image.open(sn1)
     mySn1 = ImageTk.PhotoImage(Image.open(sn1).resize((100, 100)))
 
-    csn1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    csn1 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     csn1.place(x=(width / 4 ), y=410, anchor=CENTER)
     csn1.create_image(50, 50, image=mySn1, anchor=CENTER)
     csn1.bind("<Button-1>", lambda event, p=1: selectSetBarriers(event, p))
@@ -681,7 +716,7 @@ def begin(case,user):
     copyBg1 = Image.open(st1)
     mySt1 = ImageTk.PhotoImage(Image.open(st1).resize((100, 100)))
 
-    cst1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cst1 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cst1.place(x=(width / 4 + 100), y=410, anchor=CENTER)
     cst1.create_image(50, 50, image=mySt1, anchor=CENTER)
     cst1.bind("<Button-1>", lambda event, p=1: selectSetBarriers(event, p))
@@ -691,7 +726,7 @@ def begin(case,user):
     copyBg1 = Image.open(wd1)
     myWd2 = ImageTk.PhotoImage(Image.open(wd2).resize((100, 100)))
 
-    cwd2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwd2 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cwd2.place(x=(width / 4 - 100), y=515, anchor=CENTER)
     cwd2.create_image(50, 50, image=myWd2, anchor=CENTER)
     cwd2.bind("<Button-1>", lambda event, p=2: selectSetBarriers(event, p))
@@ -700,7 +735,7 @@ def begin(case,user):
     copyBg2 = Image.open(sn2)
     mySn2 = ImageTk.PhotoImage(Image.open(sn2).resize((100, 100)))
 
-    csn2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    csn2 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     csn2.place(x=(width / 4), y=515, anchor=CENTER)
     csn2.create_image(50, 50, image=mySn2, anchor=CENTER)
     csn2.bind("<Button-1>", lambda event, p=2: selectSetBarriers(event, p))
@@ -709,7 +744,7 @@ def begin(case,user):
     copyBg2 = Image.open(st2)
     mySt2 = ImageTk.PhotoImage(Image.open(st2).resize((100, 100)))
 
-    cst2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cst2 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cst2.place(x=(width / 4 + 100), y=515, anchor=CENTER)
     cst2.create_image(50, 50, image=mySt2, anchor=CENTER)
     cst2.bind("<Button-1>", lambda event, p=2: selectSetBarriers(event, p))
@@ -718,7 +753,7 @@ def begin(case,user):
     copyBg3 = Image.open(wd3)
     myWd3 = ImageTk.PhotoImage(Image.open(wd3).resize((100, 100)))
 
-    cwd3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwd3 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cwd3.place(x=(width / 4 - 100), y=620, anchor=CENTER)
     cwd3.create_image(50, 50, image=myWd3, anchor=CENTER)
     cwd3.bind("<Button-1>", lambda event, p=3: selectSetBarriers(event, p))
@@ -727,7 +762,7 @@ def begin(case,user):
     copyBg1 = Image.open(sn3)
     mySn3 = ImageTk.PhotoImage(Image.open(sn3).resize((100, 100)))
 
-    csn3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    csn3 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     csn3.place(x=(width / 4), y=620, anchor=CENTER)
     csn3.create_image(50, 50, image=mySn3, anchor=CENTER)
     csn3.bind("<Button-1>", lambda event, p=3: selectSetBarriers(event, p))
@@ -736,12 +771,12 @@ def begin(case,user):
     copyBg3 = Image.open(st3)
     mySt3 = ImageTk.PhotoImage(Image.open(st3).resize((100, 100)))
 
-    cst3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cst3 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cst3.place(x=(width / 4 + 100), y=620, anchor=CENTER)
     cst3.create_image(50, 50, image=mySt3, anchor=CENTER)
     cst3.bind("<Button-1>", lambda event, p=3: selectSetBarriers(event, p))
 
-    entrySetBarriers = Entry(root, width=20)
+    entrySetBarriers = Entry(main_canvas, width=20)
     entrySetBarriers.place(x=(width / 4), y=725, anchor=CENTER)
     entrySetBarriers.config(state="disabled")
 
@@ -751,7 +786,7 @@ def begin(case,user):
     copyWb1 = Image.open(wb1)
     myWb1 = ImageTk.PhotoImage(Image.open(wb1).resize((100, 100)))
 
-    cwb1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwb1 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cwb1.place(x=(3*width / 4 - 100), y=410, anchor=CENTER)
     cwb1.create_image(50, 50, image=myWb1, anchor=CENTER)
     cwb1.bind("<Button-1>", lambda event, p=1: selectSetPowers(event, p))
@@ -760,7 +795,7 @@ def begin(case,user):
     copyWb2 = Image.open(wb1)
     myWb2 = ImageTk.PhotoImage(Image.open(wb2).resize((100, 100)))
 
-    cwb2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwb2 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cwb2.place(x=(3*width / 4 - 100), y=515, anchor=CENTER)
     cwb2.create_image(50, 50, image=myWb2, anchor=CENTER)
     cwb2.bind("<Button-1>", lambda event, p=2: selectSetPowers(event, p))
@@ -769,7 +804,7 @@ def begin(case,user):
     copyWb3 = Image.open(wb3)
     myWb3 = ImageTk.PhotoImage(Image.open(wb3).resize((100, 100)))
 
-    cwb3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cwb3 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cwb3.place(x=(3*width / 4 - 100), y=620, anchor=CENTER)
     cwb3.create_image(50, 50, image=myWb3, anchor=CENTER)
     cwb3.bind("<Button-1>", lambda event, p=3: selectSetPowers(event, p))
@@ -780,7 +815,7 @@ def begin(case,user):
     copyFb1 = Image.open(fb1)
     myFb1 = ImageTk.PhotoImage(Image.open(fb1).resize((100, 100)))
 
-    cfb1 = Canvas(root, width=100, height=100, bg="white", highlightbackground=BG)
+    cfb1 = Canvas(main_canvas, width=100, height=100, bg="white", highlightbackground=BG)
     cfb1.place(x=(3*width / 4), y=410, anchor=CENTER)
     cfb1.create_image(50, 50, image=myFb1, anchor=CENTER)
     cfb1.bind("<Button-1>", lambda event, p=1: selectSetPowers(event, p))
@@ -789,7 +824,7 @@ def begin(case,user):
     copyFb2 = Image.open(fb2)
     myFb2 = ImageTk.PhotoImage(Image.open(fb2).resize((100, 100)))
 
-    cfb2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cfb2 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cfb2.place(x=(3*width / 4), y=515, anchor=CENTER)
     cfb2.create_image(50, 50, image=myFb2, anchor=CENTER)
     cfb2.bind("<Button-1>", lambda event, p=2: selectSetPowers(event, p))
@@ -798,7 +833,7 @@ def begin(case,user):
     copyFb3 = Image.open(fb3)
     myFb3 = ImageTk.PhotoImage(Image.open(fb3).resize((100, 100)))
 
-    cfb3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cfb3 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cfb3.place(x=(3*width / 4), y=620, anchor=CENTER)
     cfb3.create_image(50, 50, image=myFb3, anchor=CENTER)
     cfb3.bind("<Button-1>", lambda event, p=3: selectSetPowers(event, p))
@@ -809,7 +844,7 @@ def begin(case,user):
     copyBmb1 = Image.open(bmb1)
     myBmb1 = ImageTk.PhotoImage(Image.open(bmb1).resize((100, 100)))
 
-    cbmb1 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cbmb1 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cbmb1.place(x=(3*width / 4 + 100), y=410, anchor=CENTER)
     cbmb1.create_image(50, 50, image=myBmb1, anchor=CENTER)
     cbmb1.bind("<Button-1>", lambda event, p=1: selectSetPowers(event, p))
@@ -818,7 +853,7 @@ def begin(case,user):
     copyBmb2 = Image.open(bmb2)
     myBmb2 = ImageTk.PhotoImage(Image.open(bmb2).resize((100, 100)))
 
-    cbmb2 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cbmb2 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cbmb2.place(x=(3*width / 4 + 100), y=515, anchor=CENTER)
     cbmb2.create_image(50, 50, image=myBmb2, anchor=CENTER)
     cbmb2.bind("<Button-1>", lambda event, p=2: selectSetPowers(event, p))
@@ -827,40 +862,55 @@ def begin(case,user):
     copyBmb3 = Image.open(bmb3)
     myBmb3 = ImageTk.PhotoImage(Image.open(bmb3).resize((100, 100)))
 
-    cbmb3 = Canvas(root, width=100, height=100, bg=BG, highlightbackground=BG)
+    cbmb3 = Canvas(main_canvas, width=100, height=100, bg=BG, highlightbackground=BG)
     cbmb3.place(x=(3*width / 4 + 100), y=620, anchor=CENTER)
     cbmb3.create_image(50, 50, image=myBmb3, anchor=CENTER)
     cbmb3.bind("<Button-1>", lambda event, p=3: selectSetPowers(event, p))
 
-    entrySetPowers = Entry(root, width=20)
+    entrySetPowers = Entry(main_canvas, width=20)
     entrySetPowers.place(x=(3 * width / 4), y=720, anchor=CENTER)
     entrySetPowers.config(state="disabled")
 
-    buttonProfPic = Button(root, text="Add Profile Picture", command=profilePicMaker)
+###BARRERAS###
+###FOTO###
+    buttonProfPic = Button(main_canvas, text="Add Profile Picture", command=profilePicMaker)
     buttonProfPic.place(x=width / 4, y=25, anchor=CENTER)
-
-    if case==0:
-        # Boton para registrarse
-        buttonRegister = Button(root, text="Register", command=lambda:registerGUI(case), bd=0, relief="sunken",
-                                activebackground="SystemButtonFace")
-        buttonRegister.place(x=width / 2 - 30, y=700)
-    else:
-        # Boton para registrarse
-        buttonRegister = Button(root, text="Edit", command=lambda:editProfile(user), bd=0, relief="sunken",
-                                activebackground="SystemButtonFace")
-        buttonRegister.place(x=width / 2 - 30, y=700)
-
-    root.dnd_bind('<<Drop>>', dragPic)
-
+###FOTO###
+###BIOMETRICA###
     # Variable para rastrear el estado de la casilla de verificación
     varCheckbox = BooleanVar()
 
     # Crear la casilla de verificación
-    checkbox = Checkbutton(root, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
-    checkbox.place(x=width / 4-40, y=275)
+    checkbox = Checkbutton(main_canvas, text="Biometric", variable=varCheckbox, command=toggle_checkbox)
+    checkbox.place(x=width / 4 - 40, y=275)
+###BIOMETRICA###
 
-    labelError = addLabel("", width / 2 -30, 650, "flat", 12)
-    labelError.config(fg="red",anchor="center")
+
+    root.dnd_bind('<<Drop>>', dragPic)
+
+
+    canvas_visible = BooleanVar()
+    canvas_visible.set(False)
+
+    toggle_button = Button(root, text="Personalitation")
+    toggle_button.place(x=width / 2, y=680, anchor=CENTER)
+
+    #main_canvas.itemconfigure("all", state="hidden")
+    def toggle_canvas():
+        if canvas_visible.get():
+            print("False")
+            main_canvas.pack_forget()
+            canvas_visible.set(False)
+            toggle_button.config(text="Personalitation")
+
+        else:
+            print("True")
+            main_canvas.pack()
+            canvas_visible.set(True)
+            toggle_button.config(text="Back to Register")
+
+
+    toggle_button.config(command=toggle_canvas)
     #Abre la ventana
     root.mainloop()
     return False
