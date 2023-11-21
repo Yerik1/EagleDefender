@@ -240,6 +240,7 @@ class Round:
         self.selectBarrier_thread = threading.Thread(target=self.selectBarrier)
         self.selectBarrier_thread.start()
 
+###JUEGO######################################################################################
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -419,6 +420,7 @@ class Round:
         print("win")
         pygame.quit()
         pygame.display.quit()
+###FIN JUEGO ################################################
 
     def start_timer(self,times):
         def temporizador():
@@ -436,6 +438,9 @@ class Round:
                 self.game=True
                 #pygame.mixer.music.stop()
                 self.start_timer(10)
+                self.image4.selected = False
+                self.image4.check_collision()
+                self.image4.movable = False
             else:
                 self.listAttck = Spotify.playSong(self.Game.songInfo2[0], self.Game.songInfo2[1], self.songNumber2)
                 self.songTime = self.listAttck[0]
@@ -636,10 +641,6 @@ class Round:
 
                 keys = pygame.key.get_pressed()
                 other_rects = []
-                if self.timeDefense <= 0:
-                    self.image4.selected = False
-                    self.image4.check_collision()
-                    self.image4.movable = False
                 for image in [self.image1, self.image2, self.image3, self.image4]:
                     if image.selected:
                         other_rects.extend(image.copies)
@@ -968,6 +969,8 @@ class Barriers:
                     self.combinedRect = self.combinedRect
                     self.copies.append(self.create_copy(self.original_x, self.original_y))
                     self.amount -= 1
+                    if self.amount<0:
+                        self.amount=0
 
                 self.original_x, self.original_y = self.initial_x, self.initial_y
                 return True
@@ -1030,7 +1033,7 @@ class Barriers:
         else:
             newDance=2
 
-        self.rechargeTime= int(tempo+key+valence*newValence+energy+dance*newDance+(1-intrumental+acuostic)*duration//1000)//(abs(11-self.amount))
+        self.rechargeTime= abs(int(tempo+key+valence*newValence+energy+dance*newDance+(1-intrumental+acuostic)*duration//1000)//(abs(11-self.amount))-30)
         print(self.rechargeTime)
 # Clase para gestionar las imágenes y copias de Poderes
 class Powers:
